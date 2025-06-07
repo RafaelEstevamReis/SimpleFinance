@@ -43,8 +43,10 @@ public class Manager
     static void compress(string dbFile, string destFile)
     {
         var fiOrg = new FileInfo(dbFile);
+        if (!fiOrg.Exists) return; // First run
+
         var fiDest = new FileInfo(destFile);
-        using FileStream originalFileStream = File.OpenRead(fiOrg.FullName);
+        using FileStream originalFileStream = File.Open(fiOrg.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
         using FileStream compressedFileStream = File.Create(fiDest.FullName + ".gz");
         using GZipStream compressionStream = new(compressedFileStream, CompressionMode.Compress);
         originalFileStream.CopyTo(compressionStream);
