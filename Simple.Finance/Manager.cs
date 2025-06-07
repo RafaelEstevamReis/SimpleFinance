@@ -73,7 +73,12 @@ public class Manager
 
     public decimal GetWalletBalance(long walletId)
     {
-        return 0;
+        using var cnn = db.GetConnection();
+        return cnn.ExecuteScalar<decimal>("SELECT COALESCE(SUM(PaidValue),0) FROM Transac WHERE WalletId = @id AND Status = @status AND PaymentDate <= CURRENT_TIMESTAMP", new
+        {
+            id = walletId,
+            status = Tables.Transac.PaymentStatus.Paid,
+        });
     }
 
     #endregion
