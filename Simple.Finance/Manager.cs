@@ -28,7 +28,7 @@ public class Manager
 
     #region Wallets
 
-    public IEnumerable< Tables.Wallet> GetWallets()
+    public IEnumerable<Tables.Wallet> GetWallets()
     {
         using var cnn = db.GetConnection();
         return cnn.GetAll<Tables.Wallet>();
@@ -77,6 +77,11 @@ public class Manager
 
     #region Persons
 
+    public IEnumerable<Tables.Person> GetAllPersons()
+    {
+        using var cnn = db.GetConnection();
+        return cnn.GetAll<Tables.Person>();
+    }
     public long CreateUpdatePerson(Tables.Person person)
     {
         using var cnn = db.GetConnection();
@@ -87,17 +92,122 @@ public class Manager
         saveChangeLog(cnn, originalValue, person);
         return person.Id;
     }
-    public IEnumerable<Tables.Person> GetAllPersons()
-    {
-        using var cnn = db.GetConnection();
-        return cnn.GetAll<Tables.Person>();
-    }
 
     #endregion
 
     #region Transactions
+    public IEnumerable<Tables.Transaction> GetTransactions(SearchTransactionsDate dateType, DateTime start, DateTime end)
+    {
+        string add = "";
+        string dateColumn = dateType switch
+        {
+            SearchTransactionsDate.DueDate => "DueDate",
+            SearchTransactionsDate.PaymentDate => "PaymentDate",
+            SearchTransactionsDate.Created => "Created",
+            SearchTransactionsDate.Changed => "Changed",
+            _ => throw new InvalidOperationException("Invalid date type"),
+        };
 
+        if (dateType == SearchTransactionsDate.PaymentDate)
+        {
+            add = "AND PaymentStatus = @statusPaid";
+        }
 
+        using var cnn = db.GetConnection();
+        return cnn.Query<Tables.Transaction>($"SELECT * FROM {nameof(Tables.Transaction)} WHERE ({dateColumn} BETWEEN @start AND @end ) {add} ", new
+        {
+            start,
+            end,
+            statusPaid = Tables.Transaction.PaymentStatus.Paid,
+        });
+    }
+    public IEnumerable<Tables.Transaction> GetTransactionsBy(SearchTransactionsByKind kind, long id, SearchTransactionsDate dateType, DateTime start, DateTime end)
+    {
+        string add = "";
+        string kindColumn = kind switch
+        {
+            SearchTransactionsByKind.Wallet => "WalletId",
+            SearchTransactionsByKind.Category => "CategoryId",
+            SearchTransactionsByKind.Counterparty => "CounterpartyId",
+            _ => throw new InvalidOperationException("Invalid kind type"),
+        };
+        string dateColumn = dateType switch
+        {
+            SearchTransactionsDate.DueDate => "DueDate",
+            SearchTransactionsDate.PaymentDate => "PaymentDate",
+            SearchTransactionsDate.Created => "Created",
+            SearchTransactionsDate.Changed => "Changed",
+            _ => throw new InvalidOperationException("Invalid date type"),
+        };
+
+        if(dateType == SearchTransactionsDate.PaymentDate)
+        {
+            add = "AND PaymentStatus = @statusPaid";
+        }
+
+        using var cnn = db.GetConnection();
+        return cnn.Query<Tables.Transaction>($"SELECT * FROM {nameof(Tables.Transaction)} WHERE {kindColumn} = @id AND ({dateColumn} BETWEEN @start AND @end ) {add} ", new
+        {
+            id, start, end,
+            statusPaid = Tables.Transaction.PaymentStatus.Paid,
+        });
+    }
+
+    public long CreateUpdateTransaction(Tables.Transaction tx)
+    {
+        using var cnn = db.GetConnection();
+        var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transaction>(tx.Id);
+
+        // Check signs
+        if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transaction.DueValue)}' must not zero");
+        var dueSign = Math.Sign(tx.DueValue);
+        var pSign = Math.Sign(tx.PaidValue);
+        if (pSign != 0 && dueSign != pSign) throw new InvalidOperationException($" Sign of '{nameof(Tables.Transaction.DueValue)}' must be equal '{nameof(Tables.Transaction.PaidValue)}'");
+
+        // check wallet
+        var wallet = cnn.Get<Tables.Wallet>(tx.WalletId);
+        if (wallet == null) throw new InvalidOperationException($"Invalid Wallet Id: {tx.WalletId}");
+
+        // Check Category
+        var category = cnn.Get<Tables.Category>(tx.CategoryId);
+        if (category == null) throw new InvalidOperationException($"Invalid Category Id: {tx.CategoryId}");
+
+        if (dueSign > 0 && category.IsExpense)
+        {
+            throw new InvalidOperationException($"An 'IsExpense' category can only be used with negative values");
+        }
+        else if (dueSign < 0 && !category.IsExpense)
+        {
+            throw new InvalidOperationException($"An 'IsExpense' category can not be used with negative values");
+        }
+
+        if (tx.CounterpartyId != 0)
+        {
+            var cparty = cnn.Get<Tables.Person>(tx.CounterpartyId);
+            if (cparty == null) throw new InvalidOperationException($"Invalid Counterparty Id: {tx.CounterpartyId}");
+        }
+
+        switch (tx.Type)
+        {
+            case Tables.Transaction.TransactionType.Simple:
+                break;
+            case Tables.Transaction.TransactionType.WalletTransfer:
+                throw new InvalidOperationException($"This function cannot be used with Transfers");
+            case Tables.Transaction.TransactionType.Special:
+                throw new NotImplementedException();
+            default:
+                throw new InvalidOperationException($"Invalid Type");
+        }
+
+        tx.Id = (int)cnn.Insert(tx, OnConflict.Replace);
+
+        saveChangeLog(cnn, originalValue, tx);
+        return tx.Id;
+    }
+    public void CreateUpdateWalletTransfer(Tables.Transaction send, Tables.Transaction receive)
+    {
+        throw new NotImplementedException();
+    }
 
     #endregion
 
@@ -142,5 +252,24 @@ public class Manager
 
         return records.Length > 0;
     }
+
     #endregion
+
+    #region Search Enums
+    public enum SearchTransactionsByKind
+    {
+        Wallet,
+        Category,
+        Counterparty,
+    }
+    public enum SearchTransactionsDate
+    {
+        DueDate,
+        PaymentDate,
+        Created,
+        Changed,
+    }
+
+    #endregion
+
 }
