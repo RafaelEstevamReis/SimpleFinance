@@ -197,12 +197,6 @@ public class Manager
         using var cnn = db.GetConnection();
         var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transac>(tx.Id);
 
-        // Check signs
-        if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not zero");
-        var dueSign = Math.Sign(tx.DueValue);
-        var pSign = Math.Sign(tx.PaidValue);
-        if (pSign != 0 && dueSign != pSign) throw new InvalidOperationException($" Sign of '{nameof(Tables.Transac.DueValue)}' must be equal '{nameof(Tables.Transac.PaidValue)}'");
-
         // check wallet
         var wallet = cnn.Get<Tables.Wallet>(tx.WalletId);
         if (wallet == null) throw new InvalidOperationException($"Invalid Wallet Id: {tx.WalletId}");
@@ -210,6 +204,12 @@ public class Manager
         // Check Category
         var category = cnn.Get<Tables.Category>(tx.CategoryId);
         if (category == null) throw new InvalidOperationException($"Invalid Category Id: {tx.CategoryId}");
+
+        // Check signs
+        if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not zero");
+        var dueSign = Math.Sign(tx.DueValue);
+        var pSign = Math.Sign(tx.PaidValue);
+        if (pSign != 0 && dueSign != pSign) throw new InvalidOperationException($" Sign of '{nameof(Tables.Transac.DueValue)}' must be equal '{nameof(Tables.Transac.PaidValue)}'");
 
         if (dueSign > 0 && category.IsExpense)
         {
@@ -237,6 +237,11 @@ public class Manager
             default:
                 throw new InvalidOperationException($"Invalid Type");
         }
+
+        // Update dates
+        tx.Changed = DateTime.UtcNow;
+        if (tx.Id == 0) tx.Created = DateTime.UtcNow;
+        else if (originalValue != null) tx.Created = originalValue.Created;
 
         tx.Id = (int)cnn.Insert(tx, OnConflict.Replace);
 
