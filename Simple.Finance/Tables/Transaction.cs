@@ -3,7 +3,7 @@
 using Simple.DatabaseWrapper.Attributes;
 using System;
 
-public record Transaction
+public record Transac
 {
     public enum TransactionType
     {

@@ -9,8 +9,8 @@ public record ChangeLog
     [Index("ixChangeLog_Event")]
     public DateTime Event { get; set; }
     [Index("ixChangeLog_Table")]
-    public string Table { get; set; } = string.Empty;
-    public string Field { get; set; } = string.Empty;
+    public string TableName { get; set; } = string.Empty;
+    public string FieldName { get; set; } = string.Empty;
     public string OldValue { get; set; } = string.Empty;
     public string NewValue { get; set; } = string.Empty;
 }

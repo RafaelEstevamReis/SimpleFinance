@@ -14,15 +14,22 @@ public class Manager
         db = ConnectionFactory.FromFile(dbFile);
     }
 
-    public void Initialize()
+    public void Initialize(bool createBackup = false, string? backupName = null)
     {
         using var cnn = db.GetConnection();
+
+        if (createBackup)
+        {
+            if(backupName is null) throw new ArgumentNullException(nameof(backupName), "backupName cannot be null");
+            cnn.CreateBackup(backupName);
+        }
+
         cnn.CreateTables()
            .Add<Tables.ChangeLog>()
            .Add<Tables.Category>()
            .Add<Tables.Wallet>()
            .Add<Tables.Person>()
-           .Add<Tables.Transaction>()
+           .Add<Tables.Transac>()
            .Commit();
     }
 
@@ -42,6 +49,11 @@ public class Manager
 
         saveChangeLog(cnn, originalValue, wallet);
         return wallet.Id;
+    }
+
+    public decimal GetWalletBalance(long walletId)
+    {
+        return 0;
     }
 
     #endregion
@@ -96,7 +108,7 @@ public class Manager
     #endregion
 
     #region Transactions
-    public IEnumerable<Tables.Transaction> GetTransactions(SearchTransactionsDate dateType, DateTime start, DateTime end)
+    public IEnumerable<Tables.Transac> GetTransactions(SearchTransactionsDate dateType, DateTime start, DateTime end)
     {
         string add = "";
         string dateColumn = dateType switch
@@ -114,14 +126,14 @@ public class Manager
         }
 
         using var cnn = db.GetConnection();
-        return cnn.Query<Tables.Transaction>($"SELECT * FROM {nameof(Tables.Transaction)} WHERE ({dateColumn} BETWEEN @start AND @end ) {add} ", new
+        return cnn.Query<Tables.Transac>($"SELECT * FROM {nameof(Tables.Transac)} WHERE ({dateColumn} BETWEEN @start AND @end ) {add} ", new
         {
             start,
             end,
-            statusPaid = Tables.Transaction.PaymentStatus.Paid,
+            statusPaid = Tables.Transac.PaymentStatus.Paid,
         });
     }
-    public IEnumerable<Tables.Transaction> GetTransactionsBy(SearchTransactionsByKind kind, long id, SearchTransactionsDate dateType, DateTime start, DateTime end)
+    public IEnumerable<Tables.Transac> GetTransactionsBy(SearchTransactionsByKind kind, long id, SearchTransactionsDate dateType, DateTime start, DateTime end)
     {
         string add = "";
         string kindColumn = kind switch
@@ -146,23 +158,23 @@ public class Manager
         }
 
         using var cnn = db.GetConnection();
-        return cnn.Query<Tables.Transaction>($"SELECT * FROM {nameof(Tables.Transaction)} WHERE {kindColumn} = @id AND ({dateColumn} BETWEEN @start AND @end ) {add} ", new
+        return cnn.Query<Tables.Transac>($"SELECT * FROM {nameof(Tables.Transac)} WHERE {kindColumn} = @id AND ({dateColumn} BETWEEN @start AND @end ) {add} ", new
         {
             id, start, end,
-            statusPaid = Tables.Transaction.PaymentStatus.Paid,
+            statusPaid = Tables.Transac.PaymentStatus.Paid,
         });
     }
 
-    public long CreateUpdateTransaction(Tables.Transaction tx)
+    public long CreateUpdateTransaction(Tables.Transac tx)
     {
         using var cnn = db.GetConnection();
-        var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transaction>(tx.Id);
+        var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transac>(tx.Id);
 
         // Check signs
-        if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transaction.DueValue)}' must not zero");
+        if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not zero");
         var dueSign = Math.Sign(tx.DueValue);
         var pSign = Math.Sign(tx.PaidValue);
-        if (pSign != 0 && dueSign != pSign) throw new InvalidOperationException($" Sign of '{nameof(Tables.Transaction.DueValue)}' must be equal '{nameof(Tables.Transaction.PaidValue)}'");
+        if (pSign != 0 && dueSign != pSign) throw new InvalidOperationException($" Sign of '{nameof(Tables.Transac.DueValue)}' must be equal '{nameof(Tables.Transac.PaidValue)}'");
 
         // check wallet
         var wallet = cnn.Get<Tables.Wallet>(tx.WalletId);
@@ -189,11 +201,11 @@ public class Manager
 
         switch (tx.Type)
         {
-            case Tables.Transaction.TransactionType.Simple:
+            case Tables.Transac.TransactionType.Simple:
                 break;
-            case Tables.Transaction.TransactionType.WalletTransfer:
+            case Tables.Transac.TransactionType.WalletTransfer:
                 throw new InvalidOperationException($"This function cannot be used with Transfers");
-            case Tables.Transaction.TransactionType.Special:
+            case Tables.Transac.TransactionType.Special:
                 throw new NotImplementedException();
             default:
                 throw new InvalidOperationException($"Invalid Type");
@@ -204,7 +216,7 @@ public class Manager
         saveChangeLog(cnn, originalValue, tx);
         return tx.Id;
     }
-    public void CreateUpdateWalletTransfer(Tables.Transaction send, Tables.Transaction receive)
+    public void CreateUpdateWalletTransfer(Tables.Transac send, Tables.Transac receive)
     {
         throw new NotImplementedException();
     }
@@ -241,8 +253,8 @@ public class Manager
         {
             Id = 0,
             Event = DateTime.UtcNow,
-            Table = type.FullName,
-            Field = o,
+            TableName = type.FullName,
+            FieldName = o,
             OldValue = diff[o].Item1,
             NewValue = diff[o].Item2,
         })
