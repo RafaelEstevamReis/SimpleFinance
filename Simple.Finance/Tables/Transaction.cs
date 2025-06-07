@@ -28,11 +28,11 @@ public record Transac
     public DateTime PaymentDate { get; set; }
     public string Description { get; set; } = string.Empty;
     [Index("ixTransaction_CategoryId")]
-    public int CategoryId { get; set; }
+    public long CategoryId { get; set; }
     [Index("ixTransaction_WalletId")]
-    public int WalletId { get; set; }
+    public long WalletId { get; set; }
     [Index("ixTransaction_CounterpartyId")]
-    public int CounterpartyId { get; set; }
+    public long CounterpartyId { get; set; }
     public TransactionType Type { get; set; }
     public long TypeOtherId { get; set; }
 
