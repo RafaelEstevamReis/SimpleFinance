@@ -147,7 +147,7 @@ public class Manager
 
         if (dateType == SearchTransactionsDate.PaymentDate)
         {
-            add = "AND PaymentStatus = @statusPaid";
+            add = "AND Status = @statusPaid";
         }
 
         using var cnn = db.GetConnection();
@@ -207,18 +207,11 @@ public class Manager
 
         // Check signs
         if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not zero");
-        var dueSign = Math.Sign(tx.DueValue);
-        var pSign = Math.Sign(tx.PaidValue);
-        if (pSign != 0 && dueSign != pSign) throw new InvalidOperationException($" Sign of '{nameof(Tables.Transac.DueValue)}' must be equal '{nameof(Tables.Transac.PaidValue)}'");
-
-        if (dueSign > 0 && category.IsExpense)
-        {
-            throw new InvalidOperationException($"An 'IsExpense' category can only be used with negative values");
-        }
-        else if (dueSign < 0 && !category.IsExpense)
-        {
-            throw new InvalidOperationException($"An 'IsExpense' category can not be used with negative values");
-        }
+        var sign = category.IsExpense ? -1 : 1;
+        tx.DueValue = Math.Abs(tx.PaidValue) * sign;
+        tx.PaidValue = Math.Abs(tx.PaidValue) * sign;
+        tx.RC_DueValue = Math.Abs(tx.RC_DueValue) * sign;
+        tx.RC_PaidValue = Math.Abs(tx.RC_PaidValue) * sign;
 
         if (tx.CounterpartyId != 0)
         {
