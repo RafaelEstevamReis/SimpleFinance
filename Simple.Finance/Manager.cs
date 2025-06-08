@@ -238,7 +238,7 @@ public class Manager
 
         tx.Id = (int)cnn.Insert(tx, OnConflict.Replace);
 
-        if(generateLog) saveChangeLog(cnn, originalValue, tx);
+        if (generateLog) saveChangeLog(cnn, originalValue, tx);
         return tx.Id;
     }
     public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date)
@@ -305,63 +305,46 @@ public class Manager
         saveChangeLog(cnn, null, second);
     }
 
-    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate)
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate) => updateWalletTransfer(oneOfTransactions,
+            first =>
+            {
+                first.DueValue = first.PaidValue = newValue * Math.Sign(first.PaidValue);
+                first.DueDate = first.PaymentDate = newDate;
+            },
+            second =>
+            {
+                second.DueValue = second.PaidValue = newValue * Math.Sign(second.PaidValue);
+                second.DueDate = second.PaymentDate = newDate;
+            });
+    public void UpdateWalletTransfer(long oneOfTransactions, string description) => updateWalletTransfer(oneOfTransactions,
+            first =>
+            {
+                first.Description = description;
+            },
+            second =>
+            {
+                second.Description = description;
+            });
+    public void ReverseWalletTransfer(long oneOfTransactions) => updateWalletTransfer(oneOfTransactions,
+            first =>
+            {
+                first.Status = Tables.Transac.PaymentStatus.Reversed;
+            },
+            second =>
+            {
+                second.Status = Tables.Transac.PaymentStatus.Reversed;
+            });
+    void updateWalletTransfer(long oneOfTransactions, Action<Tables.Transac> firstUpdate, Action<Tables.Transac> secondUpdate)
     {
         using var cnn = db.GetConnection();
         var first = cnn.Get<Tables.Transac>(oneOfTransactions) ?? throw new ArgumentException("Invalid transaction");
         if (first.Type != Tables.Transac.TransactionType.WalletTransfer) throw new ArgumentException("Transaction is not a wallet transfer");
         var second = cnn.Get<Tables.Transac>(first.TypeOtherId) ?? throw new ArgumentException("Invalid second transaction");
 
-        first.DueValue = first.PaidValue = newValue * Math.Sign(first.PaidValue);
-        first.DueDate = first.PaymentDate = newDate;
+        firstUpdate(first);
         first.Changed = DateTime.UtcNow;
 
-        second.DueValue = second.PaidValue = newValue * Math.Sign(second.PaidValue);
-        second.DueDate = second.PaymentDate = newDate;
-        second.Changed = DateTime.UtcNow;
-
-        var oldFirst = cnn.Get<Tables.Transac>(first.Id);
-        var oldSecond = cnn.Get<Tables.Transac>(second.Id);
-
-        cnn.Insert(first, OnConflict.Replace);
-        cnn.Insert(second, OnConflict.Replace);
-
-        saveChangeLog(cnn, oldFirst, first);
-        saveChangeLog(cnn, oldSecond, second);
-    }
-    public void UpdateWalletTransfer(long oneOfTransactions, string description)
-    {
-        using var cnn = db.GetConnection();
-        var first = cnn.Get<Tables.Transac>(oneOfTransactions) ?? throw new ArgumentException("Invalid transaction");
-        if (first.Type != Tables.Transac.TransactionType.WalletTransfer) throw new ArgumentException("Transaction is not a wallet transfer");
-        var second = cnn.Get<Tables.Transac>(first.TypeOtherId) ?? throw new ArgumentException("Invalid second transaction");
-
-        first.Description = description;
-        first.Changed = DateTime.UtcNow;
-
-        second.Description = description;
-        second.Changed = DateTime.UtcNow;
-
-        var oldFirst = cnn.Get<Tables.Transac>(first.Id);
-        var oldSecond = cnn.Get<Tables.Transac>(second.Id);
-
-        cnn.Insert(first, OnConflict.Replace);
-        cnn.Insert(second, OnConflict.Replace);
-
-        saveChangeLog(cnn, oldFirst, first);
-        saveChangeLog(cnn, oldSecond, second);
-    }
-    public void ReverseWalletTransfer(long oneOfTransactions)
-    {
-        using var cnn = db.GetConnection();
-        var first = cnn.Get<Tables.Transac>(oneOfTransactions) ?? throw new ArgumentException("Invalid transaction");
-        if (first.Type != Tables.Transac.TransactionType.WalletTransfer) throw new ArgumentException("Transaction is not a wallet transfer");
-        var second = cnn.Get<Tables.Transac>(first.TypeOtherId) ?? throw new ArgumentException("Invalid second transaction");
-
-        first.Status = Tables.Transac.PaymentStatus.Reversed;
-        first.Changed = DateTime.UtcNow;
-
-        second.Status = Tables.Transac.PaymentStatus.Reversed;
+        secondUpdate(second);
         second.Changed = DateTime.UtcNow;
 
         var oldFirst = cnn.Get<Tables.Transac>(first.Id);
