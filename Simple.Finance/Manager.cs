@@ -79,6 +79,11 @@ public class Manager
             status = Tables.Transac.PaymentStatus.Paid,
         });
     }
+    public IEnumerable<Models.WalletBalance> GetWalletsBalance()
+    {
+        using var cnn = db.GetConnection();
+        return cnn.Query<Models.WalletBalance>("SELECT WalletId, COALESCE(SUM(PaidValue),0) as Balance FROM Transac WHERE Status = 1 GROUP BY WalletId", null);
+    }
 
     #endregion
 
@@ -132,6 +137,7 @@ public class Manager
     #endregion
 
     #region Transactions
+
     public IEnumerable<Tables.Transac> GetTransactions(SearchTransactionsDate dateType, DateTime start, DateTime end)
     {
         string add = "";
