@@ -191,7 +191,8 @@ public class Manager
         });
     }
 
-    public long CreateUpdateTransaction(Tables.Transac tx)
+    public long CreateUpdateTransaction(Tables.Transac tx) => createUpdateTransaction(tx, generateLog: false);
+    private long createUpdateTransaction(Tables.Transac tx, bool generateLog)
     {
         using var cnn = db.GetConnection();
         var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transac>(tx.Id);
@@ -237,7 +238,7 @@ public class Manager
 
         tx.Id = (int)cnn.Insert(tx, OnConflict.Replace);
 
-        saveChangeLog(cnn, originalValue, tx);
+        if(generateLog) saveChangeLog(cnn, originalValue, tx);
         return tx.Id;
     }
     public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date)
@@ -281,8 +282,8 @@ public class Manager
         };
 
         // save transactions
-        txPay.Id = CreateUpdateTransaction(txPay);
-        txReceive.Id = CreateUpdateTransaction(txReceive);
+        txPay.Id = createUpdateTransaction(txPay, generateLog: false);
+        txReceive.Id = createUpdateTransaction(txReceive, generateLog: false);
         // Update as Transfer
         using var cnn = db.GetConnection();
         cnn.Execute($"UPDATE {nameof(Tables.Transac)} SET Type = @type, TypeOtherId = @other WHERE Id = @id ", new
@@ -297,6 +298,11 @@ public class Manager
             type = Tables.Transac.TransactionType.WalletTransfer,
             other = txPay.Id,
         });
+        // Generate Logs
+        var first = cnn.Get<Tables.Transac>(txPay.Id) ?? throw new ArgumentException("Invalid transaction");
+        var second = cnn.Get<Tables.Transac>(txReceive.Id) ?? throw new ArgumentException("Invalid second transaction");
+        saveChangeLog(cnn, null, first);
+        saveChangeLog(cnn, null, second);
     }
 
     public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate)
