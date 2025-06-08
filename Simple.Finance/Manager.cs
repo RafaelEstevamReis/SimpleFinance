@@ -52,7 +52,6 @@ public class Manager
         originalFileStream.CopyTo(compressionStream);
     }
 
-
     #region Wallets
 
     public IEnumerable<Tables.Wallet> GetWallets()
@@ -241,9 +240,132 @@ public class Manager
         saveChangeLog(cnn, originalValue, tx);
         return tx.Id;
     }
-    public void CreateUpdateWalletTransfer(Tables.Transac send, Tables.Transac receive)
+    public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date)
     {
-        throw new NotImplementedException();
+        var categories = GetCategories().ToArray();
+        var srcCat = categories.FirstOrDefault(o => o.Id == sourceCategory) ?? throw new ArgumentException("Invalid sourceCategory");
+        var dstCat = categories.FirstOrDefault(o => o.Id == destinationCategory) ?? throw new ArgumentException("Invalid destinationCategory");
+
+        if (!srcCat.IsExpense) throw new ArgumentException("sourceCategory must be 'IsExpense'");
+        if (dstCat.IsExpense) throw new ArgumentException("destinationCategory must not be 'IsExpense'");
+
+        var txPay = new Tables.Transac()
+        {
+            Id = 0,
+            CategoryId = sourceCategory,
+            Created = DateTime.UtcNow,
+            Changed = DateTime.UtcNow,
+            WalletId = sourceWallet,
+            DueDate = date,
+            DueValue = value,
+            PaymentDate = date,
+            PaidValue = value,
+            Description = description,
+            Status = Tables.Transac.PaymentStatus.Paid,
+            Type = Tables.Transac.TransactionType.Simple, // Start as Simple
+        };
+        var txReceive = new Tables.Transac()
+        {
+            Id = 0,
+            CategoryId = destinationCategory,
+            Created = DateTime.UtcNow,
+            Changed = DateTime.UtcNow,
+            WalletId = destinationWallet,
+            DueDate = date,
+            DueValue = value,
+            PaymentDate = date,
+            PaidValue = value,
+            Description = description,
+            Status = Tables.Transac.PaymentStatus.Paid,
+            Type = Tables.Transac.TransactionType.Simple, // Start as Simple
+        };
+
+        // save transactions
+        txPay.Id = CreateUpdateTransaction(txPay);
+        txReceive.Id = CreateUpdateTransaction(txReceive);
+        // Update as Transfer
+        using var cnn = db.GetConnection();
+        cnn.Execute($"UPDATE {nameof(Tables.Transac)} SET Type = @type, TypeOtherId = @other WHERE Id = @id ", new
+        {
+            id = txPay.Id,
+            type = Tables.Transac.TransactionType.WalletTransfer,
+            other = txReceive.Id,
+        });
+        cnn.Execute($"UPDATE {nameof(Tables.Transac)} SET Type = @type, TypeOtherId = @other WHERE Id = @id ", new
+        {
+            id = txReceive.Id,
+            type = Tables.Transac.TransactionType.WalletTransfer,
+            other = txPay.Id,
+        });
+    }
+
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate)
+    {
+        using var cnn = db.GetConnection();
+        var first = cnn.Get<Tables.Transac>(oneOfTransactions) ?? throw new ArgumentException("Invalid transaction");
+        if (first.Type != Tables.Transac.TransactionType.WalletTransfer) throw new ArgumentException("Transaction is not a wallet transfer");
+        var second = cnn.Get<Tables.Transac>(first.TypeOtherId) ?? throw new ArgumentException("Invalid second transaction");
+
+        first.DueValue = first.PaidValue = newValue * Math.Sign(first.PaidValue);
+        first.DueDate = first.PaymentDate = newDate;
+        first.Changed = DateTime.UtcNow;
+
+        second.DueValue = second.PaidValue = newValue * Math.Sign(second.PaidValue);
+        second.DueDate = second.PaymentDate = newDate;
+        second.Changed = DateTime.UtcNow;
+
+        var oldFirst = cnn.Get<Tables.Transac>(first.Id);
+        var oldSecond = cnn.Get<Tables.Transac>(second.Id);
+
+        cnn.Insert(first, OnConflict.Replace);
+        cnn.Insert(second, OnConflict.Replace);
+
+        saveChangeLog(cnn, oldFirst, first);
+        saveChangeLog(cnn, oldSecond, second);
+    }
+    public void UpdateWalletTransfer(long oneOfTransactions, string description)
+    {
+        using var cnn = db.GetConnection();
+        var first = cnn.Get<Tables.Transac>(oneOfTransactions) ?? throw new ArgumentException("Invalid transaction");
+        if (first.Type != Tables.Transac.TransactionType.WalletTransfer) throw new ArgumentException("Transaction is not a wallet transfer");
+        var second = cnn.Get<Tables.Transac>(first.TypeOtherId) ?? throw new ArgumentException("Invalid second transaction");
+
+        first.Description = description;
+        first.Changed = DateTime.UtcNow;
+
+        second.Description = description;
+        second.Changed = DateTime.UtcNow;
+
+        var oldFirst = cnn.Get<Tables.Transac>(first.Id);
+        var oldSecond = cnn.Get<Tables.Transac>(second.Id);
+
+        cnn.Insert(first, OnConflict.Replace);
+        cnn.Insert(second, OnConflict.Replace);
+
+        saveChangeLog(cnn, oldFirst, first);
+        saveChangeLog(cnn, oldSecond, second);
+    }
+    public void ReverseWalletTransfer(long oneOfTransactions)
+    {
+        using var cnn = db.GetConnection();
+        var first = cnn.Get<Tables.Transac>(oneOfTransactions) ?? throw new ArgumentException("Invalid transaction");
+        if (first.Type != Tables.Transac.TransactionType.WalletTransfer) throw new ArgumentException("Transaction is not a wallet transfer");
+        var second = cnn.Get<Tables.Transac>(first.TypeOtherId) ?? throw new ArgumentException("Invalid second transaction");
+
+        first.Status = Tables.Transac.PaymentStatus.Reversed;
+        first.Changed = DateTime.UtcNow;
+
+        second.Status = Tables.Transac.PaymentStatus.Reversed;
+        second.Changed = DateTime.UtcNow;
+
+        var oldFirst = cnn.Get<Tables.Transac>(first.Id);
+        var oldSecond = cnn.Get<Tables.Transac>(second.Id);
+
+        cnn.Insert(first, OnConflict.Replace);
+        cnn.Insert(second, OnConflict.Replace);
+
+        saveChangeLog(cnn, oldFirst, first);
+        saveChangeLog(cnn, oldSecond, second);
     }
 
     #endregion
