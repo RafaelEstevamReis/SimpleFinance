@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using Simple.Finance;
 
 public class SampleFunctions
 {
@@ -91,10 +92,10 @@ public class SampleFunctions
         Console.WriteLine($"{wallets.Length} Wallets");
         Console.WriteLine(string.Join("\n", wallets.Select(x => $" * {x.Id}: {x.Name} - Bal: {mgr.GetWalletBalance(x.Id):N2}")));
 
-        var recent = mgr.GetTransactions(Simple.Finance.Manager.SearchTransactionsDate.PaymentDate, DateTime.Now.AddYears(-1), DateTime.Now.AddDays(1))
-                        .OrderBy(o => o.PaymentDate)
-                        .TakeLast(10)
-                        .ToArray();
+        var recent = mgr.GetTransactionsOf(wallets[0], Manager.SearchTransactionsDate.PaymentDate, DateTime.Now.AddYears(-1), DateTime.Now.AddDays(1))
+                .OrderBy(o => o.PaymentDate)
+                .TakeLast(10)
+                .ToArray();
 
         decimal total = 0;
         Console.WriteLine("Recent:");
