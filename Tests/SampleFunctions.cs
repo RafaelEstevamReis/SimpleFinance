@@ -62,7 +62,7 @@ public class SampleFunctions
         mgr.CreateUpdateTransaction(new Simple.Finance.Tables.Transac
         {
             Id = 0,
-            CategoryId = cats.Where(o => o.IsExpense).First().Id,
+            CategoryId = oneOf(cats.Where(o => o.IsExpense)).Id,
             WalletId = wallets[0].Id,
             Description = $"My Expense Of {DateTime.Now}",
             DueValue = txVal,
@@ -77,7 +77,7 @@ public class SampleFunctions
             mgr.CreateUpdateTransaction(new Simple.Finance.Tables.Transac
             {
                 Id = 0,
-                CategoryId = cats.Where(o => !o.IsExpense).First().Id,
+                CategoryId = oneOf(cats.Where(o => !o.IsExpense)).Id,
                 WalletId = wallets[0].Id,
                 Description = $"Income of {DateTime.Now}",
                 DueValue = txVal,
@@ -100,21 +100,29 @@ public class SampleFunctions
         Console.WriteLine("Recent:");
         Console.WriteLine(
                 $"* {"Id",-5} " +
+                $"{"Category",-20} " +
                 $"{"Description",-40} " +
-                $"{"Date",-25} " +
-                $"{"Value",-8:F2} " +
-                $"{"Total",-10:F2}");
+                $"{"Date",-20} " +
+                $"{"Value",8:F2} " +
+                $"{"Total",8:F2}");
         foreach (var tx in recent)
         {
             total += tx.PaidValue;
             Console.WriteLine(
                 $"* {tx.Id,-5} " +
+                $"{cats.FirstOrDefault(o => o.Id == tx.CategoryId)?.Name ?? "",-20} " +
                 $"{tx.Description,-40} " +
-                $"{tx.PaymentDate,-25} " +
-                $"{tx.PaidValue,-10:F2} " +
-                $"{total,-10:F2}");
+                $"{tx.PaymentDate,-20} " +
+                $"{tx.PaidValue,8:F2} " +
+                $"{total,8:F2}");
         }
 
 
     }
+    private static T oneOf<T>(T[] items)
+    {
+        var ix = Rnd.Next(items.Length);
+        return items[ix];
+    }
+    private static T oneOf<T>(IEnumerable<T> items) => oneOf(items.ToArray());
 }
