@@ -21,6 +21,15 @@ public class OfxFile
     [XmlElement("CREDITCARDMSGSRSV1")]
     public CredMsg? CreditInfo { get; set; }
 
+    public Transaction[]? GetAllAccountTransactions()
+    {
+        return AccountInfo?.StmtTrnRs?.StmtRs?.TransactionsList?.Transactions ?? [];
+    }
+    public Transaction[]? GetAllCreditTransactions()
+    {
+        return CreditInfo?.CstmtTrnRs?.StmtRs?.TransactionsList?.Transactions ?? [];
+    }
+
     public static OfxFile? FromFile_Encoding1252(string FilePath) => FromFile(FilePath, Encoding.GetEncoding(1252));
     public static OfxFile? FromFile(string FilePath) => FromFile(FilePath, Encoding.UTF8);
     public static OfxFile? FromFile(string FilePath, Encoding encoding)
