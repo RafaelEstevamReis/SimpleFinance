@@ -21,10 +21,14 @@ public class OfxFile
     [XmlElement("CREDITCARDMSGSRSV1")]
     public CredMsg? CreditInfo { get; set; }
 
-    public static OfxFile? FromFile(string FilePath)
+    public static OfxFile? FromFile_Encoding1252(string FilePath) => FromFile(FilePath, Encoding.GetEncoding(1252));
+    public static OfxFile? FromFile(string FilePath) => FromFile(FilePath, Encoding.UTF8);
+    public static OfxFile? FromFile(string FilePath, Encoding encoding)
     {
-        var xml = File.ReadAllText(FilePath, Encoding.GetEncoding(1252));
-        return FromXML(xml);
+        var xml = File.ReadAllText(FilePath, encoding);
+        var ofx = FromXML(xml);
+        if(ofx?.FileInfo != null) ofx.FileInfo.FileOnDisk = FilePath;
+        return ofx;
     }
     public static OfxFile? FromXML(string fileContents)
     {
@@ -193,6 +197,7 @@ public class OfxFile
     {
         [XmlElement("SONRS")]
         public FileinfoSorns? Sorns { get; set; }
+        public string? FileOnDisk { get; set; }
     }
     [Serializable()]
     public class FileinfoSorns
@@ -315,9 +320,14 @@ public class OfxFile
 
         public DateTime DateAsOf()
         {
+            if (DtAsOf is null) return DateTime.MinValue;
             return DateTime.ParseExact(DtAsOf, "yyyyMMdd", CultureInfo.InvariantCulture);
         }
-
+        public decimal Amount()
+        {
+            if (Ammount == null) return 0;
+            return Convert.ToDecimal(Ammount, CultureInfo.InvariantCulture);
+        }
     }
 
 }
