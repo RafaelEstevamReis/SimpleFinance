@@ -7,7 +7,7 @@ using System.Text;
 public static class MTHelper
 {
     // https://www2.swift.com/knowledgecentre/publications/us9m_20230720/?topic=mt940-field-spec.htm
-    public static IEnumerable<string?> ContentSplitter(string content, Token[] ruleSet)
+    public static IEnumerable<string> ContentSplitter(string content, Token[] ruleSet)
     {
         int pos = 0;
 
@@ -18,7 +18,7 @@ public static class MTHelper
 
             if (pos > content.Length)
             {
-                yield return token.IsOptional ? null : "";
+                yield return "";
                 continue;
             }
 
@@ -33,7 +33,7 @@ public static class MTHelper
                 }
                 else
                 {
-                    yield return token.IsOptional ? null : "";
+                    yield return "";
                 }
                 continue;
             }
@@ -47,7 +47,7 @@ public static class MTHelper
             while (pos < content.Length && count < maxLen)
             {
                 char c = content[pos];
-                var nextToken = i < ruleSet.Length ? ruleSet[i + 1] : null;
+                var nextToken = i < (ruleSet.Length - 1) ? ruleSet[i + 1] : null;
 
                 bool match = token.Type switch
                 {
@@ -58,6 +58,13 @@ public static class MTHelper
                     FieldType.X => true,
                     _ => false
                 };
+
+                if (nextToken != null
+                    && nextToken.Type == FieldType.L
+                    && nextToken.Literal.StartsWith(c))
+                {
+                    match = false;
+                }
 
                 if (!match) break;
 
@@ -75,7 +82,7 @@ public static class MTHelper
             }
             else if (token.IsOptional)
             {
-                throw new Exception($"Missing field for rule {token.OriginalRule}");
+                yield return ""; // Optional
             }
             else
             {
@@ -129,10 +136,15 @@ public static class MTHelper
             string clean = isOptional ? part[1..^1] : part;
 
             // Literal //
-            if (clean.StartsWith( "//"))
+            if (clean.StartsWith("//"))
             {
                 yield return new Token(2, FieldType.L, isOptional, true, part, "//");
                 clean = clean.Substring(2);
+            }
+            if (clean.StartsWith("/"))
+            {
+                yield return new Token(1, FieldType.L, isOptional, true, part, "/");
+                clean = clean.Substring(1);
             }
 
             // Último char é o tipo: n, a, c, d, x
@@ -156,6 +168,29 @@ public static class MTHelper
             if (!int.TryParse(clean[..lenEnd], out int maxLen)) throw new ArgumentException($"Invalid rule block size: '{part}'");
 
             yield return new Token(maxLen, fieldType, isOptional, isFixed, part);
+        }
+    }
+
+    public static IEnumerable<string[]> ParseLinesToBlocks(string[] lines)
+    {
+        List<string> currentBlock = [];
+        foreach (string line in lines)
+        {
+            if (line.Length == 0) continue; // Error?
+
+            if (line[0] == '{') continue; // Message
+
+            if (line[0] == ':') // New Block
+            {
+                if (currentBlock.Count > 0) yield return currentBlock.ToArray();
+                currentBlock.Clear();
+
+                currentBlock.Add(line);
+            }
+            else
+            {
+                currentBlock.Add(line);
+            }
         }
     }
 
