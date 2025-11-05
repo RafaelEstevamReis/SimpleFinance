@@ -9,6 +9,10 @@ using System.Linq;
 public class MT940Parser
 {
     // https://www2.swift.com/knowledgecentre/publications/us9m_20230720/?topic=mt940-field-spec.htm
+    // https://developer.gs.com/docs/services/transaction-banking/swift-reporting/#layout-of-mt-940 Goldman Sachs
+    // https://www.bnpparibas.pl/_fileserver/item/1504996
+    // https://bankrec.westpac.com.au/docs/statements/mt940/
+
     static readonly Dictionary<string, string> dicRules = new Dictionary<string, string>
     {
          { "20", "16x" },
