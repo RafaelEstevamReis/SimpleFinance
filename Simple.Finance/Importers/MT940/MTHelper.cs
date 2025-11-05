@@ -179,6 +179,7 @@ public static class MTHelper
             if (line.Length == 0) continue; // Error?
 
             if (line[0] == '{') continue; // Message
+            if (line.StartsWith("-}")) continue; // Message
 
             if (line[0] == ':') // New Block
             {
@@ -192,6 +193,7 @@ public static class MTHelper
                 currentBlock.Add(line);
             }
         }
+        if (currentBlock.Count > 0) yield return currentBlock.ToArray();
     }
 
     public enum FieldType { N, A, C, D, X, L }

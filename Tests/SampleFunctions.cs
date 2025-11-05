@@ -1,13 +1,13 @@
 ﻿namespace Tests;
 
+using Simple.Finance;
 using System;
 using System.Linq;
-using Simple.Finance;
 
 public class SampleFunctions
 {
     static Random Rnd = new();
-    public static void Run(Simple.Finance.Manager mgr)
+    public static void Run(Manager mgr)
     {
         Console.WriteLine(">> Sample Functions\n");
 
