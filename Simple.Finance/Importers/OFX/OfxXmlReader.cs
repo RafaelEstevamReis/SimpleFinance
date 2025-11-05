@@ -21,11 +21,11 @@ public class OfxFile
     [XmlElement("CREDITCARDMSGSRSV1")]
     public CredMsg? CreditInfo { get; set; }
 
-    public Transaction[]? GetAllAccountTransactions()
+    public Transaction[] GetAllAccountTransactions()
     {
         return AccountInfo?.StmtTrnRs?.StmtRs?.TransactionsList?.Transactions ?? [];
     }
-    public Transaction[]? GetAllCreditTransactions()
+    public Transaction[] GetAllCreditTransactions()
     {
         return CreditInfo?.CstmtTrnRs?.StmtRs?.TransactionsList?.Transactions ?? [];
     }
