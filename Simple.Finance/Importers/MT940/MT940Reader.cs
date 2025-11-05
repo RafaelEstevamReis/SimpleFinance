@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -12,6 +13,7 @@ public class MT940Reader
     {
          { "20", "16x" },
          { "21", "16x" },
+         { "25", "35x" },
          { "28C", "5n[/5n]" },
          { "60F", "1!a6!n3!a15d" },
          { "60M", "1!a6!n3!a15d" },
@@ -85,9 +87,11 @@ public class MT940Reader
                 case "28C":
                     mt940.R28CStatementNumberSequence = r;
                     break;
-                case "60F":
-                case "60M":
-                    mt940.R60OpeningBalance = r;
+                case "60F": // First opening balance
+                    mt940.R60FOpeningBalance = r;
+                    break;
+                case "60M": // intermediate opening balance
+                    mt940.R60MOpeningBalance.Add(r);
                     break;
 
                 case "61":
@@ -126,6 +130,24 @@ public class MT940Reader
         return mt940;
     }
 
+    public static MT940Statement ParseMT940FromRecord(MT940Record record)
+    {
+        var mt940 = new MT940Statement()
+        {
+            TransacationReferenceNumber = MT940Statement.MTTransacationReferenceNumber.Parse(record.R20TransactionReferenceNumber),
+            RelatedReference = MT940Statement.MTRelatedReference.Parse(record.R21RelatedReference),
+            AccountIdentification = MT940Statement.MTAccountIdentification.Parse(record.R25AccountIdentification),
+            StatementNumberSequence = MT940Statement.MTStatementNumberSequence.Parse(record.R28CStatementNumberSequence),
+            OpeningBalance = MT940Statement.MTBalance.Parse(record.R60FOpeningBalance), // First
+            Statement = MT940Statement.MTStatement.Parse(record.R61R86StatementeLineInformationAccountOwner),
+            ClosingBalance = MT940Statement.MTBalance.Parse(record.R62ClosingBalance),
+            ClosingAvailableBalance = MT940Statement.MTBalance.Parse(record.R64ClosingAvailableBalance),
+            FowardAvailableBalance = MT940Statement.MTBalance.Parse(record.R65FowardAvailableBalance),
+            InformationToAccountOwner = MT940Statement.MTInformationToAccountOwner.Parse(record.R86InformationToAccountOwner),
+        };
+        return mt940;
+    }
+
     public record MTRecord
     {
         public string Field { get; set; } = string.Empty;
@@ -139,7 +161,8 @@ public class MT940Reader
         public MTRecord? R21RelatedReference { get; set; }
         public MTRecord R25AccountIdentification { get; set; }
         public MTRecord R28CStatementNumberSequence { get; set; }
-        public MTRecord R60OpeningBalance { get; set; }
+        public MTRecord R60FOpeningBalance { get; set; }
+        public List<MTRecord> R60MOpeningBalance { get; set; } = [];
         public List<(MTRecord, List<MTRecord>)> R61R86StatementeLineInformationAccountOwner { get; set; } = [];
         public MTRecord R62ClosingBalance { get; set; }
         public MTRecord? R64ClosingAvailableBalance { get; set; }
@@ -154,56 +177,72 @@ public class MT940Statement
     public MTRelatedReference? RelatedReference { get; set; }
     public MTAccountIdentification? AccountIdentification { get; set; }
     public MTStatementNumberSequence? StatementNumberSequence { get; set; }
-    public MTOpeningBalance? OpeningBalance { get; set; }
+    public MTBalance? OpeningBalance { get; set; } // Can have intermediates
     public MTStatement[] Statement { get; set; } = [];
-    public MTClosingBalance? ClosingBalance { get; set; }
-    public MTClosingAvailableBalance? ClosingAvailableBalance { get; set; }
-    public MTFowardAvailableBalance? FowardAvailableBalance { get; set; }
+    public MTBalance? ClosingBalance { get; set; }
+    public MTBalance? ClosingAvailableBalance { get; set; }
+    public MTBalance? FowardAvailableBalance { get; set; }
     public MTInformationToAccountOwner? InformationToAccountOwner { get; set; }
 
     public class MTTransacationReferenceNumber
     {
+        public string ReferenceId { get; set; } = string.Empty;
+
         internal static MTTransacationReferenceNumber? Parse(MT940Reader.MTRecord r20TransactionReferenceNumber)
         {
             if (r20TransactionReferenceNumber == null) return null;
 
-            return null;
+            return new MTTransacationReferenceNumber
+            {
+                ReferenceId = r20TransactionReferenceNumber.Data[0],
+            };
         }
     }
     public class MTRelatedReference
     {
+        public string ReferenceId { get; set; } = string.Empty;
+
         internal static MTRelatedReference? Parse(MT940Reader.MTRecord? r21RelatedReference)
         {
             if (r21RelatedReference == null) return null;
 
-            return null;
+            return new MTRelatedReference
+            {
+                ReferenceId = r21RelatedReference.Data[0]
+            };
         }
     }
     public class MTAccountIdentification
     {
+        public string AccountId { get; set; } = string.Empty;
+
         internal static MTAccountIdentification? Parse(MT940Reader.MTRecord r25AccountIdentification)
         {
             if (r25AccountIdentification == null) return null;
 
-            return null;
+            return new MTAccountIdentification
+            {
+                AccountId = r25AccountIdentification.Data[0],
+            };
         }
     }
     public class MTStatementNumberSequence
     {
+        public string StatementNumber { get; set; } = string.Empty;
+        public string SquenceNumber { get; set; } = string.Empty;
+
         internal static MTStatementNumberSequence? Parse(MT940Reader.MTRecord r28CStatementNumberSequence)
         {
             if (r28CStatementNumberSequence == null) return null;
 
-            return null;
-        }
-    }
-    public class MTOpeningBalance
-    {
-        internal static MTOpeningBalance? Parse(MT940Reader.MTRecord r60OpeningBalance)
-        {
-            if (r60OpeningBalance == null) return null;
+            var s = new MTStatementNumberSequence
+            {
+                StatementNumber = r28CStatementNumberSequence.Data[0],
+            };
+            // Optional
+            if (r28CStatementNumberSequence.Data.Length >= 2) s.SquenceNumber = r28CStatementNumberSequence.Data[2];
 
-            return null;
+            return s;
         }
     }
     public class MTStatement
@@ -216,40 +255,35 @@ public class MT940Statement
             return null;
         }
     }
-    public class MTClosingBalance
-    {
-        internal static MTClosingBalance? Parse(MT940Reader.MTRecord r62ClosingBalance)
-        {
-            if (r62ClosingBalance == null) return null;
-
-            return null;
-        }
-    }
-    public class MTClosingAvailableBalance
-    {
-        internal static MTClosingAvailableBalance? Parse(MT940Reader.MTRecord? r64ClosingAvailableBalance)
-        {
-            if (r64ClosingAvailableBalance == null) return null;
-
-            return null;
-        }
-    }
-    public class MTFowardAvailableBalance
-    {
-        internal static MTFowardAvailableBalance? Parse(MT940Reader.MTRecord? r65FowardAvailableBalance)
-        {
-            if (r65FowardAvailableBalance == null) return null;
-
-            return null;
-        }
-    }
     public class MTInformationToAccountOwner
     {
         internal static MTInformationToAccountOwner? Parse(List<MT940Reader.MTRecord> r86InformationToAccountOwner)
         {
-            if (r86InformationToAccountOwner == null) return null;
+            if (r86InformationToAccountOwner == null
+                || r86InformationToAccountOwner.Count == 0) return null;
 
             return null;
+        }
+    }
+
+    public class MTBalance
+    {
+        public string Type { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+        public string Currency { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+
+        public static MTBalance? Parse(MT940Reader.MTRecord? alanceRecord)
+        {
+            if (alanceRecord == null) return null;
+
+            return new MTBalance
+            {
+                Type = alanceRecord.Data[0],
+                Date = DateTime.ParseExact(alanceRecord.Data[1], "yyMMdd", CultureInfo.InvariantCulture),
+                Currency = alanceRecord.Data[2],
+                Amount = decimal.Parse(alanceRecord.Data[3].Replace(",", "."), CultureInfo.InvariantCulture),
+            };
         }
     }
 
