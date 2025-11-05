@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 public static class MTHelper
@@ -194,6 +195,18 @@ public static class MTHelper
             }
         }
         if (currentBlock.Count > 0) yield return currentBlock.ToArray();
+    }
+
+    public static decimal? DecimalParser(string content)
+    {
+        if (content.Contains(",")) content = content.Replace(",", ".");
+        if (content.EndsWith('.')) content = content + "0";
+
+        if (decimal.TryParse(content, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out decimal d))
+        {
+            return d;
+        }
+        return null;
     }
 
     public enum FieldType { N, A, C, D, X, L }

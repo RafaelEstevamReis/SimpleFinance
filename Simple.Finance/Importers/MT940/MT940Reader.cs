@@ -247,12 +247,45 @@ public class MT940Statement
     }
     public class MTStatement
     {
+        public DateTime Date { get; set; }
+        public DateTime? EntryDate { get; set; }
+        public string CreditDebitMark { get; set; } = string.Empty;
+        public string FundsCode { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string TransactionType { get; set; } = string.Empty;
+        public string TransactionCode { get; set; } = string.Empty;
+        public string ReferenceForOwner { get; set; } = string.Empty;
+        public string ReferenceForServicingInstitution { get; set; } = string.Empty;
+
+        public string[] AdditionalInformation { get; set; } = [];
+
         internal static MTStatement[] Parse(List<(MT940Reader.MTRecord, List<MT940Reader.MTRecord>)> r61R86StatementeLineInformationAccountOwner)
         {
             if (r61R86StatementeLineInformationAccountOwner == null) return [];
             if (r61R86StatementeLineInformationAccountOwner.Count == 0) return [];
 
-            return null;
+            return r61R86StatementeLineInformationAccountOwner.Select(buildSingle).ToArray();
+        }
+        private static MTStatement buildSingle((MT940Reader.MTRecord, List<MT940Reader.MTRecord>) block)
+        {
+            var b61 = block.Item1;
+            var arrb86 = block.Item2;
+
+            var markTypeCode = b61.Data[2] + b61.Data[3];
+
+            return new MTStatement
+            {
+                Date = DateTime.ParseExact(b61.Data[0], "yyMMdd", CultureInfo.InvariantCulture),
+                EntryDate = null, // How can I get the Year? Is aways learlier than Date
+                CreditDebitMark = markTypeCode.Length == 2 ? markTypeCode[0..1] : markTypeCode[0..2],
+                FundsCode = markTypeCode[^1..],
+                Amount = MTHelper.DecimalParser(b61.Data[4]) ?? 0,
+                TransactionType = b61.Data[5],
+                TransactionCode = b61.Data[6],
+                ReferenceForOwner = b61.Data[7],
+                ReferenceForServicingInstitution = b61.Data[9], // [8] is "//"
+                AdditionalInformation = arrb86.Select(o => o.Data[0]).ToArray(),
+            };
         }
     }
     public class MTInformationToAccountOwner
@@ -273,16 +306,16 @@ public class MT940Statement
         public string Currency { get; set; } = string.Empty;
         public decimal Amount { get; set; }
 
-        public static MTBalance? Parse(MT940Reader.MTRecord? alanceRecord)
+        public static MTBalance? Parse(MT940Reader.MTRecord? balanceRecord)
         {
-            if (alanceRecord == null) return null;
+            if (balanceRecord == null) return null;
 
             return new MTBalance
             {
-                Type = alanceRecord.Data[0],
-                Date = DateTime.ParseExact(alanceRecord.Data[1], "yyMMdd", CultureInfo.InvariantCulture),
-                Currency = alanceRecord.Data[2],
-                Amount = decimal.Parse(alanceRecord.Data[3].Replace(",", "."), CultureInfo.InvariantCulture),
+                Type = balanceRecord.Data[0],
+                Date = DateTime.ParseExact(balanceRecord.Data[1], "yyMMdd", CultureInfo.InvariantCulture),
+                Currency = balanceRecord.Data[2],
+                Amount = MTHelper.DecimalParser(balanceRecord.Data[3]) ?? 0,
             };
         }
     }
