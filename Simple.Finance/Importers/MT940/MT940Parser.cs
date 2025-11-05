@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-public class MT940Reader
+public class MT940Parser
 {
     // https://www2.swift.com/knowledgecentre/publications/us9m_20230720/?topic=mt940-field-spec.htm
     static readonly Dictionary<string, string> dicRules = new Dictionary<string, string>
@@ -25,46 +25,41 @@ public class MT940Reader
          { "86", "65x" },
     };
 
-
-
-    public static IEnumerable<MTRecord> ParseRecordsFromFile(string file)
+    public static MT940Statement FromFile(string file, System.Text.Encoding? encoding)
     {
-        var lines = File.ReadAllLines(file);
-        return ParseRecordsFromLines(lines);
+        var lines = File.ReadAllLines(file, encoding ?? System.Text.Encoding.UTF8);
+        return FromLines(lines);
     }
-    private static IEnumerable<MTRecord> ParseRecordsFromLines(string[] lines)
+    public static MT940Statement FromLines(string[] lines)
     {
-        var blocks = MTHelper.ParseLinesToBlocks(lines);
-        foreach (var b in blocks)
+        var record = ParserMT940RecordFromLines(lines);
+        return ParseMT940FromRecord(record);
+    }
+
+    public static MT940Statement ParseMT940FromRecord(MT940Record record)
+    {
+        var mt940 = new MT940Statement()
         {
-            var l1 = b[0];
-            var field = l1.Split(':')[1];
-            var content = l1.Substring(field.Length + 2);
-
-            var record = new MTRecord
-            {
-                Field = field,
-                OriginalContent = string.Join('\n', b),
-            };
-
-            if (dicRules.TryGetValue(record.Field, out string rule))
-            {
-                var tokens = MTHelper.Tokenizer(rule).ToArray();
-                var data = MTHelper.ContentSplitter(content, tokens).ToArray();
-
-                record.Tokens = tokens;
-                record.Data = data;
-            }
-
-            yield return record;
-        }
+            TransacationReferenceNumber = MT940Statement.MTTransacationReferenceNumber.Parse(record.R20TransactionReferenceNumber),
+            RelatedReference = MT940Statement.MTRelatedReference.Parse(record.R21RelatedReference),
+            AccountIdentification = MT940Statement.MTAccountIdentification.Parse(record.R25AccountIdentification),
+            StatementNumberSequence = MT940Statement.MTStatementNumberSequence.Parse(record.R28CStatementNumberSequence),
+            OpeningBalance = MT940Statement.MTBalance.Parse(record.R60FOpeningBalance), // First
+            Statement = MT940Statement.MTStatement.Parse(record.R61R86StatementeLineInformationAccountOwner),
+            ClosingBalance = MT940Statement.MTBalance.Parse(record.R62ClosingBalance),
+            ClosingAvailableBalance = MT940Statement.MTBalance.Parse(record.R64ClosingAvailableBalance),
+            FowardAvailableBalance = MT940Statement.MTBalance.Parse(record.R65FowardAvailableBalance),
+            InformationToAccountOwner = MT940Statement.MTInformationToAccountOwner.Parse(record.R86InformationToAccountOwner),
+        };
+        return mt940;
     }
-    public static MT940Record ParseMT940RecordsFromFile(string file)
+
+    public static MT940Record ParseMT940RecordFromFile(string file, System.Text.Encoding? encoding)
     {
-        var lines = File.ReadAllLines(file);
-        return ParseMT940RecordsFromLines(lines);
+        var lines = File.ReadAllLines(file, encoding ?? System.Text.Encoding.UTF8);
+        return ParserMT940RecordFromLines(lines);
     }
-    public static MT940Record ParseMT940RecordsFromLines(string[] lines)
+    public static MT940Record ParserMT940RecordFromLines(string[] lines)
     {
         var records = ParseRecordsFromLines(lines);
 
@@ -130,22 +125,37 @@ public class MT940Reader
         return mt940;
     }
 
-    public static MT940Statement ParseMT940FromRecord(MT940Record record)
+    public static IEnumerable<MTRecord> ParseRecordsFromFile(string file)
     {
-        var mt940 = new MT940Statement()
+        var lines = File.ReadAllLines(file);
+        return ParseRecordsFromLines(lines);
+    }
+    private static IEnumerable<MTRecord> ParseRecordsFromLines(string[] lines)
+    {
+        var blocks = MTHelper.ParseLinesToBlocks(lines);
+        foreach (var b in blocks)
         {
-            TransacationReferenceNumber = MT940Statement.MTTransacationReferenceNumber.Parse(record.R20TransactionReferenceNumber),
-            RelatedReference = MT940Statement.MTRelatedReference.Parse(record.R21RelatedReference),
-            AccountIdentification = MT940Statement.MTAccountIdentification.Parse(record.R25AccountIdentification),
-            StatementNumberSequence = MT940Statement.MTStatementNumberSequence.Parse(record.R28CStatementNumberSequence),
-            OpeningBalance = MT940Statement.MTBalance.Parse(record.R60FOpeningBalance), // First
-            Statement = MT940Statement.MTStatement.Parse(record.R61R86StatementeLineInformationAccountOwner),
-            ClosingBalance = MT940Statement.MTBalance.Parse(record.R62ClosingBalance),
-            ClosingAvailableBalance = MT940Statement.MTBalance.Parse(record.R64ClosingAvailableBalance),
-            FowardAvailableBalance = MT940Statement.MTBalance.Parse(record.R65FowardAvailableBalance),
-            InformationToAccountOwner = MT940Statement.MTInformationToAccountOwner.Parse(record.R86InformationToAccountOwner),
-        };
-        return mt940;
+            var l1 = b[0];
+            var field = l1.Split(':')[1];
+            var content = l1.Substring(field.Length + 2);
+
+            var record = new MTRecord
+            {
+                Field = field,
+                OriginalContent = string.Join('\n', b),
+            };
+
+            if (dicRules.TryGetValue(record.Field, out string rule))
+            {
+                var tokens = MTHelper.Tokenizer(rule).ToArray();
+                var data = MTHelper.ContentSplitter(content, tokens).ToArray();
+
+                record.Tokens = tokens;
+                record.Data = data;
+            }
+
+            yield return record;
+        }
     }
 
     public record MTRecord
@@ -157,14 +167,14 @@ public class MT940Reader
     }
     public record MT940Record
     {
-        public MTRecord R20TransactionReferenceNumber { get; set; }
+        public MTRecord? R20TransactionReferenceNumber { get; set; }
         public MTRecord? R21RelatedReference { get; set; }
-        public MTRecord R25AccountIdentification { get; set; }
-        public MTRecord R28CStatementNumberSequence { get; set; }
-        public MTRecord R60FOpeningBalance { get; set; }
+        public MTRecord? R25AccountIdentification { get; set; }
+        public MTRecord? R28CStatementNumberSequence { get; set; }
+        public MTRecord? R60FOpeningBalance { get; set; }
         public List<MTRecord> R60MOpeningBalance { get; set; } = [];
         public List<(MTRecord, List<MTRecord>)> R61R86StatementeLineInformationAccountOwner { get; set; } = [];
-        public MTRecord R62ClosingBalance { get; set; }
+        public MTRecord? R62ClosingBalance { get; set; }
         public MTRecord? R64ClosingAvailableBalance { get; set; }
         public MTRecord? R65FowardAvailableBalance { get; set; }
         public List<MTRecord> R86InformationToAccountOwner { get; set; } = [];
@@ -188,7 +198,7 @@ public class MT940Statement
     {
         public string ReferenceId { get; set; } = string.Empty;
 
-        internal static MTTransacationReferenceNumber? Parse(MT940Reader.MTRecord r20TransactionReferenceNumber)
+        internal static MTTransacationReferenceNumber? Parse(MT940Parser.MTRecord r20TransactionReferenceNumber)
         {
             if (r20TransactionReferenceNumber == null) return null;
 
@@ -202,7 +212,7 @@ public class MT940Statement
     {
         public string ReferenceId { get; set; } = string.Empty;
 
-        internal static MTRelatedReference? Parse(MT940Reader.MTRecord? r21RelatedReference)
+        internal static MTRelatedReference? Parse(MT940Parser.MTRecord? r21RelatedReference)
         {
             if (r21RelatedReference == null) return null;
 
@@ -216,7 +226,7 @@ public class MT940Statement
     {
         public string AccountId { get; set; } = string.Empty;
 
-        internal static MTAccountIdentification? Parse(MT940Reader.MTRecord r25AccountIdentification)
+        internal static MTAccountIdentification? Parse(MT940Parser.MTRecord r25AccountIdentification)
         {
             if (r25AccountIdentification == null) return null;
 
@@ -231,7 +241,7 @@ public class MT940Statement
         public string StatementNumber { get; set; } = string.Empty;
         public string SquenceNumber { get; set; } = string.Empty;
 
-        internal static MTStatementNumberSequence? Parse(MT940Reader.MTRecord r28CStatementNumberSequence)
+        internal static MTStatementNumberSequence? Parse(MT940Parser.MTRecord r28CStatementNumberSequence)
         {
             if (r28CStatementNumberSequence == null) return null;
 
@@ -250,7 +260,7 @@ public class MT940Statement
         public DateTime Date { get; set; }
         public DateTime? EntryDate { get; set; }
         public string CreditDebitMark { get; set; } = string.Empty;
-        public string FundsCode { get; set; } = string.Empty;
+        public string? FundsCode { get; set; } = string.Empty;
         public decimal Amount { get; set; }
         public string TransactionType { get; set; } = string.Empty;
         public string TransactionCode { get; set; } = string.Empty;
@@ -259,26 +269,67 @@ public class MT940Statement
 
         public string[] AdditionalInformation { get; set; } = [];
 
-        internal static MTStatement[] Parse(List<(MT940Reader.MTRecord, List<MT940Reader.MTRecord>)> r61R86StatementeLineInformationAccountOwner)
+        internal static MTStatement[] Parse(List<(MT940Parser.MTRecord, List<MT940Parser.MTRecord>)> r61R86StatementeLineInformationAccountOwner)
         {
             if (r61R86StatementeLineInformationAccountOwner == null) return [];
             if (r61R86StatementeLineInformationAccountOwner.Count == 0) return [];
 
             return r61R86StatementeLineInformationAccountOwner.Select(buildSingle).ToArray();
         }
-        private static MTStatement buildSingle((MT940Reader.MTRecord, List<MT940Reader.MTRecord>) block)
+        private static MTStatement buildSingle((MT940Parser.MTRecord, List<MT940Parser.MTRecord>) block)
         {
             var b61 = block.Item1;
             var arrb86 = block.Item2;
 
-            var markTypeCode = b61.Data[2] + b61.Data[3];
+            var markFundsCode = b61.Data[2] + b61.Data[3];
+
+            string cdMark;
+            string? fundsCode;
+            if (markFundsCode[0] == 'R')
+            {
+                // exact 2 are from Mark
+                if (markFundsCode.Length == 2)
+                {
+                    cdMark = markFundsCode;
+                    fundsCode = null;
+                }
+                else if (markFundsCode.Length == 3)
+                {
+                    cdMark = markFundsCode[..2];
+                    fundsCode = markFundsCode[^1..];
+                }
+                else
+                {
+                    // ?
+                    throw new Exception("Invalid Markins for CD/Funds");
+                }
+            }
+            else
+            {
+                // exact 1 is from Mark
+                if (markFundsCode.Length == 1)
+                {
+                    cdMark = markFundsCode;
+                    fundsCode = null;
+                }
+                else if (markFundsCode.Length == 2)
+                {
+                    cdMark = markFundsCode[..1];
+                    fundsCode = markFundsCode[^1..];
+                }
+                else
+                {
+                    // ?
+                    throw new Exception("Invalid Markins for CD/Funds");
+                }
+            }
 
             return new MTStatement
             {
                 Date = DateTime.ParseExact(b61.Data[0], "yyMMdd", CultureInfo.InvariantCulture),
                 EntryDate = null, // How can I get the Year? Is aways learlier than Date
-                CreditDebitMark = markTypeCode.Length == 2 ? markTypeCode[0..1] : markTypeCode[0..2],
-                FundsCode = markTypeCode[^1..],
+                CreditDebitMark = cdMark,
+                FundsCode = fundsCode,
                 Amount = MTHelper.DecimalParser(b61.Data[4]) ?? 0,
                 TransactionType = b61.Data[5],
                 TransactionCode = b61.Data[6],
@@ -290,7 +341,7 @@ public class MT940Statement
     }
     public class MTInformationToAccountOwner
     {
-        internal static MTInformationToAccountOwner? Parse(List<MT940Reader.MTRecord> r86InformationToAccountOwner)
+        internal static MTInformationToAccountOwner? Parse(List<MT940Parser.MTRecord> r86InformationToAccountOwner)
         {
             if (r86InformationToAccountOwner == null
                 || r86InformationToAccountOwner.Count == 0) return null;
@@ -306,7 +357,7 @@ public class MT940Statement
         public string Currency { get; set; } = string.Empty;
         public decimal Amount { get; set; }
 
-        public static MTBalance? Parse(MT940Reader.MTRecord? balanceRecord)
+        public static MTBalance? Parse(MT940Parser.MTRecord? balanceRecord)
         {
             if (balanceRecord == null) return null;
 
