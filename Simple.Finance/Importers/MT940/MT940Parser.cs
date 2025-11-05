@@ -118,6 +118,8 @@ public class MT940Parser
                     mt940.Other.Add(r);
 #if DEBUG
                     throw new NotImplementedException($"Not supported field: {r.Field}");
+#else
+                    break;
 #endif
             }
         }
