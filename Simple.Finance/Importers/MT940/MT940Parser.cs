@@ -204,7 +204,7 @@ public class MT940Statement
     {
         public string ReferenceId { get; set; } = string.Empty;
 
-        internal static MTTransacationReferenceNumber? Parse(MT940Parser.MTRecord r20TransactionReferenceNumber)
+        internal static MTTransacationReferenceNumber? Parse(MT940Parser.MTRecord? r20TransactionReferenceNumber)
         {
             if (r20TransactionReferenceNumber == null) return null;
 
@@ -232,7 +232,7 @@ public class MT940Statement
     {
         public string AccountId { get; set; } = string.Empty;
 
-        internal static MTAccountIdentification? Parse(MT940Parser.MTRecord r25AccountIdentification)
+        internal static MTAccountIdentification? Parse(MT940Parser.MTRecord? r25AccountIdentification)
         {
             if (r25AccountIdentification == null) return null;
 
@@ -247,7 +247,7 @@ public class MT940Statement
         public string StatementNumber { get; set; } = string.Empty;
         public string SquenceNumber { get; set; } = string.Empty;
 
-        internal static MTStatementNumberSequence? Parse(MT940Parser.MTRecord r28CStatementNumberSequence)
+        internal static MTStatementNumberSequence? Parse(MT940Parser.MTRecord? r28CStatementNumberSequence)
         {
             if (r28CStatementNumberSequence == null) return null;
 
