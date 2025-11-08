@@ -5,7 +5,7 @@ using TextSerializer;
 using TextSerializer.Attributes;
 
 [RegistrySize(240)]
-public record ExtratoHeaderLoteModel
+public record SegExtratoHeaderLoteModel
 {
     [Index(1), Type(DataType.N), Length(3)]
     public string CBanco { get; set; } = string.Empty;
