@@ -15,7 +15,7 @@ public record ArquivoHeaderModel
     public string CRegistro { get; set; } = string.Empty; // "0" para Header Arquivo
 
     [Index(4), Type(DataType.C), Length(9)]
-    public string Filler1 { get; set; } = string.Empty;
+    public string FILLER1 { get; set; } = string.Empty;
 
     [Index(5), Type(DataType.N), Length(1)]
     public string ETipoInscricao { get; set; } = string.Empty;
@@ -39,7 +39,7 @@ public record ArquivoHeaderModel
     public string NomeBanco { get; set; } = string.Empty;
 
     [Index(15), Type(DataType.C), Length(10)]
-    public string CNAB_FILLER2 { get; set; } = string.Empty;
+    public string FILLER2 { get; set; } = string.Empty;
 
     [Index(16), Type(DataType.C), Length(1)]
     public string ACodigoRemessaRetorno { get; set; } = string.Empty;
@@ -54,10 +54,10 @@ public record ArquivoHeaderModel
     [Index(21), Type(DataType.N), Length(5)]
     public string ADensidade { get; set; } = string.Empty;
     [Index(22), Type(DataType.N), Length(20)]
-    public string CNAB_FILLER3 { get; set; } = string.Empty;
+    public string FILLER3 { get; set; } = string.Empty;
     [Index(23), Type(DataType.N), Length(20)]
-    public string CNAB_FILLER4 { get; set; } = string.Empty;
+    public string FILLER4 { get; set; } = string.Empty;
 
     [Index(24), Type(DataType.C), Length(29)]
-    public string CNAB_FILLER5 { get; set; } = string.Empty;
+    public string FILLER5 { get; set; } = string.Empty;
 }

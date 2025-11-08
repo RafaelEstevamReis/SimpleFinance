@@ -24,7 +24,7 @@ public record SegExtratoHeaderLoteModel
     public string SLayoutLote { get; set; } = string.Empty;
 
     [Index(8), Type(DataType.C), Length(1)]
-    public string CNAB_FILLER1 { get; set; } = string.Empty;
+    public string FILLER1 { get; set; } = string.Empty;
 
     [Index(9), Type(DataType.N), Length(1)]
     public string ETipoInscricao { get; set; } = string.Empty;
@@ -46,7 +46,7 @@ public record SegExtratoHeaderLoteModel
     public string ENome { get; set; } = string.Empty;
 
     [Index(18), Type(DataType.C), Length(40)]
-    public string CNAB_FILLER2 { get; set; } = string.Empty;
+    public string FILLER2 { get; set; } = string.Empty;
 
     [Index(19), Type(DataType.N), Length(8)]
     public DateTime SIData { get; set; }
@@ -62,5 +62,5 @@ public record SegExtratoHeaderLoteModel
     public string SISequenciaExtrato { get; set; } = string.Empty;
 
     [Index(25), Type(DataType.C), Length(62)]
-    public string CNAB_FILLER3 { get; set; } = string.Empty;
+    public string FILLER3 { get; set; } = string.Empty;
 }

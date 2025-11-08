@@ -24,7 +24,7 @@ public record CobrancaHeaderModel
     [Index(7), Type(DataType.C), Length(14)]
     public string DocBeneficiario { get; set; } = string.Empty;
     [Index(8), Type(DataType.C), Length(31)]
-    public string Filler1 { get; set; } = string.Empty;
+    public string FILLER1 { get; set; } = string.Empty;
     [Index(9), Type(DataType.N), Length(3)]
     public string NumeroBanco { get; set; } = string.Empty;
     [Index(10), Type(DataType.C), Length(15)]
@@ -32,11 +32,11 @@ public record CobrancaHeaderModel
     [Index(11), Type(DataType.N), Length(8)]
     public string DataArquivo { get; set; } = string.Empty; // yyyyMMdd
     [Index(13), Type(DataType.C), Length(8)]
-    public string Filler2 { get; set; } = string.Empty;
+    public string FILLER2 { get; set; } = string.Empty;
     [Index(14), Type(DataType.C), Length(7)]
     public string NumeroRetorno { get; set; } = string.Empty;
     [Index(15), Type(DataType.C), Length(272)]
-    public string Filler3 { get; set; } = string.Empty;
+    public string FILLER3 { get; set; } = string.Empty;
     [Index(16), Type(DataType.N), Length(5)]
     public string Versao { get; set; } = string.Empty;
     [Index(17), Type(DataType.N), Length(6)]

@@ -15,7 +15,7 @@ public record ArquivoTrailerModel
     public string CRegistro { get; set; } = string.Empty; // "9" para Trailer Arquivo
 
     [Index(4), Type(DataType.C), Length(9)]
-    public string Filler1 { get; set; } = string.Empty;
+    public string FILLER1 { get; set; } = string.Empty;
 
     [Index(5), Type(DataType.N), Length(6)]
     public string QtdLotes { get; set; } = string.Empty;
@@ -25,5 +25,5 @@ public record ArquivoTrailerModel
     public string QtdContas { get; set; } = string.Empty;
 
     [Index(8), Type(DataType.C), Length(205)]
-    public string Filler2 { get; set; } = string.Empty;
+    public string FILLER2 { get; set; } = string.Empty;
 }

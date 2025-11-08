@@ -20,7 +20,7 @@ public record SegExtratoDetalheModel
     public string SCodSegmento { get; set; } = string.Empty; // "E" para Extrato
 
     [Index(6), Type(DataType.C), Length(3)]
-    public string CNAB_FILLER1 { get; set; } = string.Empty;
+    public string FILLER1 { get; set; } = string.Empty;
 
     [Index(7), Type(DataType.N), Length(1)]
     public string ETipoInscricao { get; set; } = string.Empty;
@@ -42,7 +42,7 @@ public record SegExtratoDetalheModel
     public string ENome { get; set; } = string.Empty;
 
     [Index(16), Type(DataType.C), Length(40)]
-    public string CNAB_FILLER2 { get; set; } = string.Empty;
+    public string FILLER2 { get; set; } = string.Empty;
     // PULA CAMPOS VARIA DE BANCO PRA BANCO
 
     [Index(22), Type(DataType.N), Length(8)]
