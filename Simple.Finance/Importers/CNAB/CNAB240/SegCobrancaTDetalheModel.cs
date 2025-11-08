@@ -50,7 +50,7 @@ public record SegCobrancaTDetalheModel
     [Index(20), Type(DataType.N), Length(1)]
     public string DvAgCobRec { get; set; } = string.Empty;
     [Index(21), Type(DataType.C), Length(25)]
-    public string FILLER2 { get; set; } = string.Empty;
+    public string IdentificacaoTituloEmpresa { get; set; } = string.Empty;
     [Index(22), Type(DataType.N), Length(2)]
     public string CodMoeda { get; set; } = string.Empty;
 
