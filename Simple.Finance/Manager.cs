@@ -46,8 +46,10 @@ public class Manager
         if (!fiOrg.Exists) return; // First run
 
         var fiDest = new FileInfo(destFile);
+        var zipName = fiDest.FullName + ".gz";
+
         using FileStream originalFileStream = File.Open(fiOrg.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        using FileStream compressedFileStream = File.Create(fiDest.FullName + ".gz");
+        using FileStream compressedFileStream = File.Create(zipName);
         using GZipStream compressionStream = new(compressedFileStream, CompressionMode.Compress);
         originalFileStream.CopyTo(compressionStream);
     }
