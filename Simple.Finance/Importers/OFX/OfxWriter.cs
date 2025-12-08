@@ -113,7 +113,7 @@ public class OfxWriter
         public decimal Value { get; set; }
         public DateTime Date { get; set; }
         public string Id { get; set; } = string.Empty;
-        public string Memo { get; set; }
+        public string Memo { get; set; } = string.Empty;
     }
 
     public class SimplifiedOFX
