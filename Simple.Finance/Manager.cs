@@ -199,7 +199,7 @@ public class Manager
         });
     }
 
-    public long CreateUpdateTransaction(Tables.Transac tx) => createUpdateTransaction(tx, generateLog: false);
+    public long CreateUpdateTransaction(Tables.Transac tx) => createUpdateTransaction(tx, generateLog: true);
     private long createUpdateTransaction(Tables.Transac tx, bool generateLog)
     {
         using var cnn = db.GetConnection();
