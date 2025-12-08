@@ -36,6 +36,7 @@ public record Transac
     public TransactionType Type { get; set; }
     public long TypeOtherId { get; set; }
 
+    [Index("ixTransaction_Status")]
     public PaymentStatus Status { get; set; }
     public string PaymentCurrency { get; set; } = string.Empty;
     public decimal DueValue { get; set; }
