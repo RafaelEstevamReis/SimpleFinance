@@ -186,7 +186,7 @@ public class Manager
 
         if (dateType == SearchTransactionsDate.PaymentDate)
         {
-            add = "AND PaymentStatus = @statusPaid";
+            add = $"AND {nameof(Tables.Transac.Status)} = @statusPaid";
         }
 
         using var cnn = db.GetConnection();
