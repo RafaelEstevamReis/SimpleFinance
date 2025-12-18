@@ -36,6 +36,19 @@ public class ExchangeRateConverter
 
         return null;
     }
+
+    public static ExchangeRateConverter CreateWithTemporalSeries()
+    {
+        var exRate = new ExchangeRateConverter()
+        {
+            ExchangeRateTables = [
+                new TemporalSeries_BRLUSD(),
+                new TemporalSeries_EURUSD(),
+                new TemporalSeries_BTCUSD(),
+            ],
+        };
+        return exRate;
+    }
 }
 public interface IExchangeRateTable
 {
