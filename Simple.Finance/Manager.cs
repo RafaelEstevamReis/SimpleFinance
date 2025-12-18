@@ -145,6 +145,7 @@ public class Manager
         string add = "";
         string dateColumn = dateType switch
         {
+            SearchTransactionsDate.EffectiveDate => "[INV]",
             SearchTransactionsDate.DueDate => "DueDate",
             SearchTransactionsDate.PaymentDate => "PaymentDate",
             SearchTransactionsDate.Created => "Created",
@@ -156,9 +157,18 @@ public class Manager
         {
             add = "AND Status = @statusPaid";
         }
+        string query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE ({dateColumn} BETWEEN @start AND @end ) {add} ";
+
+        if (dateType == SearchTransactionsDate.EffectiveDate)
+        {
+            string paidOnes = $"( {nameof(Tables.Transac.Status)} = @statusPaid AND {nameof(Tables.Transac.PaymentDate)} BETWEEN @start AND @end )";
+            string unpaidOnes = $"( {nameof(Tables.Transac.Status)} = @statusUnpaid AND {nameof(Tables.Transac.DueDate)} BETWEEN @start AND @end )";
+
+            query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE ( {paidOnes} OR {unpaidOnes} )";
+        }
 
         using var cnn = db.GetConnection();
-        return cnn.Query<Tables.Transac>($"SELECT * FROM {nameof(Tables.Transac)} WHERE ({dateColumn} BETWEEN @start AND @end ) {add} ", new
+        return cnn.Query<Tables.Transac>(query, new
         {
             start,
             end,
@@ -177,25 +187,35 @@ public class Manager
         };
         string dateColumn = dateType switch
         {
+            SearchTransactionsDate.EffectiveDate => "[INV]",
             SearchTransactionsDate.DueDate => "DueDate",
             SearchTransactionsDate.PaymentDate => "PaymentDate",
             SearchTransactionsDate.Created => "Created",
             SearchTransactionsDate.Changed => "Changed",
             _ => throw new InvalidOperationException("Invalid date type"),
         };
-
         if (dateType == SearchTransactionsDate.PaymentDate)
         {
             add = $"AND {nameof(Tables.Transac.Status)} = @statusPaid";
         }
+        string query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE {kindColumn} = @id AND ({dateColumn} BETWEEN @start AND @end ) {add} ";
+
+        if(dateType == SearchTransactionsDate.EffectiveDate)
+        {
+            string paidOnes = $"( {nameof(Tables.Transac.Status)} = @statusPaid AND {nameof(Tables.Transac.PaymentDate)} BETWEEN @start AND @end )";
+            string unpaidOnes = $"( {nameof(Tables.Transac.Status)} = @statusUnpaid AND {nameof(Tables.Transac.DueDate)} BETWEEN @start AND @end )";
+
+            query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE {kindColumn} = @id AND ( {paidOnes} OR {unpaidOnes} )";
+        }
 
         using var cnn = db.GetConnection();
-        return cnn.Query<Tables.Transac>($"SELECT * FROM {nameof(Tables.Transac)} WHERE {kindColumn} = @id AND ({dateColumn} BETWEEN @start AND @end ) {add} ", new
+        return cnn.Query<Tables.Transac>(query, new
         {
             id,
             start,
             end,
             statusPaid = Tables.Transac.PaymentStatus.Paid,
+            statusUnpaid = Tables.Transac.PaymentStatus.Unpaid,
         });
     }
 
@@ -424,6 +444,10 @@ public class Manager
         PaymentDate,
         Created,
         Changed,
+        /// <summary>
+        /// Due date for Unpaid and PaymentDate for paid ones
+        /// </summary>
+        EffectiveDate,
     }
 
     #endregion
