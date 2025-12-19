@@ -67,7 +67,7 @@
             // btnCancel
             // 
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(208, 286);
+            btnCancel.Location = new System.Drawing.Point(207, 283);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
             btnCancel.TabIndex = 11;
@@ -76,7 +76,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(81, 286);
+            btnSave.Location = new System.Drawing.Point(80, 283);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 10;
@@ -86,7 +86,7 @@
             // 
             // txtName
             // 
-            txtName.Location = new System.Drawing.Point(10, 253);
+            txtName.Location = new System.Drawing.Point(9, 250);
             txtName.MaxLength = 64;
             txtName.Name = "txtName";
             txtName.Size = new System.Drawing.Size(345, 23);
@@ -95,7 +95,7 @@
             // lblId
             // 
             lblId.AutoSize = true;
-            lblId.Location = new System.Drawing.Point(32, 10);
+            lblId.Location = new System.Drawing.Point(31, 10);
             lblId.Name = "lblId";
             lblId.Size = new System.Drawing.Size(12, 15);
             lblId.TabIndex = 8;
@@ -104,7 +104,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(10, 10);
+            label2.Location = new System.Drawing.Point(9, 10);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(20, 15);
             label2.TabIndex = 7;
@@ -113,7 +113,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(10, 234);
+            label1.Location = new System.Drawing.Point(9, 231);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(130, 15);
             label1.TabIndex = 6;
@@ -191,7 +191,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(12, 69);
+            label7.Location = new System.Drawing.Point(9, 69);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(97, 15);
             label7.TabIndex = 17;
@@ -200,7 +200,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(12, 135);
+            label8.Location = new System.Drawing.Point(9, 135);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(105, 15);
             label8.TabIndex = 19;
@@ -242,7 +242,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(12, 168);
+            label9.Location = new System.Drawing.Point(9, 168);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(58, 15);
             label9.TabIndex = 20;
@@ -251,7 +251,7 @@
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new System.Drawing.Point(3, 6);
+            label10.Location = new System.Drawing.Point(3, 7);
             label10.Name = "label10";
             label10.Size = new System.Drawing.Size(48, 15);
             label10.TabIndex = 21;
@@ -260,7 +260,9 @@
             // dtDue
             // 
             dtDue.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            dtDue.Location = new System.Drawing.Point(75, 164);
+            dtDue.Location = new System.Drawing.Point(73, 164);
+            dtDue.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
+            dtDue.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDue.Name = "dtDue";
             dtDue.Size = new System.Drawing.Size(95, 23);
             dtDue.TabIndex = 22;
@@ -269,15 +271,17 @@
             // 
             dtPaid.CustomFormat = "dd/MM/yyyy HH:mm";
             dtPaid.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            dtPaid.Location = new System.Drawing.Point(68, 2);
+            dtPaid.Location = new System.Drawing.Point(64, 3);
+            dtPaid.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
+            dtPaid.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtPaid.Name = "dtPaid";
-            dtPaid.Size = new System.Drawing.Size(115, 23);
+            dtPaid.Size = new System.Drawing.Size(132, 23);
             dtPaid.TabIndex = 23;
             // 
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new System.Drawing.Point(12, 36);
+            label11.Location = new System.Drawing.Point(9, 36);
             label11.Name = "label11";
             label11.Size = new System.Drawing.Size(43, 15);
             label11.TabIndex = 24;
@@ -286,7 +290,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new System.Drawing.Point(12, 102);
+            label12.Location = new System.Drawing.Point(9, 102);
             label12.Name = "label12";
             label12.Size = new System.Drawing.Size(58, 15);
             label12.TabIndex = 25;
@@ -313,7 +317,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(12, 201);
+            label3.Location = new System.Drawing.Point(211, 168);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(62, 15);
             label3.TabIndex = 28;
@@ -322,7 +326,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(3, 39);
+            label5.Location = new System.Drawing.Point(202, 7);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(64, 15);
             label5.TabIndex = 29;
@@ -331,10 +335,10 @@
             // txtDue
             // 
             txtDue.DecimalPlaces = 2;
-            txtDue.Location = new System.Drawing.Point(75, 198);
+            txtDue.Location = new System.Drawing.Point(274, 164);
             txtDue.MoneySign = "";
             txtDue.Name = "txtDue";
-            txtDue.Size = new System.Drawing.Size(95, 23);
+            txtDue.Size = new System.Drawing.Size(80, 23);
             txtDue.TabIndex = 30;
             txtDue.Text = "0,00";
             txtDue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -343,10 +347,10 @@
             // txtPaid
             // 
             txtPaid.DecimalPlaces = 2;
-            txtPaid.Location = new System.Drawing.Point(68, 36);
+            txtPaid.Location = new System.Drawing.Point(265, 3);
             txtPaid.MoneySign = "";
             txtPaid.Name = "txtPaid";
-            txtPaid.Size = new System.Drawing.Size(115, 23);
+            txtPaid.Size = new System.Drawing.Size(81, 23);
             txtPaid.TabIndex = 31;
             txtPaid.Text = "0,00";
             txtPaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -358,16 +362,16 @@
             pnlPaid.Controls.Add(txtPaid);
             pnlPaid.Controls.Add(dtPaid);
             pnlPaid.Controls.Add(label5);
-            pnlPaid.Location = new System.Drawing.Point(172, 162);
+            pnlPaid.Location = new System.Drawing.Point(9, 193);
             pnlPaid.Name = "pnlPaid";
-            pnlPaid.Size = new System.Drawing.Size(187, 67);
+            pnlPaid.Size = new System.Drawing.Size(349, 30);
             pnlPaid.TabIndex = 32;
             // 
             // dlgEditTransaction
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(365, 316);
+            ClientSize = new System.Drawing.Size(362, 316);
             Controls.Add(pnlPaid);
             Controls.Add(txtDue);
             Controls.Add(label3);
@@ -392,6 +396,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            KeyPreview = true;
             Name = "dlgEditTransaction";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Edit Transaction";

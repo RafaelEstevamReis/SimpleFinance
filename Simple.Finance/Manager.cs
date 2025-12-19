@@ -1,5 +1,6 @@
 ﻿namespace Simple.Finance;
 
+using Simple.Finance.Helpers;
 using Simple.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -419,7 +420,7 @@ public class Manager
     private bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer)
     {
         var type = typeof(T);
-        var diff = Helpers.ModelDiff(older, newer);
+        var diff = ModelHelpers.ModelDiff(older, newer);
 
         var tableId = (long)type.GetProperties().Where(o => o.Name == "Id").First().GetValue(newer);
 

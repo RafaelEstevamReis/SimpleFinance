@@ -37,19 +37,18 @@ namespace DemoProject
             DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
-            btnAddWallet = new Button();
             grdWallets = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
             Column3 = new DataGridViewTextBoxColumn();
+            btnAddWallet = new Button();
             groupBox2 = new GroupBox();
-            btnAddCategory = new Button();
             grdCategories = new DataGridView();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             Column4 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            btnAddCategory = new Button();
             groupBox3 = new GroupBox();
-            btnAddTransaction = new Button();
             grdTxRecent = new DataGridView();
             Column5 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
@@ -57,6 +56,7 @@ namespace DemoProject
             dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
             Column8 = new DataGridViewTextBoxColumn();
             Column7 = new DataGridViewTextBoxColumn();
+            btnAddTransaction = new Button();
             groupBox4 = new GroupBox();
             grdTxDue = new DataGridView();
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
@@ -65,6 +65,7 @@ namespace DemoProject
             editToolStripMenuItem = new ToolStripMenuItem();
             deleteToolStripMenuItem = new ToolStripMenuItem();
             btnTransactionBook = new Button();
+            btnAdvSearch = new Button();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -85,16 +86,6 @@ namespace DemoProject
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "My Wallets";
-            // 
-            // btnAddWallet
-            // 
-            btnAddWallet.Location = new Point(5, 498);
-            btnAddWallet.Name = "btnAddWallet";
-            btnAddWallet.Size = new Size(92, 31);
-            btnAddWallet.TabIndex = 1;
-            btnAddWallet.Text = "New Wallet";
-            btnAddWallet.UseVisualStyleBackColor = true;
-            btnAddWallet.Click += btnAddWallet_Click;
             // 
             // grdWallets
             // 
@@ -138,6 +129,16 @@ namespace DemoProject
             Column3.ReadOnly = true;
             Column3.Width = 75;
             // 
+            // btnAddWallet
+            // 
+            btnAddWallet.Location = new Point(5, 498);
+            btnAddWallet.Name = "btnAddWallet";
+            btnAddWallet.Size = new Size(92, 31);
+            btnAddWallet.TabIndex = 1;
+            btnAddWallet.Text = "New Wallet";
+            btnAddWallet.UseVisualStyleBackColor = true;
+            btnAddWallet.Click += btnAddWallet_Click;
+            // 
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -148,17 +149,6 @@ namespace DemoProject
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "My Categories";
-            // 
-            // btnAddCategory
-            // 
-            btnAddCategory.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnAddCategory.Location = new Point(103, 498);
-            btnAddCategory.Name = "btnAddCategory";
-            btnAddCategory.Size = new Size(92, 31);
-            btnAddCategory.TabIndex = 2;
-            btnAddCategory.Text = "New Category";
-            btnAddCategory.UseVisualStyleBackColor = true;
-            btnAddCategory.Click += btnAddCategory_Click;
             // 
             // grdCategories
             // 
@@ -200,6 +190,17 @@ namespace DemoProject
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
+            // btnAddCategory
+            // 
+            btnAddCategory.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnAddCategory.Location = new Point(103, 498);
+            btnAddCategory.Name = "btnAddCategory";
+            btnAddCategory.Size = new Size(92, 31);
+            btnAddCategory.TabIndex = 2;
+            btnAddCategory.Text = "New Category";
+            btnAddCategory.UseVisualStyleBackColor = true;
+            btnAddCategory.Click += btnAddCategory_Click;
+            // 
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -210,16 +211,6 @@ namespace DemoProject
             groupBox3.TabIndex = 1;
             groupBox3.TabStop = false;
             groupBox3.Text = "Recent Transactions";
-            // 
-            // btnAddTransaction
-            // 
-            btnAddTransaction.Location = new Point(201, 498);
-            btnAddTransaction.Name = "btnAddTransaction";
-            btnAddTransaction.Size = new Size(116, 31);
-            btnAddTransaction.TabIndex = 3;
-            btnAddTransaction.Text = "New Transaction";
-            btnAddTransaction.UseVisualStyleBackColor = true;
-            btnAddTransaction.Click += btnAddTransaction_Click;
             // 
             // grdTxRecent
             // 
@@ -284,6 +275,16 @@ namespace DemoProject
             Column7.HeaderText = "Wallet";
             Column7.Name = "Column7";
             Column7.ReadOnly = true;
+            // 
+            // btnAddTransaction
+            // 
+            btnAddTransaction.Location = new Point(201, 498);
+            btnAddTransaction.Name = "btnAddTransaction";
+            btnAddTransaction.Size = new Size(116, 31);
+            btnAddTransaction.TabIndex = 3;
+            btnAddTransaction.Text = "New Transaction";
+            btnAddTransaction.UseVisualStyleBackColor = true;
+            btnAddTransaction.Click += btnAddTransaction_Click;
             // 
             // groupBox4
             // 
@@ -362,11 +363,23 @@ namespace DemoProject
             btnTransactionBook.UseVisualStyleBackColor = true;
             btnTransactionBook.Click += btnTransactionBook_Click;
             // 
+            // btnAdvSearch
+            // 
+            btnAdvSearch.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnAdvSearch.Location = new Point(713, 498);
+            btnAdvSearch.Name = "btnAdvSearch";
+            btnAdvSearch.Size = new Size(110, 31);
+            btnAdvSearch.TabIndex = 4;
+            btnAdvSearch.Text = "Advanced Search";
+            btnAdvSearch.UseVisualStyleBackColor = true;
+            btnAdvSearch.Click += btnAdvSearch_Click;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(949, 538);
+            Controls.Add(btnAdvSearch);
             Controls.Add(btnAddTransaction);
             Controls.Add(btnAddCategory);
             Controls.Add(btnAddWallet);
@@ -423,5 +436,6 @@ namespace DemoProject
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
         private Button btnTransactionBook;
+        private Button btnAdvSearch;
     }
 }

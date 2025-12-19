@@ -249,5 +249,10 @@ namespace DemoProject
         {
             frmTransactionBook.ShowDialog(manager);
         }
+
+        private void btnAdvSearch_Click(object sender, EventArgs e)
+        {
+            frmAdvancedSearch.ShowDialog(manager);
+        }
     }
 }
