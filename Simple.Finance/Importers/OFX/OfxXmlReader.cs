@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -36,7 +37,7 @@ public class OfxFile
     {
         var xml = File.ReadAllText(FilePath, encoding);
         var ofx = FromXML(xml);
-        if(ofx?.FileInfo != null) ofx.FileInfo.FileOnDisk = FilePath;
+        if (ofx?.FileInfo != null) ofx.FileInfo.FileOnDisk = FilePath;
         return ofx;
     }
     public static OfxFile? FromXML(string fileContents)
@@ -318,6 +319,12 @@ public class OfxFile
         public string? Memo { get; set; }
         [XmlElement("NAME")]
         public string? Name { get; set; }
+
+        public DateTime? DatePosted()
+        {
+            if (DtPosted is null) return null;
+            return DateTime.ParseExact(DtPosted, "yyyyMMdd", CultureInfo.InvariantCulture);
+        }
     }
     [Serializable()]
     public class LedgeBalance
