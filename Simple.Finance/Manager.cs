@@ -394,6 +394,7 @@ public class Manager
     #endregion
 
     #region ChangeLog
+
     public IEnumerable<Tables.ChangeLog> GetLogs(DateTime start, DateTime end)
     {
         using var cnn = db.GetConnection();
@@ -471,6 +472,7 @@ public class Manager
     #endregion
 
     #region Search Enums
+
     public enum SearchTransactionsByKind
     {
         Wallet,
