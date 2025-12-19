@@ -1,9 +1,9 @@
-﻿namespace Simple.Finance;
+﻿namespace Simple.Finance.Helpers;
 
 using System.Collections.Generic;
 using System.Reflection;
 
-public static class Helpers
+public static class ModelHelpers
 {
     public static Dictionary<string, (string, string)> ModelDiff<T>(T? older, T newer)
     {
