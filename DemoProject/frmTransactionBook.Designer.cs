@@ -89,6 +89,7 @@
             grdTransactions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             grdTransactions.Size = new System.Drawing.Size(726, 486);
             grdTransactions.TabIndex = 3;
+            grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
             // 
             // Column1
             // 

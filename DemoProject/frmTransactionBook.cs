@@ -1,4 +1,5 @@
 ﻿using Simple.Finance;
+using Simple.Finance.Tables;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,6 +35,10 @@ namespace DemoProject
         }
         private void dtDate_ValueChanged(object sender, EventArgs e)
         {
+            refresh();
+        }
+        void refresh()
+        {
             var start = StartOfMonth(dtDate.Value);
             var end = start.AddMonths(1).AddSeconds(-1);
 
@@ -46,9 +51,11 @@ namespace DemoProject
             foreach (var tx in txs)
             {
                 balance += tx.EfectiveValue;
-                grdTransactions.Rows.Add(tx.EfectiveDate, tx.GetCategoryName(categories), tx.Description, tx.EfectiveValue, balance);
+                int ix = grdTransactions.Rows.Add(tx.EfectiveDate, tx.GetCategoryName(categories), tx.Description, tx.EfectiveValue, balance);
+                grdTransactions.Rows[ix].Tag = tx;
             }
         }
+
         private static DateTime StartOfMonth(DateTime dt)
         {
             return new DateTime(dt.Year, dt.Month, 1, 0, 0, 0, dt.Kind);
@@ -62,6 +69,36 @@ namespace DemoProject
             return frm.ShowDialog();
         }
 
+        private void grdTransactions_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (sender == null) return;
+            if (e.RowIndex < 0) return;
 
+            grdTransactions.ClearSelection();
+            grdTransactions.Rows[e.RowIndex].Selected = true;
+            var target = grdTransactions.Rows[e.RowIndex].Tag as Transac;
+            if (target == null) return;
+            editTransaction(target);
+        }
+
+        private void editTransaction(Transac t)
+        {
+            if (t.Type == Transac.TransactionType.Special)
+            {
+                MessageBox.Show("Special transactions cannot be edited here");
+                return;
+            }
+            if (t.Type == Transac.TransactionType.WalletTransfer)
+            {
+                MessageBox.Show("Transfer transactions cannot be edited here");
+                return;
+            }
+
+            var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+            if (result != DialogResult.OK) return;
+
+            manager.CreateUpdateTransaction(t);
+            refresh();
+        }
     }
 }
