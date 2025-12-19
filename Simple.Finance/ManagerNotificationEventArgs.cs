@@ -4,20 +4,20 @@ using System;
 
 public class ManagerNotificationEventArgs : EventArgs
 {
-    public enum EventNotificationType
+    public enum EventNotificationItem
     {
         Wallet,
         Category,
         Person,
         Transaction,
     }
-    public enum EventNotificationKind
+    public enum EventNotificationAction
     {
         New,
         Update,
     }
 
-    public EventNotificationType Type { get; set; }
-    public EventNotificationKind Kind { get; set; }
+    public EventNotificationItem Item { get; set; }
+    public EventNotificationAction Action { get; set; }
     public long Id { get; set; }
 }

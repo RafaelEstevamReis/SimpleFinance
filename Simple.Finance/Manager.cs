@@ -439,27 +439,27 @@ public class Manager
         .ToArray();
         cnn.BulkInsert(records);
 
-        notify(type.FullName, older == null ? ManagerNotificationEventArgs.EventNotificationKind.New : ManagerNotificationEventArgs.EventNotificationKind.Update, tableId);
+        notify(type.FullName, older == null ? ManagerNotificationEventArgs.EventNotificationAction.New : ManagerNotificationEventArgs.EventNotificationAction.Update, tableId);
         return records.Length > 0;
     }
 
-    private void notify(string tableName, ManagerNotificationEventArgs.EventNotificationKind eventNotificationKind, long id)
+    private void notify(string tableName, ManagerNotificationEventArgs.EventNotificationAction eventNotificationAction, long id)
     {
         if (EventNotifier == null) return;
 
         var tableEnum = tableName switch
         {
-            "Simple.Finance.Tables.Category" => ManagerNotificationEventArgs.EventNotificationType.Category,
-            "Simple.Finance.Tables.Person" => ManagerNotificationEventArgs.EventNotificationType.Person,
-            "Simple.Finance.Tables.Transac" => ManagerNotificationEventArgs.EventNotificationType.Transaction,
-            "Simple.Finance.Tables.Wallet" => ManagerNotificationEventArgs.EventNotificationType.Wallet,
+            "Simple.Finance.Tables.Category" => ManagerNotificationEventArgs.EventNotificationItem.Category,
+            "Simple.Finance.Tables.Person" => ManagerNotificationEventArgs.EventNotificationItem.Person,
+            "Simple.Finance.Tables.Transac" => ManagerNotificationEventArgs.EventNotificationItem.Transaction,
+            "Simple.Finance.Tables.Wallet" => ManagerNotificationEventArgs.EventNotificationItem.Wallet,
             _ => throw new NotImplementedException()
         };
 
         EventNotifier.Invoke(this, new ManagerNotificationEventArgs
         {
-            Type = tableEnum,
-            Kind = eventNotificationKind,
+            Item = tableEnum,
+            Action = eventNotificationAction,
             Id = id,
         });
     }
