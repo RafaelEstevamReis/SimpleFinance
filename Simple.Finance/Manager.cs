@@ -34,6 +34,7 @@ public class Manager
         using var cnn = db.GetConnection();
         cnn.CreateTables()
            .Add<Tables.ChangeLog>()
+           .Add<Tables.ChangeLogItem>()
            .Add<Tables.Category>()
            .Add<Tables.Wallet>()
            .Add<Tables.Person>()
@@ -200,7 +201,7 @@ public class Manager
         }
         string query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE {kindColumn} = @id AND ({dateColumn} BETWEEN @start AND @end ) {add} ";
 
-        if(dateType == SearchTransactionsDate.EffectiveDate)
+        if (dateType == SearchTransactionsDate.EffectiveDate)
         {
             string paidOnes = $"( {nameof(Tables.Transac.Status)} = @statusPaid AND {nameof(Tables.Transac.PaymentDate)} BETWEEN @start AND @end )";
             string unpaidOnes = $"( {nameof(Tables.Transac.Status)} = @statusUnpaid AND {nameof(Tables.Transac.DueDate)} BETWEEN @start AND @end )";
@@ -408,22 +409,29 @@ public class Manager
             end
         });
     }
-    private static bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer)
+    private bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer)
     {
         var type = typeof(T);
         var diff = Helpers.ModelDiff(older, newer);
 
-        var records = diff.Keys.Select(o => new Tables.ChangeLog
+        var tableId = (long)type.GetProperties().Where(o => o.Name == "Id").First().GetValue(newer);
+
+        var logId = cnn.Insert(new Tables.ChangeLog
         {
             Id = 0,
             Event = DateTime.UtcNow,
             TableName = type.FullName,
+            TableId = tableId,
+        });
+        var records = diff.Keys.Select(o => new Tables.ChangeLogItem
+        {
+            Id = 0,
+            LogId = logId,
             FieldName = o,
             OldValue = diff[o].Item1,
             NewValue = diff[o].Item2,
         })
         .ToArray();
-
         cnn.BulkInsert(records);
 
         return records.Length > 0;

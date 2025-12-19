@@ -10,6 +10,15 @@ public record ChangeLog
     public DateTime Event { get; set; }
     [Index("ixChangeLog_Table")]
     public string TableName { get; set; } = string.Empty;
+    public long TableId { get; set; }
+}
+
+public record ChangeLogItem
+{
+    public long Id { get; set; }
+    [Index("ixChangeLogItem_LogId")]
+    public long LogId { get; set; }
+    
     public string FieldName { get; set; } = string.Empty;
     public string OldValue { get; set; } = string.Empty;
     public string NewValue { get; set; } = string.Empty;
