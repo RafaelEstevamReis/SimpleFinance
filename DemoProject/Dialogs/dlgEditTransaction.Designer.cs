@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button2 = new System.Windows.Forms.Button();
+            btnCancel = new System.Windows.Forms.Button();
             btnSave = new System.Windows.Forms.Button();
             txtName = new System.Windows.Forms.TextBox();
             lblId = new System.Windows.Forms.Label();
@@ -64,15 +64,15 @@
             pnlPaid.SuspendLayout();
             SuspendLayout();
             // 
-            // button2
+            // btnCancel
             // 
-            button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            button2.Location = new System.Drawing.Point(208, 286);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(75, 23);
-            button2.TabIndex = 11;
-            button2.Text = "Cancel";
-            button2.UseVisualStyleBackColor = true;
+            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            btnCancel.Location = new System.Drawing.Point(208, 286);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new System.Drawing.Size(75, 23);
+            btnCancel.TabIndex = 11;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnSave
             // 
@@ -385,7 +385,7 @@
             Controls.Add(label6);
             Controls.Add(lblCreated);
             Controls.Add(label4);
-            Controls.Add(button2);
+            Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(txtName);
             Controls.Add(lblId);
@@ -408,7 +408,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label lblId;

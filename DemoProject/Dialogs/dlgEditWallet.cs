@@ -1,10 +1,11 @@
-﻿using Simple.Finance.Tables;
+﻿using DemoProject.Components;
+using Simple.Finance.Tables;
 using System;
 using System.Windows.Forms;
 
 namespace DemoProject.Dialogs
 {
-    public partial class dlgEditWallet : Form
+    public partial class dlgEditWallet : DialogBase
     {
         Wallet wallet;
         public dlgEditWallet()
@@ -33,6 +34,5 @@ namespace DemoProject.Dialogs
 
             return frm.ShowDialog();
         }
-
     }
 }

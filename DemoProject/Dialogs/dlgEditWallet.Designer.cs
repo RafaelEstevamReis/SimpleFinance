@@ -36,7 +36,7 @@ namespace DemoProject.Dialogs
             lblId = new Label();
             txtName = new TextBox();
             btnSave = new Button();
-            button2 = new Button();
+            btnCancel = new Button();
             SuspendLayout();
             // 
             // label1
@@ -84,22 +84,22 @@ namespace DemoProject.Dialogs
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
-            // button2
+            // btnCancel
             // 
-            button2.DialogResult = DialogResult.Cancel;
-            button2.Location = new Point(218, 94);
-            button2.Name = "button2";
-            button2.Size = new Size(75, 23);
-            button2.TabIndex = 5;
-            button2.Text = "Cancel";
-            button2.UseVisualStyleBackColor = true;
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Location = new Point(218, 94);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(75, 23);
+            btnCancel.TabIndex = 5;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
             // 
             // dlgEditWallet
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(385, 128);
-            Controls.Add(button2);
+            Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(txtName);
             Controls.Add(lblId);
@@ -120,6 +120,6 @@ namespace DemoProject.Dialogs
         private Label lblId;
         private TextBox txtName;
         private Button btnSave;
-        private Button button2;
+        private Button btnCancel;
     }
 }

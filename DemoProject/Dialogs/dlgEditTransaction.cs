@@ -1,4 +1,5 @@
-﻿using Simple.Finance.Tables;
+﻿using DemoProject.Components;
+using Simple.Finance.Tables;
 using System;
 using System.Data;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Windows.Forms;
 
 namespace DemoProject.Dialogs
 {
-    public partial class dlgEditTransaction : Form
+    public partial class dlgEditTransaction : DialogBase
     {
         private Transac transaction;
         private Category[] categories;
@@ -54,7 +55,7 @@ namespace DemoProject.Dialogs
                 return;
             }
 
-            if(txtDue.Value <= 0)
+            if (txtDue.Value <= 0)
             {
                 MessageBox.Show("Due Value bust be longer than 1");
                 return;

@@ -31,7 +31,7 @@ namespace DemoProject.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            button2 = new Button();
+            btnCancel = new Button();
             btnSave = new Button();
             txtName = new TextBox();
             lblId = new Label();
@@ -44,15 +44,15 @@ namespace DemoProject.Dialogs
             pnlType.SuspendLayout();
             SuspendLayout();
             // 
-            // button2
+            // btnCancel
             // 
-            button2.DialogResult = DialogResult.Cancel;
-            button2.Location = new Point(217, 116);
-            button2.Name = "button2";
-            button2.Size = new Size(75, 23);
-            button2.TabIndex = 11;
-            button2.Text = "Cancel";
-            button2.UseVisualStyleBackColor = true;
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Location = new Point(217, 116);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(75, 23);
+            btnCancel.TabIndex = 11;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnSave
             // 
@@ -146,7 +146,7 @@ namespace DemoProject.Dialogs
             ClientSize = new Size(383, 151);
             Controls.Add(pnlType);
             Controls.Add(label3);
-            Controls.Add(button2);
+            Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(txtName);
             Controls.Add(lblId);
@@ -164,7 +164,7 @@ namespace DemoProject.Dialogs
 
         #endregion
 
-        private Button button2;
+        private Button btnCancel;
         private Button btnSave;
         private TextBox txtName;
         private Label lblId;
