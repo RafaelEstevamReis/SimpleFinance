@@ -121,8 +121,25 @@ namespace DemoProject
                 grdTransactions.ClearSelection();
                 if (grdTransactions.Rows.Count > sri) grdTransactions.Rows[sri].Selected = true;
             }
+
+            txtTotalPaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Paid).Sum(o => o.PaidValue);
+            txtTotalUnpaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid).Sum(o => o.DueValue);
+            txtTotalIncome.Value = txs.Where(o => o.DueValue > 0).Sum(o => o.EfectiveValue);
+            txtTotalExpenses.Value = txs.Where(o => o.DueValue < 0).Sum(o => o.EfectiveValue);
+
         }
 
+        private void grdTransactions_SelectionChanged(object sender, EventArgs e)
+        {
+            var selectedCellsIndex = grdTransactions.SelectedCells
+                .Cast<DataGridViewCell>()
+                .Select(c => c.RowIndex)
+                .Distinct();
+
+            var trx = selectedCellsIndex.Select(ix => grdTransactions.Rows[ix].Tag as Transac)
+                                        .Where(o => o != null);
+            txtTotalSelected.Value = trx.Sum(o => o!.EfectiveValue);
+        }
         private void grdTransactions_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;

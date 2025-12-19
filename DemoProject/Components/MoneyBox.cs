@@ -21,12 +21,19 @@ namespace DemoProject.Components
 
         protected override void OnCreateControl()
         {
-            this.TextAlign = HorizontalAlignment.Right;
-            renderValue();
+            try
+            {
+                this.TextAlign = HorizontalAlignment.Right;
+                renderValue();
+            }
+            catch { }
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            if (ReadOnly) return;
+            if (!Enabled) return;
+
             e.Handled = true;
             e.SuppressKeyPress = true;
 
