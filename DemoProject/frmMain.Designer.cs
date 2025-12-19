@@ -32,10 +32,10 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             btnAddWallet = new Button();
             grdWallets = new DataGridView();
@@ -80,7 +80,7 @@ namespace DemoProject
             // 
             groupBox1.Controls.Add(btnAddWallet);
             groupBox1.Controls.Add(grdWallets);
-            groupBox1.Location = new Point(5, 5);
+            groupBox1.Location = new Point(5, 4);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(367, 231);
             groupBox1.TabIndex = 0;
@@ -89,7 +89,7 @@ namespace DemoProject
             // 
             // btnAddWallet
             // 
-            btnAddWallet.Location = new Point(340, 14);
+            btnAddWallet.Location = new Point(340, 10);
             btnAddWallet.Name = "btnAddWallet";
             btnAddWallet.Size = new Size(21, 23);
             btnAddWallet.TabIndex = 1;
@@ -105,12 +105,12 @@ namespace DemoProject
             grdWallets.AllowUserToResizeRows = false;
             grdWallets.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdWallets.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3 });
-            grdWallets.Location = new Point(7, 43);
+            grdWallets.Location = new Point(7, 35);
             grdWallets.Name = "grdWallets";
             grdWallets.ReadOnly = true;
             grdWallets.RowHeadersVisible = false;
             grdWallets.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdWallets.Size = new Size(354, 182);
+            grdWallets.Size = new Size(354, 190);
             grdWallets.TabIndex = 0;
             grdWallets.CellDoubleClick += grdWallets_CellDoubleClick;
             grdWallets.CellMouseClick += grdWallets_CellMouseClick;
@@ -131,9 +131,9 @@ namespace DemoProject
             // 
             // Column3
             // 
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle9.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle1;
             Column3.HeaderText = "Balance";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
@@ -144,7 +144,7 @@ namespace DemoProject
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox2.Controls.Add(btnAddCategory);
             groupBox2.Controls.Add(grdCategories);
-            groupBox2.Location = new Point(378, 5);
+            groupBox2.Location = new Point(378, 4);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(561, 231);
             groupBox2.TabIndex = 1;
@@ -154,7 +154,7 @@ namespace DemoProject
             // btnAddCategory
             // 
             btnAddCategory.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnAddCategory.Location = new Point(534, 14);
+            btnAddCategory.Location = new Point(534, 10);
             btnAddCategory.Name = "btnAddCategory";
             btnAddCategory.Size = new Size(21, 23);
             btnAddCategory.TabIndex = 2;
@@ -171,12 +171,12 @@ namespace DemoProject
             grdCategories.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             grdCategories.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdCategories.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, Column4, dataGridViewTextBoxColumn2 });
-            grdCategories.Location = new Point(6, 43);
+            grdCategories.Location = new Point(6, 35);
             grdCategories.Name = "grdCategories";
             grdCategories.ReadOnly = true;
             grdCategories.RowHeadersVisible = false;
             grdCategories.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdCategories.Size = new Size(549, 182);
+            grdCategories.Size = new Size(549, 190);
             grdCategories.TabIndex = 1;
             grdCategories.CellDoubleClick += grdCategories_CellDoubleClick;
             grdCategories.CellMouseClick += grdCategories_CellMouseClick;
@@ -207,16 +207,16 @@ namespace DemoProject
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox3.Controls.Add(btnAddTransaction);
             groupBox3.Controls.Add(grdTxRecent);
-            groupBox3.Location = new Point(5, 240);
+            groupBox3.Location = new Point(5, 237);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(645, 252);
+            groupBox3.Size = new Size(645, 257);
             groupBox3.TabIndex = 1;
             groupBox3.TabStop = false;
             groupBox3.Text = "Recent Transactions";
             // 
             // btnAddTransaction
             // 
-            btnAddTransaction.Location = new Point(618, 15);
+            btnAddTransaction.Location = new Point(618, 10);
             btnAddTransaction.Name = "btnAddTransaction";
             btnAddTransaction.Size = new Size(21, 23);
             btnAddTransaction.TabIndex = 3;
@@ -233,12 +233,12 @@ namespace DemoProject
             grdTxRecent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             grdTxRecent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdTxRecent.Columns.AddRange(new DataGridViewColumn[] { Column5, dataGridViewTextBoxColumn4, Column6, dataGridViewTextBoxColumn5, Column8, Column7 });
-            grdTxRecent.Location = new Point(6, 44);
+            grdTxRecent.Location = new Point(6, 35);
             grdTxRecent.Name = "grdTxRecent";
             grdTxRecent.ReadOnly = true;
             grdTxRecent.RowHeadersVisible = false;
             grdTxRecent.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxRecent.Size = new Size(633, 203);
+            grdTxRecent.Size = new Size(633, 216);
             grdTxRecent.TabIndex = 2;
             grdTxRecent.CellDoubleClick += grdTxRecent_CellDoubleClick;
             // 
@@ -251,8 +251,8 @@ namespace DemoProject
             // 
             // dataGridViewTextBoxColumn4
             // 
-            dataGridViewCellStyle10.Format = "d";
-            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle2.Format = "d";
+            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridViewTextBoxColumn4.HeaderText = "Due Date";
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             dataGridViewTextBoxColumn4.ReadOnly = true;
@@ -260,9 +260,9 @@ namespace DemoProject
             // 
             // Column6
             // 
-            dataGridViewCellStyle11.Format = "d";
-            dataGridViewCellStyle11.NullValue = "-";
-            Column6.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle3.Format = "d";
+            dataGridViewCellStyle3.NullValue = "-";
+            Column6.DefaultCellStyle = dataGridViewCellStyle3;
             Column6.HeaderText = "Paid Date";
             Column6.Name = "Column6";
             Column6.ReadOnly = true;
@@ -292,9 +292,9 @@ namespace DemoProject
             // 
             groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox4.Controls.Add(grdTxDue);
-            groupBox4.Location = new Point(656, 240);
+            groupBox4.Location = new Point(656, 237);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(283, 252);
+            groupBox4.Size = new Size(283, 257);
             groupBox4.TabIndex = 2;
             groupBox4.TabStop = false;
             groupBox4.Text = "Due Transactions";
@@ -313,14 +313,14 @@ namespace DemoProject
             grdTxDue.ReadOnly = true;
             grdTxDue.RowHeadersVisible = false;
             grdTxDue.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxDue.Size = new Size(271, 224);
+            grdTxDue.Size = new Size(271, 229);
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
             // 
             // dataGridViewTextBoxColumn6
             // 
-            dataGridViewCellStyle12.Format = "d";
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle4.Format = "d";
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridViewTextBoxColumn6.HeaderText = "Due Date";
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             dataGridViewTextBoxColumn6.ReadOnly = true;
@@ -375,7 +375,6 @@ namespace DemoProject
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "frmMain";
             StartPosition = FormStartPosition.CenterScreen;
