@@ -458,6 +458,7 @@ public class Manager
 
         EventNotifier.Invoke(this, new ManagerNotificationEventArgs
         {
+            Type = tableEnum,
             Kind = eventNotificationKind,
             Id = id,
         });
