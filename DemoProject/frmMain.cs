@@ -66,8 +66,8 @@ namespace DemoProject
         }
         void updateMyTransactions()
         {
-            var wallets = manager.GetWallets().ToDictionary(o => o.Id, o => o.Name);
-            var categories = manager.GetCategories().ToDictionary(o => o.Id, o => o.Name);
+            var wallets = manager.GetWalletsDict();
+            var categories = manager.GetCategoriesDict();
 
             // Recent
             grdTxRecent.Rows.Clear();

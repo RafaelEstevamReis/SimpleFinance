@@ -21,12 +21,10 @@ namespace DemoProject.Components
 
         protected override void OnCreateControl()
         {
-            try
-            {
-                this.TextAlign = HorizontalAlignment.Right;
-                renderValue();
-            }
-            catch { }
+            if (IsAncestorSiteInDesignMode) return;
+
+            this.TextAlign = HorizontalAlignment.Right;
+            renderValue();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

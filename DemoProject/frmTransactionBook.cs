@@ -57,7 +57,7 @@ namespace DemoProject
         {
             using var frm = new frmTransactionBook();
             frm.manager = manager;
-            frm.categories = manager.GetCategories().ToDictionary(o => o.Id, o => o.Name);
+            frm.categories = manager.GetCategoriesDict();
             return frm.ShowDialog();
         }
 

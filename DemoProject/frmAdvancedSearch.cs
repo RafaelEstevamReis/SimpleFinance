@@ -46,6 +46,7 @@ namespace DemoProject
         }
         private void search()
         {
+            // Save grid positions
             var fsri = grdTransactions.FirstDisplayedScrollingRowIndex;
             var sri = -1;
             if (grdTransactions.SelectedCells.Count > 0) sri = grdTransactions.SelectedCells[0].RowIndex;
@@ -81,7 +82,7 @@ namespace DemoProject
             if (chkHidePaids.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Paid);
             if (chkHideUnpaids.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Unpaid);
 
-            var dicCategories = manager.GetCategories().ToDictionary(o => o.Id, o => o.Name);
+            var dicCategories = manager.GetCategoriesDict();
 
             txs = txs.OrderBy(o => o.EfectiveValue);
 
@@ -111,7 +112,7 @@ namespace DemoProject
                 }
 
             }
-
+            // Restore grid positions
             if (fsri > 0)
             {
                 if (grdTransactions.Rows.Count > fsri) grdTransactions.FirstDisplayedScrollingRowIndex = fsri;
@@ -121,12 +122,11 @@ namespace DemoProject
                 grdTransactions.ClearSelection();
                 if (grdTransactions.Rows.Count > sri) grdTransactions.Rows[sri].Selected = true;
             }
-
+            // Totals
             txtTotalPaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Paid).Sum(o => o.PaidValue);
             txtTotalUnpaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid).Sum(o => o.DueValue);
             txtTotalIncome.Value = txs.Where(o => o.DueValue > 0).Sum(o => o.EfectiveValue);
             txtTotalExpenses.Value = txs.Where(o => o.DueValue < 0).Sum(o => o.EfectiveValue);
-
         }
 
         private void grdTransactions_SelectionChanged(object sender, EventArgs e)
