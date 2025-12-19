@@ -443,6 +443,10 @@ public class Manager
         return records.Length > 0;
     }
 
+    #endregion
+
+    #region Notification
+
     private void notify(string tableName, ManagerNotificationEventArgs.EventNotificationAction eventNotificationAction, long id)
     {
         if (EventNotifier == null) return;
