@@ -47,6 +47,9 @@ public record Transac
     public decimal RC_DueValue { get; set; }
     public decimal RC_PaidValue { get; set; }
 
+    public DateTime EfectiveDate => Status == PaymentStatus.Paid ? PaymentDate : DueDate;
+    public decimal EfectiveValue => Status == PaymentStatus.Paid ? PaidValue : DueValue;
+
     public string GetCategoryName(Dictionary<long, string> categories)
     {
         if(categories.ContainsKey(CategoryId)) return categories[CategoryId];

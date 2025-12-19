@@ -32,10 +32,10 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             btnAddWallet = new Button();
             grdWallets = new DataGridView();
@@ -64,6 +64,7 @@ namespace DemoProject
             cntxEditDelete = new ContextMenuStrip(components);
             editToolStripMenuItem = new ToolStripMenuItem();
             deleteToolStripMenuItem = new ToolStripMenuItem();
+            btnTransactionBook = new Button();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -130,9 +131,9 @@ namespace DemoProject
             // 
             // Column3
             // 
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle9.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle9;
             Column3.HeaderText = "Balance";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
@@ -208,7 +209,7 @@ namespace DemoProject
             groupBox3.Controls.Add(grdTxRecent);
             groupBox3.Location = new Point(5, 240);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(645, 238);
+            groupBox3.Size = new Size(645, 252);
             groupBox3.TabIndex = 1;
             groupBox3.TabStop = false;
             groupBox3.Text = "Recent Transactions";
@@ -237,7 +238,7 @@ namespace DemoProject
             grdTxRecent.ReadOnly = true;
             grdTxRecent.RowHeadersVisible = false;
             grdTxRecent.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxRecent.Size = new Size(633, 189);
+            grdTxRecent.Size = new Size(633, 203);
             grdTxRecent.TabIndex = 2;
             grdTxRecent.CellDoubleClick += grdTxRecent_CellDoubleClick;
             // 
@@ -250,8 +251,8 @@ namespace DemoProject
             // 
             // dataGridViewTextBoxColumn4
             // 
-            dataGridViewCellStyle6.Format = "d";
-            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle10.Format = "d";
+            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle10;
             dataGridViewTextBoxColumn4.HeaderText = "Due Date";
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             dataGridViewTextBoxColumn4.ReadOnly = true;
@@ -259,9 +260,9 @@ namespace DemoProject
             // 
             // Column6
             // 
-            dataGridViewCellStyle7.Format = "d";
-            dataGridViewCellStyle7.NullValue = "-";
-            Column6.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle11.Format = "d";
+            dataGridViewCellStyle11.NullValue = "-";
+            Column6.DefaultCellStyle = dataGridViewCellStyle11;
             Column6.HeaderText = "Paid Date";
             Column6.Name = "Column6";
             Column6.ReadOnly = true;
@@ -293,7 +294,7 @@ namespace DemoProject
             groupBox4.Controls.Add(grdTxDue);
             groupBox4.Location = new Point(656, 240);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(283, 238);
+            groupBox4.Size = new Size(283, 252);
             groupBox4.TabIndex = 2;
             groupBox4.TabStop = false;
             groupBox4.Text = "Due Transactions";
@@ -312,14 +313,14 @@ namespace DemoProject
             grdTxDue.ReadOnly = true;
             grdTxDue.RowHeadersVisible = false;
             grdTxDue.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxDue.Size = new Size(271, 210);
+            grdTxDue.Size = new Size(271, 224);
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
             // 
             // dataGridViewTextBoxColumn6
             // 
-            dataGridViewCellStyle8.Format = "d";
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle12.Format = "d";
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle12;
             dataGridViewTextBoxColumn6.HeaderText = "Due Date";
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             dataGridViewTextBoxColumn6.ReadOnly = true;
@@ -353,11 +354,23 @@ namespace DemoProject
             deleteToolStripMenuItem.Text = "Delete";
             deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
             // 
+            // btnTransactionBook
+            // 
+            btnTransactionBook.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnTransactionBook.Location = new Point(829, 498);
+            btnTransactionBook.Name = "btnTransactionBook";
+            btnTransactionBook.Size = new Size(110, 31);
+            btnTransactionBook.TabIndex = 3;
+            btnTransactionBook.Text = "Transaction Book";
+            btnTransactionBook.UseVisualStyleBackColor = true;
+            btnTransactionBook.Click += btnTransactionBook_Click;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(949, 485);
+            ClientSize = new Size(949, 538);
+            Controls.Add(btnTransactionBook);
             Controls.Add(groupBox4);
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
@@ -410,5 +423,6 @@ namespace DemoProject
         private DataGridView grdTxDue;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+        private Button btnTransactionBook;
     }
 }

@@ -179,6 +179,7 @@ public class Manager
             start,
             end,
             statusPaid = Tables.Transac.PaymentStatus.Paid,
+            statusUnpaid = Tables.Transac.PaymentStatus.Unpaid,
         });
     }
     public IEnumerable<Tables.Transac> GetTransactionsBy(SearchTransactionsByKind kind, long id, SearchTransactionsDate dateType, DateTime start, DateTime end)

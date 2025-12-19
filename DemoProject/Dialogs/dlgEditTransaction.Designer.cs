@@ -67,7 +67,7 @@
             // button2
             // 
             button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            button2.Location = new System.Drawing.Point(204, 286);
+            button2.Location = new System.Drawing.Point(208, 286);
             button2.Name = "button2";
             button2.Size = new System.Drawing.Size(75, 23);
             button2.TabIndex = 11;
@@ -76,7 +76,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(77, 286);
+            btnSave.Location = new System.Drawing.Point(81, 286);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 10;
@@ -89,7 +89,7 @@
             txtName.Location = new System.Drawing.Point(10, 253);
             txtName.MaxLength = 64;
             txtName.Name = "txtName";
-            txtName.Size = new System.Drawing.Size(334, 23);
+            txtName.Size = new System.Drawing.Size(345, 23);
             txtName.TabIndex = 9;
             // 
             // lblId
@@ -267,10 +267,11 @@
             // 
             // dtPaid
             // 
-            dtPaid.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            dtPaid.Location = new System.Drawing.Point(73, 2);
+            dtPaid.CustomFormat = "dd/MM/yyyy HH:mm";
+            dtPaid.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            dtPaid.Location = new System.Drawing.Point(68, 2);
             dtPaid.Name = "dtPaid";
-            dtPaid.Size = new System.Drawing.Size(95, 23);
+            dtPaid.Size = new System.Drawing.Size(115, 23);
             dtPaid.TabIndex = 23;
             // 
             // label11
@@ -297,7 +298,7 @@
             cboWallet.FormattingEnabled = true;
             cboWallet.Location = new System.Drawing.Point(76, 33);
             cboWallet.Name = "cboWallet";
-            cboWallet.Size = new System.Drawing.Size(268, 23);
+            cboWallet.Size = new System.Drawing.Size(279, 23);
             cboWallet.TabIndex = 26;
             // 
             // cboCategory
@@ -306,7 +307,7 @@
             cboCategory.FormattingEnabled = true;
             cboCategory.Location = new System.Drawing.Point(76, 99);
             cboCategory.Name = "cboCategory";
-            cboCategory.Size = new System.Drawing.Size(268, 23);
+            cboCategory.Size = new System.Drawing.Size(279, 23);
             cboCategory.TabIndex = 27;
             // 
             // label3
@@ -342,10 +343,10 @@
             // txtPaid
             // 
             txtPaid.DecimalPlaces = 2;
-            txtPaid.Location = new System.Drawing.Point(73, 36);
+            txtPaid.Location = new System.Drawing.Point(68, 36);
             txtPaid.MoneySign = "";
             txtPaid.Name = "txtPaid";
-            txtPaid.Size = new System.Drawing.Size(95, 23);
+            txtPaid.Size = new System.Drawing.Size(115, 23);
             txtPaid.TabIndex = 31;
             txtPaid.Text = "0,00";
             txtPaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -357,16 +358,16 @@
             pnlPaid.Controls.Add(txtPaid);
             pnlPaid.Controls.Add(dtPaid);
             pnlPaid.Controls.Add(label5);
-            pnlPaid.Location = new System.Drawing.Point(176, 162);
+            pnlPaid.Location = new System.Drawing.Point(172, 162);
             pnlPaid.Name = "pnlPaid";
-            pnlPaid.Size = new System.Drawing.Size(172, 67);
+            pnlPaid.Size = new System.Drawing.Size(187, 67);
             pnlPaid.TabIndex = 32;
             // 
             // dlgEditTransaction
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(357, 316);
+            ClientSize = new System.Drawing.Size(365, 316);
             Controls.Add(pnlPaid);
             Controls.Add(txtDue);
             Controls.Add(label3);

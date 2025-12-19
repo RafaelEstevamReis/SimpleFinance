@@ -71,9 +71,9 @@ namespace DemoProject
 
             // Recent
             grdTxRecent.Rows.Clear();
-            var txs = manager.GetTransactions(Manager.SearchTransactionsDate.Changed, DateTime.UtcNow.AddDays(-300), DateTime.UtcNow.AddMinutes(1))
+            var txs = manager.GetTransactions(Manager.SearchTransactionsDate.Changed, DateTime.UtcNow.AddDays(-180), DateTime.UtcNow.AddMinutes(1))
                              .OrderByDescending(o => o.Changed)
-                             //.Take(45)
+                             .Take(45)
                              ;
             foreach (var tx in txs)
             {
@@ -245,5 +245,9 @@ namespace DemoProject
             manager.CreateUpdateWallet(w);
         }
 
+        private void btnTransactionBook_Click(object sender, EventArgs e)
+        {
+            frmTransactionBook.ShowDialog(manager);
+        }
     }
 }
