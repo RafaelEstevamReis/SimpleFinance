@@ -2,6 +2,7 @@
 
 using Simple.DatabaseWrapper.Attributes;
 using System;
+using System.Collections.Generic;
 
 public record Transac
 {
@@ -46,4 +47,14 @@ public record Transac
     public decimal RC_DueValue { get; set; }
     public decimal RC_PaidValue { get; set; }
 
+    public string GetCategoryName(Dictionary<long, string> categories)
+    {
+        if(categories.ContainsKey(CategoryId)) return categories[CategoryId];
+        return "[-]";
+    }
+    public string GetWalletName(Dictionary<long, string> wallets)
+    {
+        if (wallets.ContainsKey(WalletId)) return wallets[WalletId];
+        return "[-]";
+    }
 }

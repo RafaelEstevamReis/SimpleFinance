@@ -54,7 +54,7 @@ public class Manager
         var fiDest = new FileInfo(destFile);
         var zipName = fiDest.FullName + ".gz";
 
-        using FileStream originalFileStream = File.Open(fiOrg.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using FileStream originalFileStream = File.Open(fiOrg.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using FileStream compressedFileStream = File.Create(zipName);
         using GZipStream compressionStream = new(compressedFileStream, CompressionMode.Compress);
         originalFileStream.CopyTo(compressionStream);
