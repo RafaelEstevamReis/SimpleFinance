@@ -31,30 +31,40 @@ public record Transac
     [Index("ixTransaction_CategoryId")]
     public long CategoryId { get; set; }
     [Index("ixTransaction_WalletId")]
+    [Index("ixTransaction_Balance", columnOrder: 1)]
     public long WalletId { get; set; }
     [Index("ixTransaction_CounterpartyId")]
     public long CounterpartyId { get; set; }
     public TransactionType Type { get; set; }
     public long TypeOtherId { get; set; }
 
-    [Index("ixTransaction_Status")]
+    [Index("ixTransaction_Balance", columnOrder: 0)] // First column on index replaces a solo index on the column
     public PaymentStatus Status { get; set; }
     public string PaymentCurrency { get; set; } = string.Empty;
     public decimal DueValue { get; set; }
+    [Index("ixTransaction_Balance", columnOrder: 2)]
     public decimal PaidValue { get; set; }
 
     public string ReferenceCurrency { get; set; } = string.Empty;
     public decimal RC_DueValue { get; set; }
     public decimal RC_PaidValue { get; set; }
 
+    public string? ExternalIdentifier { get; set; }
+
     public DateTime EfectiveDate => Status == PaymentStatus.Paid ? PaymentDate : DueDate;
     public decimal EfectiveValue => Status == PaymentStatus.Paid ? PaidValue : DueValue;
 
+    /// <summary>
+    /// Get Transaction category name using provided cache
+    /// </summary>
     public string GetCategoryName(Dictionary<long, string> categories)
     {
         if(categories.ContainsKey(CategoryId)) return categories[CategoryId];
         return "[-]";
     }
+    /// <summary>
+    /// Get Transaction walelt name using provided cache
+    /// </summary>
     public string GetWalletName(Dictionary<long, string> wallets)
     {
         if (wallets.ContainsKey(WalletId)) return wallets[WalletId];
