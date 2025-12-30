@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Simple.BotUtils" Version="1.8.11" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Simple.Finance\Simple.Finance.csproj" />
   </ItemGroup>
 
