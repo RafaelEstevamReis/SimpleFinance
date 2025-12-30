@@ -18,7 +18,14 @@ public class SampleFunctions
             mgr.CreateUpdateWallet(new Simple.Finance.Tables.Wallet()
             {
                 Id = 0,
-                Name = "Default Wallet",
+                Name = "Checking Account",
+                Description = "",
+                IsDeleted = false,
+            });
+            mgr.CreateUpdateWallet(new Simple.Finance.Tables.Wallet()
+            {
+                Id = 0,
+                Name = "Savings Account",
                 Description = "",
                 IsDeleted = false,
             });

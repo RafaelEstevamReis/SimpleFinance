@@ -31,9 +31,64 @@ namespace DemoProject
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            checkDefaultItems();
+
             updateMyWallets();
             updateMyCategories();
             updateMyTransactions();
+        }
+
+        private void checkDefaultItems()
+        {
+            /* Wallets */
+            var wallets = manager.GetWallets().ToArray();
+            if (wallets.Length == 0)
+            {
+                manager.CreateUpdateWallet(new Wallet()
+                {
+                    Id = 0,
+                    Name = "Checking Account",
+                    Description = "",
+                    IsDeleted = false,
+                });
+                manager.CreateUpdateWallet(new Wallet()
+                {
+                    Id = 0,
+                    Name = "Savings Account",
+                    Description = "",
+                    IsDeleted = false,
+                });
+            }
+
+            /* Categories */
+            var cats = manager.GetCategories().ToArray();
+            if (cats.Length == 0)
+            {
+                manager.CreateUpdateCategory(new Category()
+                {
+                    Id = 0,
+                    Name = "My House Expenses",
+                    Description = "",
+                    IsExpense = true,
+                    IsDeleted = false,
+                });
+                manager.CreateUpdateCategory(new Category()
+                {
+                    Id = 0,
+                    Name = "My Food Expenses",
+                    Description = "",
+                    IsExpense = true,
+                    IsDeleted = false,
+                });
+                manager.CreateUpdateCategory(new Category()
+                {
+                    Id = 0,
+                    Name = "Income",
+                    Description = "",
+                    IsExpense = false,
+                    IsDeleted = false,
+                });
+            }
         }
 
         void updateMyWallets()
@@ -201,7 +256,7 @@ namespace DemoProject
             if (target is Category c) deleteCategory(c);
             if (target is Transac t)
             {
-                if(t.Type != Transac.TransactionType.Simple)
+                if (t.Type != Transac.TransactionType.Simple)
                 {
                     MessageBox.Show("This type of transaction cannot be reversed");
                     return;
