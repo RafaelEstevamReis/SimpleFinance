@@ -23,6 +23,12 @@ public class Manager
         db = ConnectionFactory.FromFile(dbFile);
         this.dbFile = dbFile;
     }
+    private Manager(ConnectionFactory db, string dbFile)
+    {
+        this.db = db;
+        this.dbFile = dbFile;
+    }
+    public static Manager FromDatabase(ConnectionFactory db) => new Manager(db, string.Empty);
 
     /// <summary>
     /// Initializes database and backups it
@@ -34,6 +40,7 @@ public class Manager
         if (createBackup)
         {
             if (backupName is null) throw new ArgumentNullException(nameof(backupName), "backupName cannot be null");
+            if (string.IsNullOrEmpty(dbFile)) throw new ArgumentException(nameof(createBackup), "createBackup is not compatible with external databases");
             compress(dbFile, backupName);
         }
 
