@@ -21,7 +21,7 @@ namespace DemoProject.Dialogs
                 return;
             }
 
-            wallet.Name = txtName.Text;
+            wallet.Name = txtName.Text.Trim();
             DialogResult = DialogResult.OK;
         }
 

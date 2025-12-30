@@ -21,7 +21,7 @@ namespace DemoProject.Dialogs
                 return;
             }
 
-            category.Name = txtName.Text;
+            category.Name = txtName.Text.Trim();
             if (pnlType.Enabled) category.IsExpense = rdoExpense.Enabled;
 
             DialogResult = DialogResult.OK;

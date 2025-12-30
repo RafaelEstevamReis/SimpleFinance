@@ -110,7 +110,7 @@ namespace DemoProject.Dialogs
             transaction.DueValue = sign * txtDue.Value;
             transaction.PaidValue = sign * txtPaid.Value;
 
-            transaction.Description = txtName.Text;
+            transaction.Description = txtName.Text.Trim();
 
             manager.CreateUpdateTransaction(transaction); // Save
             // Recuring?
