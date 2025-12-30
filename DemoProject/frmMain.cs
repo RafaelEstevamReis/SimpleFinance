@@ -79,11 +79,10 @@ namespace DemoProject
             {
                 if (tx.Status == Transac.PaymentStatus.Reversed) continue;
 
-                var paymentDate = tx.Status == Transac.PaymentStatus.Paid ? (DateTime?)tx.PaymentDate : null;
                 string category = tx.GetCategoryName(categories);
                 string wallet = tx.GetWalletName(wallets);
 
-                int ix = grdTxRecent.Rows.Add(tx.Status, tx.DueDate, paymentDate, category, tx.Description, wallet);
+                int ix = grdTxRecent.Rows.Add(tx.Status, tx.EfectiveDate, category, tx.Description, tx.EfectiveValue, wallet);
                 grdTxRecent.Rows[ix].Tag = tx;
             }
 

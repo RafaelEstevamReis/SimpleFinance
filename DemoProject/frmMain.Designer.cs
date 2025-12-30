@@ -32,10 +32,10 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             grdWallets = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
@@ -50,12 +50,6 @@ namespace DemoProject
             btnAddCategory = new Button();
             groupBox3 = new GroupBox();
             grdTxRecent = new DataGridView();
-            Column5 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
-            Column6 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
-            Column8 = new DataGridViewTextBoxColumn();
-            Column7 = new DataGridViewTextBoxColumn();
             btnAddTransaction = new Button();
             groupBox4 = new GroupBox();
             grdTxDue = new DataGridView();
@@ -66,6 +60,12 @@ namespace DemoProject
             deleteToolStripMenuItem = new ToolStripMenuItem();
             btnTransactionBook = new Button();
             btnAdvSearch = new Button();
+            Column5 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
+            Column8 = new DataGridViewTextBoxColumn();
+            Column9 = new DataGridViewTextBoxColumn();
+            Column7 = new DataGridViewTextBoxColumn();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -121,9 +121,9 @@ namespace DemoProject
             // 
             // Column3
             // 
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle1;
             Column3.HeaderText = "Balance";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
@@ -220,7 +220,7 @@ namespace DemoProject
             grdTxRecent.AllowUserToResizeRows = false;
             grdTxRecent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             grdTxRecent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdTxRecent.Columns.AddRange(new DataGridViewColumn[] { Column5, dataGridViewTextBoxColumn4, Column6, dataGridViewTextBoxColumn5, Column8, Column7 });
+            grdTxRecent.Columns.AddRange(new DataGridViewColumn[] { Column5, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, Column8, Column9, Column7 });
             grdTxRecent.Location = new Point(6, 22);
             grdTxRecent.Name = "grdTxRecent";
             grdTxRecent.ReadOnly = true;
@@ -229,52 +229,6 @@ namespace DemoProject
             grdTxRecent.Size = new Size(633, 229);
             grdTxRecent.TabIndex = 2;
             grdTxRecent.CellDoubleClick += grdTxRecent_CellDoubleClick;
-            // 
-            // Column5
-            // 
-            Column5.HeaderText = "Status";
-            Column5.Name = "Column5";
-            Column5.ReadOnly = true;
-            Column5.Width = 70;
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            dataGridViewCellStyle6.Format = "d";
-            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle6;
-            dataGridViewTextBoxColumn4.HeaderText = "Due Date";
-            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            dataGridViewTextBoxColumn4.ReadOnly = true;
-            dataGridViewTextBoxColumn4.Width = 80;
-            // 
-            // Column6
-            // 
-            dataGridViewCellStyle7.Format = "d";
-            dataGridViewCellStyle7.NullValue = "-";
-            Column6.DefaultCellStyle = dataGridViewCellStyle7;
-            Column6.HeaderText = "Paid Date";
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            Column6.Width = 80;
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            dataGridViewTextBoxColumn5.HeaderText = "Catgory";
-            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            dataGridViewTextBoxColumn5.ReadOnly = true;
-            // 
-            // Column8
-            // 
-            Column8.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Column8.HeaderText = "Description";
-            Column8.MinimumWidth = 250;
-            Column8.Name = "Column8";
-            Column8.ReadOnly = true;
-            // 
-            // Column7
-            // 
-            Column7.HeaderText = "Wallet";
-            Column7.Name = "Column7";
-            Column7.ReadOnly = true;
             // 
             // btnAddTransaction
             // 
@@ -317,8 +271,8 @@ namespace DemoProject
             // 
             // dataGridViewTextBoxColumn6
             // 
-            dataGridViewCellStyle8.Format = "d";
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle4.Format = "d";
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridViewTextBoxColumn6.HeaderText = "Due Date";
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             dataGridViewTextBoxColumn6.ReadOnly = true;
@@ -374,6 +328,52 @@ namespace DemoProject
             btnAdvSearch.UseVisualStyleBackColor = true;
             btnAdvSearch.Click += btnAdvSearch_Click;
             // 
+            // Column5
+            // 
+            Column5.HeaderText = "Status";
+            Column5.Name = "Column5";
+            Column5.ReadOnly = true;
+            Column5.Width = 70;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            dataGridViewCellStyle2.Format = "d";
+            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewTextBoxColumn4.HeaderText = "Eff. Date";
+            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            dataGridViewTextBoxColumn4.ReadOnly = true;
+            dataGridViewTextBoxColumn4.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            dataGridViewTextBoxColumn5.HeaderText = "Catgory";
+            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            dataGridViewTextBoxColumn5.ReadOnly = true;
+            // 
+            // Column8
+            // 
+            Column8.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Column8.HeaderText = "Description";
+            Column8.MinimumWidth = 250;
+            Column8.Name = "Column8";
+            Column8.ReadOnly = true;
+            // 
+            // Column9
+            // 
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N2";
+            Column9.DefaultCellStyle = dataGridViewCellStyle3;
+            Column9.HeaderText = "Value";
+            Column9.Name = "Column9";
+            Column9.ReadOnly = true;
+            Column9.Width = 75;
+            // 
+            // Column7
+            // 
+            Column7.HeaderText = "Wallet";
+            Column7.Name = "Column7";
+            Column7.ReadOnly = true;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -426,16 +426,16 @@ namespace DemoProject
         private Button btnAddCategory;
         private Button btnAddTransaction;
         private DataGridView grdTxRecent;
-        private DataGridViewTextBoxColumn Column5;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private DataGridViewTextBoxColumn Column6;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private DataGridViewTextBoxColumn Column8;
-        private DataGridViewTextBoxColumn Column7;
         private DataGridView grdTxDue;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
         private Button btnTransactionBook;
         private Button btnAdvSearch;
+        private DataGridViewTextBoxColumn Column5;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private DataGridViewTextBoxColumn Column8;
+        private DataGridViewTextBoxColumn Column9;
+        private DataGridViewTextBoxColumn Column7;
     }
 }
