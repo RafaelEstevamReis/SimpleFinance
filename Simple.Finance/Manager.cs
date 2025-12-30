@@ -154,6 +154,11 @@ public class Manager
 
     #region Transactions
 
+    public Tables.Transac? GetTransactionById(long id)
+    {
+        using var cnn = db.GetConnection();
+        return cnn.Get<Tables.Transac>(id);
+    }
     public IEnumerable<Tables.Transac> GetTransactions(SearchTransactionsDate dateType, DateTime start, DateTime end)
     {
         string add = "";
