@@ -89,7 +89,7 @@ namespace DemoProject
             var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
             if (result != DialogResult.OK) return;
 
-            manager.CreateUpdateTransaction(t);
+            //manager.CreateUpdateTransaction(t);
             refresh();
         }
     }

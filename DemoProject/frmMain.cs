@@ -181,12 +181,12 @@ namespace DemoProject
                 Changed = DateTime.UtcNow,
                 DueDate = DateTime.UtcNow,
                 PaymentDate = DateTime.UtcNow,
-                Description = "New Category",
+                Description = "New Transaction",
             };
             var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
             if (result != DialogResult.OK) return;
 
-            manager.CreateUpdateTransaction(t);
+            //manager.CreateUpdateTransaction(t);
         }
 
         private void editCategory(Category c)
@@ -219,7 +219,7 @@ namespace DemoProject
             var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
             if (result != DialogResult.OK) return;
 
-            manager.CreateUpdateTransaction(t);
+            //manager.CreateUpdateTransaction(t);
         }
 
         private void deleteCategory(Category c)

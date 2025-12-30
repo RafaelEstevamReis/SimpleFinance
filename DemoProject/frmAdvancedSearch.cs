@@ -103,14 +103,17 @@ namespace DemoProject
                 grdTransactions.Rows[ix].Tag = tx;
 
                 if (tx.Status == Transac.PaymentStatus.Paid) grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.LightGreen;
-                if (tx.Status == Transac.PaymentStatus.Unpaid)
+                else if (tx.Status == Transac.PaymentStatus.Unpaid)
                 {
                     if (tx.DueDate.Date < DateTime.Now.Date)
                     {
                         grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.MistyRose;
                     }
                 }
-
+                else if (tx.Status == Transac.PaymentStatus.Reversed)
+                {
+                    grdTransactions.Rows[ix].DefaultCellStyle.Font = new Font(this.Font, FontStyle.Strikeout);
+                }
             }
             // Restore grid positions
             if (fsri > 0)
@@ -178,7 +181,7 @@ namespace DemoProject
             var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
             if (result != DialogResult.OK) return;
 
-            manager.CreateUpdateTransaction(t);
+            //manager.CreateUpdateTransaction(t);
             search();
         }
 

@@ -1,7 +1,9 @@
 ﻿using DemoProject.Components;
+using Simple.Finance;
 using Simple.Finance.Tables;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -9,6 +11,7 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgEditTransaction : DialogBase
     {
+        private Manager manager;
         private Transac transaction;
         private Category[] categories;
         private Wallet[] wallets;
@@ -20,6 +23,11 @@ namespace DemoProject.Dialogs
 
         private void dlgEditTransaction_Load(object sender, EventArgs e)
         {
+            this.Height = 357;
+
+            lblAdvanced.Visible = transaction.Id == 0;
+            rdoReversed.Visible = transaction.Id > 0;
+
             lblId.Text = transaction.Id.ToString();
             lblCreated.Text = transaction.Created.ToLocalTime().ToString("d");
             lblChanged.Text = transaction.Changed.ToLocalTime().ToString("dd/MM/yyyy HH:mm");
@@ -28,7 +36,8 @@ namespace DemoProject.Dialogs
             txtName.Text = transaction.Description;
 
             if (transaction.Status == Transac.PaymentStatus.Paid) rdoPaid.Checked = true;
-            else rdoUnpaid.Checked = true;
+            else if (transaction.Status == Transac.PaymentStatus.Unpaid) rdoUnpaid.Checked = true;
+            else rdoReversed.Checked = true;
 
             if (transaction.DueValue > 0) rdoIncome.Checked = true;
             else rdoExpense.Checked = true;
@@ -49,6 +58,8 @@ namespace DemoProject.Dialogs
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            bool isNew = transaction.Id == 0;
+
             if (txtName.Text.Length < 1)
             {
                 MessageBox.Show("Transaction Description bust be longer than 1");
@@ -71,11 +82,27 @@ namespace DemoProject.Dialogs
                 MessageBox.Show("Category bust be selected");
                 return;
             }
+            if (rdoRecuringYes.Checked)
+            {
+                if (cboRecuringPeriod.SelectedIndex < 0)
+                {
+                    MessageBox.Show("A recuring period bust be selected");
+                    return;
+                }
+            }
+            if(isNew && rdoReversed.Checked)
+            {
+                MessageBox.Show("A transaction cannot be created as Reversed");
+                return;
+            }
 
             transaction.WalletId = (long)cboWallet.SelectedValue;
             transaction.CategoryId = (long)cboCategory.SelectedValue;
 
-            transaction.Status = rdoPaid.Checked ? Transac.PaymentStatus.Paid : Transac.PaymentStatus.Unpaid;
+            if (rdoPaid.Checked) transaction.Status = Transac.PaymentStatus.Paid;
+            else if (rdoReversed.Checked) transaction.Status = Transac.PaymentStatus.Reversed;
+            else transaction.Status = Transac.PaymentStatus.Unpaid;
+
             transaction.DueDate = dtDue.Value;
             transaction.PaymentDate = dtPaid.Value;
 
@@ -85,12 +112,52 @@ namespace DemoProject.Dialogs
 
             transaction.Description = txtName.Text;
 
+            manager.CreateUpdateTransaction(transaction); // Save
+            // Recuring?
+            if (isNew && rdoRecuringYes.Checked)
+            {
+                // Handle description
+                string oldDesc = transaction.Description;
+                // Adjust original
+                transaction.Description = oldDesc + $" (1/{udRecuringCopies.Value + 1})";
+                manager.CreateUpdateTransaction(transaction); // Save
+
+                var txForCopy = manager.GetTransactionById(transaction.Id);
+                Debug.Assert(txForCopy is not null);
+                if (txForCopy == null)
+                {
+                    txForCopy = transaction;
+                    txForCopy.Id = 0;
+                }
+
+                for (int i = 0; i < udRecuringCopies.Value; i++)
+                {
+                    txForCopy.Id = 0; // New Tr
+                    txForCopy.Description = oldDesc + $" ({i + 2}/{udRecuringCopies.Value + 1})";
+                    // Advance date
+                    if (cboRecuringPeriod.SelectedIndex == 0)
+                    {
+                        txForCopy.DueDate = txForCopy.DueDate.AddDays(7);
+                        txForCopy.PaymentDate = txForCopy.PaymentDate.AddDays(7);
+                    }
+                    else
+                    {
+                        txForCopy.DueDate = txForCopy.DueDate.AddMonths(1);
+                        txForCopy.PaymentDate = txForCopy.PaymentDate.AddMonths(1);
+                    }
+
+                    // Save
+                    manager.CreateUpdateTransaction(txForCopy); // Save
+                }
+            }
+
             DialogResult = DialogResult.OK;
         }
 
-        public static DialogResult ShowDialog(Transac transaction, Simple.Finance.Manager manager)
+        public static DialogResult ShowDialog(Transac transaction, Manager manager)
         {
             using var frm = new dlgEditTransaction();
+            frm.manager = manager;
             frm.transaction = transaction;
             frm.categories = manager.GetCategories().Where(o => !o.IsDeleted).ToArray();
             frm.wallets = manager.GetWallets().Where(o => !o.IsDeleted).ToArray();
@@ -125,5 +192,10 @@ namespace DemoProject.Dialogs
             pnlPaid.Enabled = rdoPaid.Checked;
         }
 
+        private void lblAdvanced_Click(object sender, EventArgs e)
+        {
+            Height = 445;
+            lblAdvanced.Visible = false;
+        }
     }
 }

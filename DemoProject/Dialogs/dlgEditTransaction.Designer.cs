@@ -59,15 +59,26 @@
             txtDue = new DemoProject.Components.MoneyBox();
             txtPaid = new DemoProject.Components.MoneyBox();
             pnlPaid = new System.Windows.Forms.Panel();
+            lblAdvanced = new System.Windows.Forms.Label();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            udRecuringCopies = new System.Windows.Forms.NumericUpDown();
+            label14 = new System.Windows.Forms.Label();
+            label13 = new System.Windows.Forms.Label();
+            cboRecuringPeriod = new System.Windows.Forms.ComboBox();
+            rdoRecuringYes = new System.Windows.Forms.RadioButton();
+            rdoRecuringNo = new System.Windows.Forms.RadioButton();
+            rdoReversed = new System.Windows.Forms.RadioButton();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             pnlPaid.SuspendLayout();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)udRecuringCopies).BeginInit();
             SuspendLayout();
             // 
             // btnCancel
             // 
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(207, 283);
+            btnCancel.Location = new System.Drawing.Point(195, 283);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
             btnCancel.TabIndex = 11;
@@ -76,7 +87,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(80, 283);
+            btnSave.Location = new System.Drawing.Point(93, 283);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 10;
@@ -208,17 +219,18 @@
             // 
             // panel2
             // 
+            panel2.Controls.Add(rdoReversed);
             panel2.Controls.Add(rdoPaid);
             panel2.Controls.Add(rdoUnpaid);
             panel2.Location = new System.Drawing.Point(121, 130);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(161, 27);
+            panel2.Size = new System.Drawing.Size(234, 27);
             panel2.TabIndex = 18;
             // 
             // rdoPaid
             // 
             rdoPaid.AutoSize = true;
-            rdoPaid.Location = new System.Drawing.Point(86, 3);
+            rdoPaid.Location = new System.Drawing.Point(77, 3);
             rdoPaid.Name = "rdoPaid";
             rdoPaid.Size = new System.Drawing.Size(48, 19);
             rdoPaid.TabIndex = 1;
@@ -367,11 +379,110 @@
             pnlPaid.Size = new System.Drawing.Size(349, 30);
             pnlPaid.TabIndex = 32;
             // 
+            // lblAdvanced
+            // 
+            lblAdvanced.AutoSize = true;
+            lblAdvanced.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            lblAdvanced.Location = new System.Drawing.Point(1, 300);
+            lblAdvanced.Name = "lblAdvanced";
+            lblAdvanced.Size = new System.Drawing.Size(75, 17);
+            lblAdvanced.TabIndex = 33;
+            lblAdvanced.Text = "Advanced ▼";
+            lblAdvanced.Click += lblAdvanced_Click;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(udRecuringCopies);
+            groupBox1.Controls.Add(label14);
+            groupBox1.Controls.Add(label13);
+            groupBox1.Controls.Add(cboRecuringPeriod);
+            groupBox1.Controls.Add(rdoRecuringYes);
+            groupBox1.Controls.Add(rdoRecuringNo);
+            groupBox1.Location = new System.Drawing.Point(9, 317);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(345, 83);
+            groupBox1.TabIndex = 34;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Create as Recuring";
+            // 
+            // udRecuringCopies
+            // 
+            udRecuringCopies.Location = new System.Drawing.Point(233, 47);
+            udRecuringCopies.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
+            udRecuringCopies.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            udRecuringCopies.Name = "udRecuringCopies";
+            udRecuringCopies.Size = new System.Drawing.Size(44, 23);
+            udRecuringCopies.TabIndex = 37;
+            udRecuringCopies.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new System.Drawing.Point(183, 50);
+            label14.Name = "label14";
+            label14.Size = new System.Drawing.Size(46, 15);
+            label14.TabIndex = 36;
+            label14.Text = "Copies:";
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new System.Drawing.Point(9, 50);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(34, 15);
+            label13.TabIndex = 35;
+            label13.Text = "Type:";
+            // 
+            // cboRecuringPeriod
+            // 
+            cboRecuringPeriod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cboRecuringPeriod.FormattingEnabled = true;
+            cboRecuringPeriod.Items.AddRange(new object[] { "Weekly", "Monthly" });
+            cboRecuringPeriod.Location = new System.Drawing.Point(49, 47);
+            cboRecuringPeriod.Name = "cboRecuringPeriod";
+            cboRecuringPeriod.Size = new System.Drawing.Size(121, 23);
+            cboRecuringPeriod.TabIndex = 2;
+            // 
+            // rdoRecuringYes
+            // 
+            rdoRecuringYes.AutoSize = true;
+            rdoRecuringYes.Location = new System.Drawing.Point(121, 19);
+            rdoRecuringYes.Name = "rdoRecuringYes";
+            rdoRecuringYes.Size = new System.Drawing.Size(96, 19);
+            rdoRecuringYes.TabIndex = 1;
+            rdoRecuringYes.Text = "Create copies";
+            rdoRecuringYes.UseVisualStyleBackColor = true;
+            // 
+            // rdoRecuringNo
+            // 
+            rdoRecuringNo.AutoSize = true;
+            rdoRecuringNo.Checked = true;
+            rdoRecuringNo.Location = new System.Drawing.Point(8, 19);
+            rdoRecuringNo.Name = "rdoRecuringNo";
+            rdoRecuringNo.Size = new System.Drawing.Size(100, 19);
+            rdoRecuringNo.TabIndex = 0;
+            rdoRecuringNo.TabStop = true;
+            rdoRecuringNo.Text = "One time only";
+            rdoRecuringNo.UseVisualStyleBackColor = true;
+            // 
+            // rdoReversed
+            // 
+            rdoReversed.AutoSize = true;
+            rdoReversed.Location = new System.Drawing.Point(140, 3);
+            rdoReversed.Name = "rdoReversed";
+            rdoReversed.Size = new System.Drawing.Size(72, 19);
+            rdoReversed.TabIndex = 2;
+            rdoReversed.TabStop = true;
+            rdoReversed.Text = "Reversed";
+            rdoReversed.UseVisualStyleBackColor = true;
+            // 
             // dlgEditTransaction
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(362, 316);
+            ClientSize = new System.Drawing.Size(362, 405);
+            Controls.Add(lblAdvanced);
+            Controls.Add(groupBox1);
             Controls.Add(pnlPaid);
             Controls.Add(txtDue);
             Controls.Add(label3);
@@ -407,6 +518,9 @@
             panel2.PerformLayout();
             pnlPaid.ResumeLayout(false);
             pnlPaid.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)udRecuringCopies).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -444,5 +558,14 @@
         private Components.MoneyBox txtDue;
         private Components.MoneyBox txtPaid;
         private System.Windows.Forms.Panel pnlPaid;
+        private System.Windows.Forms.Label lblAdvanced;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton rdoRecuringNo;
+        private System.Windows.Forms.RadioButton rdoRecuringYes;
+        private System.Windows.Forms.ComboBox cboRecuringPeriod;
+        private System.Windows.Forms.NumericUpDown udRecuringCopies;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.RadioButton rdoReversed;
     }
 }
