@@ -50,7 +50,7 @@ namespace DemoProject.Dialogs
             btnCancel.Location = new Point(217, 116);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(75, 23);
-            btnCancel.TabIndex = 11;
+            btnCancel.TabIndex = 4;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -59,7 +59,7 @@ namespace DemoProject.Dialogs
             btnSave.Location = new Point(90, 116);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(75, 23);
-            btnSave.TabIndex = 10;
+            btnSave.TabIndex = 3;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
@@ -70,7 +70,7 @@ namespace DemoProject.Dialogs
             txtName.MaxLength = 32;
             txtName.Name = "txtName";
             txtName.Size = new Size(358, 23);
-            txtName.TabIndex = 9;
+            txtName.TabIndex = 2;
             // 
             // lblId
             // 
@@ -78,7 +78,7 @@ namespace DemoProject.Dialogs
             lblId.Location = new Point(85, 9);
             lblId.Name = "lblId";
             lblId.Size = new Size(12, 15);
-            lblId.TabIndex = 8;
+            lblId.TabIndex = 0;
             lblId.Text = "-";
             // 
             // label2
@@ -114,7 +114,7 @@ namespace DemoProject.Dialogs
             rdoExpense.Location = new Point(3, 3);
             rdoExpense.Name = "rdoExpense";
             rdoExpense.Size = new Size(68, 19);
-            rdoExpense.TabIndex = 13;
+            rdoExpense.TabIndex = 0;
             rdoExpense.TabStop = true;
             rdoExpense.Text = "Expense";
             rdoExpense.UseVisualStyleBackColor = true;
@@ -125,7 +125,7 @@ namespace DemoProject.Dialogs
             rdoIncome.Location = new Point(77, 3);
             rdoIncome.Name = "rdoIncome";
             rdoIncome.Size = new Size(65, 19);
-            rdoIncome.TabIndex = 14;
+            rdoIncome.TabIndex = 1;
             rdoIncome.TabStop = true;
             rdoIncome.Text = "Income";
             rdoIncome.UseVisualStyleBackColor = true;
@@ -137,7 +137,7 @@ namespace DemoProject.Dialogs
             pnlType.Location = new Point(103, 32);
             pnlType.Name = "pnlType";
             pnlType.Size = new Size(171, 26);
-            pnlType.TabIndex = 15;
+            pnlType.TabIndex = 1;
             // 
             // dlgEditCategory
             // 
@@ -153,6 +153,7 @@ namespace DemoProject.Dialogs
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            KeyPreview = true;
             Name = "dlgEditCategory";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Edit Category";

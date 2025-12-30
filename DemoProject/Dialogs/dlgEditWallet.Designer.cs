@@ -63,7 +63,7 @@ namespace DemoProject.Dialogs
             lblId.Location = new Point(74, 9);
             lblId.Name = "lblId";
             lblId.Size = new Size(12, 15);
-            lblId.TabIndex = 2;
+            lblId.TabIndex = 0;
             lblId.Text = "-";
             // 
             // txtName
@@ -72,14 +72,14 @@ namespace DemoProject.Dialogs
             txtName.MaxLength = 32;
             txtName.Name = "txtName";
             txtName.Size = new Size(358, 23);
-            txtName.TabIndex = 3;
+            txtName.TabIndex = 1;
             // 
             // btnSave
             // 
             btnSave.Location = new Point(91, 94);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(75, 23);
-            btnSave.TabIndex = 4;
+            btnSave.TabIndex = 2;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
@@ -90,7 +90,7 @@ namespace DemoProject.Dialogs
             btnCancel.Location = new Point(218, 94);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(75, 23);
-            btnCancel.TabIndex = 5;
+            btnCancel.TabIndex = 3;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -106,6 +106,7 @@ namespace DemoProject.Dialogs
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            KeyPreview = true;
             Name = "dlgEditWallet";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Edit Wallet";

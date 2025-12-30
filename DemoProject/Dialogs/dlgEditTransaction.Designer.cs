@@ -44,6 +44,7 @@
             label7 = new System.Windows.Forms.Label();
             label8 = new System.Windows.Forms.Label();
             panel2 = new System.Windows.Forms.Panel();
+            rdoReversed = new System.Windows.Forms.RadioButton();
             rdoPaid = new System.Windows.Forms.RadioButton();
             rdoUnpaid = new System.Windows.Forms.RadioButton();
             label9 = new System.Windows.Forms.Label();
@@ -67,7 +68,6 @@
             cboRecuringPeriod = new System.Windows.Forms.ComboBox();
             rdoRecuringYes = new System.Windows.Forms.RadioButton();
             rdoRecuringNo = new System.Windows.Forms.RadioButton();
-            rdoReversed = new System.Windows.Forms.RadioButton();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             pnlPaid.SuspendLayout();
@@ -136,7 +136,7 @@
             lblCreated.Location = new System.Drawing.Point(124, 10);
             lblCreated.Name = "lblCreated";
             lblCreated.Size = new System.Drawing.Size(12, 15);
-            lblCreated.TabIndex = 13;
+            lblCreated.TabIndex = 0;
             lblCreated.Text = "-";
             // 
             // label4
@@ -154,7 +154,7 @@
             lblChanged.Location = new System.Drawing.Point(251, 10);
             lblChanged.Name = "lblChanged";
             lblChanged.Size = new System.Drawing.Size(12, 15);
-            lblChanged.TabIndex = 15;
+            lblChanged.TabIndex = 1;
             lblChanged.Text = "-";
             // 
             // label6
@@ -173,7 +173,7 @@
             panel1.Location = new System.Drawing.Point(121, 64);
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(161, 27);
-            panel1.TabIndex = 16;
+            panel1.TabIndex = 3;
             // 
             // rdoIncome
             // 
@@ -225,7 +225,18 @@
             panel2.Location = new System.Drawing.Point(121, 130);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(234, 27);
-            panel2.TabIndex = 18;
+            panel2.TabIndex = 5;
+            // 
+            // rdoReversed
+            // 
+            rdoReversed.AutoSize = true;
+            rdoReversed.Location = new System.Drawing.Point(140, 3);
+            rdoReversed.Name = "rdoReversed";
+            rdoReversed.Size = new System.Drawing.Size(72, 19);
+            rdoReversed.TabIndex = 2;
+            rdoReversed.TabStop = true;
+            rdoReversed.Text = "Reversed";
+            rdoReversed.UseVisualStyleBackColor = true;
             // 
             // rdoPaid
             // 
@@ -277,7 +288,7 @@
             dtDue.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDue.Name = "dtDue";
             dtDue.Size = new System.Drawing.Size(95, 23);
-            dtDue.TabIndex = 22;
+            dtDue.TabIndex = 6;
             // 
             // dtPaid
             // 
@@ -288,7 +299,7 @@
             dtPaid.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtPaid.Name = "dtPaid";
             dtPaid.Size = new System.Drawing.Size(132, 23);
-            dtPaid.TabIndex = 23;
+            dtPaid.TabIndex = 0;
             // 
             // label11
             // 
@@ -315,7 +326,7 @@
             cboWallet.Location = new System.Drawing.Point(76, 33);
             cboWallet.Name = "cboWallet";
             cboWallet.Size = new System.Drawing.Size(279, 23);
-            cboWallet.TabIndex = 26;
+            cboWallet.TabIndex = 2;
             // 
             // cboCategory
             // 
@@ -324,7 +335,7 @@
             cboCategory.Location = new System.Drawing.Point(76, 99);
             cboCategory.Name = "cboCategory";
             cboCategory.Size = new System.Drawing.Size(279, 23);
-            cboCategory.TabIndex = 27;
+            cboCategory.TabIndex = 4;
             // 
             // label3
             // 
@@ -351,7 +362,7 @@
             txtDue.MoneySign = "";
             txtDue.Name = "txtDue";
             txtDue.Size = new System.Drawing.Size(80, 23);
-            txtDue.TabIndex = 30;
+            txtDue.TabIndex = 7;
             txtDue.Text = "0,00";
             txtDue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             txtDue.Value = new decimal(new int[] { 0, 0, 0, 0 });
@@ -363,7 +374,7 @@
             txtPaid.MoneySign = "";
             txtPaid.Name = "txtPaid";
             txtPaid.Size = new System.Drawing.Size(81, 23);
-            txtPaid.TabIndex = 31;
+            txtPaid.TabIndex = 1;
             txtPaid.Text = "0,00";
             txtPaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             txtPaid.Value = new decimal(new int[] { 0, 0, 0, 0 });
@@ -377,7 +388,7 @@
             pnlPaid.Location = new System.Drawing.Point(9, 193);
             pnlPaid.Name = "pnlPaid";
             pnlPaid.Size = new System.Drawing.Size(349, 30);
-            pnlPaid.TabIndex = 32;
+            pnlPaid.TabIndex = 8;
             // 
             // lblAdvanced
             // 
@@ -401,7 +412,7 @@
             groupBox1.Location = new System.Drawing.Point(9, 317);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(345, 83);
-            groupBox1.TabIndex = 34;
+            groupBox1.TabIndex = 12;
             groupBox1.TabStop = false;
             groupBox1.Text = "Create as Recuring";
             // 
@@ -412,7 +423,7 @@
             udRecuringCopies.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             udRecuringCopies.Name = "udRecuringCopies";
             udRecuringCopies.Size = new System.Drawing.Size(44, 23);
-            udRecuringCopies.TabIndex = 37;
+            udRecuringCopies.TabIndex = 3;
             udRecuringCopies.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // label14
@@ -464,17 +475,6 @@
             rdoRecuringNo.TabStop = true;
             rdoRecuringNo.Text = "One time only";
             rdoRecuringNo.UseVisualStyleBackColor = true;
-            // 
-            // rdoReversed
-            // 
-            rdoReversed.AutoSize = true;
-            rdoReversed.Location = new System.Drawing.Point(140, 3);
-            rdoReversed.Name = "rdoReversed";
-            rdoReversed.Size = new System.Drawing.Size(72, 19);
-            rdoReversed.TabIndex = 2;
-            rdoReversed.TabStop = true;
-            rdoReversed.Text = "Reversed";
-            rdoReversed.UseVisualStyleBackColor = true;
             // 
             // dlgEditTransaction
             // 
