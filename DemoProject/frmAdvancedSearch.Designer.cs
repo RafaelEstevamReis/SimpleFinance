@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             groupBox1 = new System.Windows.Forms.GroupBox();
             label4 = new System.Windows.Forms.Label();
             dtTo = new System.Windows.Forms.DateTimePicker();
@@ -63,6 +63,7 @@
             label8 = new System.Windows.Forms.Label();
             txtTotalSelected = new DemoProject.Components.MoneyBox();
             label9 = new System.Windows.Forms.Label();
+            chkHideReversed = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
@@ -138,6 +139,7 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(chkHideReversed);
             groupBox2.Controls.Add(cboReferenceType);
             groupBox2.Controls.Add(chkFilterReference);
             groupBox2.Controls.Add(label5);
@@ -256,9 +258,9 @@
             // 
             // Column1
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "d";
-            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "d";
+            Column1.DefaultCellStyle = dataGridViewCellStyle4;
             Column1.HeaderText = "Due Date";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
@@ -266,18 +268,18 @@
             // 
             // Column4
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Format = "N2";
+            Column4.DefaultCellStyle = dataGridViewCellStyle5;
             Column4.HeaderText = "Value";
             Column4.Name = "Column4";
             Column4.ReadOnly = true;
             // 
             // Column5
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "d";
-            Column5.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Format = "d";
+            Column5.DefaultCellStyle = dataGridViewCellStyle6;
             Column5.HeaderText = "Paid Date";
             Column5.Name = "Column5";
             Column5.ReadOnly = true;
@@ -414,6 +416,16 @@
             label9.TabIndex = 14;
             label9.Text = "Total Selected:";
             // 
+            // chkHideReversed
+            // 
+            chkHideReversed.AutoSize = true;
+            chkHideReversed.Location = new System.Drawing.Point(202, 77);
+            chkHideReversed.Name = "chkHideReversed";
+            chkHideReversed.Size = new System.Drawing.Size(106, 19);
+            chkHideReversed.TabIndex = 9;
+            chkHideReversed.Text = "Hide Reverseds";
+            chkHideReversed.UseVisualStyleBackColor = true;
+            // 
             // frmAdvancedSearch
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -483,5 +495,6 @@
         private System.Windows.Forms.Label label8;
         private Components.MoneyBox txtTotalSelected;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox chkHideReversed;
     }
 }

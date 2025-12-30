@@ -81,6 +81,7 @@ namespace DemoProject
 
             if (chkHidePaids.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Paid);
             if (chkHideUnpaids.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Unpaid);
+            if (chkHideReversed.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Reversed);
 
             var dicCategories = manager.GetCategoriesDict();
 
