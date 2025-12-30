@@ -265,7 +265,7 @@ public class Manager
         // Check signs
         if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not zero");
         var sign = category.IsExpense ? -1 : 1;
-        tx.DueValue = Math.Abs(tx.PaidValue) * sign;
+        tx.DueValue = Math.Abs(tx.DueValue) * sign;
         tx.PaidValue = Math.Abs(tx.PaidValue) * sign;
         tx.RC_DueValue = Math.Abs(tx.RC_DueValue) * sign;
         tx.RC_PaidValue = Math.Abs(tx.RC_PaidValue) * sign;
