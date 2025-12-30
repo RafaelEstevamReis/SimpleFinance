@@ -227,10 +227,24 @@ public class Manager
         });
     }
 
-    public long CreateUpdateTransaction(Tables.Transac tx) => createUpdateTransaction(tx, generateLog: true);
-    private long createUpdateTransaction(Tables.Transac tx, bool generateLog)
+    public long CreateUpdateTransaction(Tables.Transac tx)
     {
         using var cnn = db.GetConnection();
+        return createUpdateTransaction(cnn, tx, generateLog: true);
+    }
+    public IEnumerable<long> CreateUpdateBulkTransaction(IEnumerable<Tables.Transac> txs)
+    {
+        List<long> lst = [];
+        using var cnn = db.GetConnection();
+        foreach (var tx in txs)
+        {
+            var id = createUpdateTransaction(cnn, tx, generateLog: true);
+            lst.Add(id);
+        }
+        return lst;
+    }
+    private long createUpdateTransaction(ISqliteConnection cnn, Tables.Transac tx, bool generateLog)
+    {
         var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transac>(tx.Id);
 
         // check wallet
@@ -317,11 +331,11 @@ public class Manager
             Type = Tables.Transac.TransactionType.Simple, // Start as Simple
         };
 
-        // save transactions
-        txPay.Id = createUpdateTransaction(txPay, generateLog: false);
-        txReceive.Id = createUpdateTransaction(txReceive, generateLog: false);
-        // Update as Transfer
         using var cnn = db.GetConnection();
+        // save transactions
+        txPay.Id = createUpdateTransaction(cnn, txPay, generateLog: false);
+        txReceive.Id = createUpdateTransaction(cnn, txReceive, generateLog: false);
+        // Update as Transfer
         cnn.Execute($"UPDATE {nameof(Tables.Transac)} SET Type = @type, TypeOtherId = @other WHERE Id = @id ", new
         {
             id = txPay.Id,
