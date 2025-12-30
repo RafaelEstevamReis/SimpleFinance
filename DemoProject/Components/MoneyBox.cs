@@ -37,20 +37,24 @@ namespace DemoProject.Components
 
             if (e.KeyCode == Keys.Back)
             {
+                checkSel();
+
                 Value /= 10;
                 Value = Math.Round(Value, DecimalPlaces, MidpointRounding.ToZero);
                 base.OnKeyDown(e);
             }
             else if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
             {
-                Value *= 10;
-                Value += (e.KeyCode - Keys.D0) * (1 / (decimal)Math.Pow(10, DecimalPlaces));
+                checkSel();
+                processNumber(e.KeyCode - Keys.D0);
+
                 base.OnKeyDown(e);
             }
             else if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
             {
-                Value *= 10;
-                Value += (e.KeyCode - Keys.NumPad0) * (1 / (decimal)Math.Pow(10, DecimalPlaces)); ;
+                checkSel();
+                processNumber(e.KeyCode - Keys.NumPad0);
+
                 base.OnKeyDown(e);
             }
             else
@@ -63,6 +67,22 @@ namespace DemoProject.Components
 
             renderValue();
         }
+
+        private void checkSel()
+        {
+            if(SelectedText == Text)
+            {
+                value = 0;
+                Text = "";
+            }
+        }
+
+        private void processNumber(int n)
+        {
+            Value *= 10;
+            Value += n * (1 / (decimal)Math.Pow(10, DecimalPlaces));
+        }
+
         void renderValue()
         {
             if (IsDisposed) return;
