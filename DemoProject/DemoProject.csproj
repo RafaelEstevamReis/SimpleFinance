@@ -1,15 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>disable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>disable</ImplicitUsings>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Simple.Finance\Simple.Finance.csproj" />
-  </ItemGroup>
+		<Authors>RafaelEstevam.Nest</Authors>
+		<Company>RafaelEstevam.Net</Company>
+		<Product>Simple C# personal finance manager</Product>
+		<Description>Simple C# personal finance manager</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/RafaelEstevamReis/SimpleFinance</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/RafaelEstevamReis/SimpleFinance</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>Simple API Finance Manager</PackageTags>
+		<PackageReleaseNotes>See examples and documentation on the GitHub page https://github.com/RafaelEstevamReis/SimpleFinance</PackageReleaseNotes>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Simple.Finance\Simple.Finance.csproj" />
+	</ItemGroup>
 
 </Project>
