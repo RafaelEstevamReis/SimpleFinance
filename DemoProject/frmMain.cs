@@ -105,9 +105,63 @@ namespace DemoProject
         private void grdCategories_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
         private void grdTxRecent_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
         private void grdTxDue_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
+        private void grdTxDue_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right) return;
+            if (e.RowIndex < 0) return;
+
+            grdTxDue.ClearSelection();
+            grdTxDue.Rows[e.RowIndex].Selected = true;
+            cntxDueTx.Tag = grdTxDue.Rows[e.RowIndex].Tag;
+
+            cntxDueTx.Show(Cursor.Position);
+        }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e) => editTarget(cntxEditDelete.Tag);
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e) => deleteTarget(cntxEditDelete.Tag);
+
+        private void dueTxOpenForEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            editTarget(cntxDueTx.Tag);
+        }
+        private void DueTxReverseTransactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            deleteTarget(cntxDueTx.Tag);
+        }
+        private void dueTxPayOnDueDateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tx = cntxDueTx.Tag as Transac;
+            if (tx == null) return;
+
+            if (tx.Type != Transac.TransactionType.Simple)
+            {
+                MessageBox.Show("This type of transaction cannot be edited here");
+                return;
+            }
+
+            tx.Status = Transac.PaymentStatus.Paid;
+            tx.PaymentDate = tx.DueDate.Date;
+            tx.PaidValue = tx.DueValue;
+
+            manager.CreateUpdateTransaction(tx);
+        }
+        private void dueTxPayAsTodayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tx = cntxDueTx.Tag as Transac;
+            if (tx == null) return;
+
+            if (tx.Type != Transac.TransactionType.Simple)
+            {
+                MessageBox.Show("This type of transaction cannot be edited here");
+                return;
+            }
+
+            tx.Status = Transac.PaymentStatus.Paid;
+            tx.PaymentDate = DateTime.Now;
+            tx.PaidValue = tx.DueValue;
+
+            manager.CreateUpdateTransaction(tx);
+        }
 
         private void btnAddWallet_Click(object sender, EventArgs e) => newWallet();
         private void btnAddCategory_Click(object sender, EventArgs e) => newCategory();
@@ -145,6 +199,16 @@ namespace DemoProject
         {
             if (target is Wallet w) deleteWallet(w);
             if (target is Category c) deleteCategory(c);
+            if (target is Transac t)
+            {
+                if(t.Type != Transac.TransactionType.Simple)
+                {
+                    MessageBox.Show("This type of transaction cannot be reversed");
+                    return;
+                }
+                t.Status = Transac.PaymentStatus.Reversed;
+                manager.CreateUpdateTransaction(t);
+            }
         }
 
         private void newWallet()
@@ -253,5 +317,6 @@ namespace DemoProject
         {
             frmAdvancedSearch.ShowDialog(manager);
         }
+
     }
 }

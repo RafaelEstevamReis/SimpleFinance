@@ -32,10 +32,10 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             grdWallets = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
@@ -50,6 +50,12 @@ namespace DemoProject
             btnAddCategory = new Button();
             groupBox3 = new GroupBox();
             grdTxRecent = new DataGridView();
+            Column5 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
+            Column8 = new DataGridViewTextBoxColumn();
+            Column9 = new DataGridViewTextBoxColumn();
+            Column7 = new DataGridViewTextBoxColumn();
             btnAddTransaction = new Button();
             groupBox4 = new GroupBox();
             grdTxDue = new DataGridView();
@@ -60,12 +66,12 @@ namespace DemoProject
             deleteToolStripMenuItem = new ToolStripMenuItem();
             btnTransactionBook = new Button();
             btnAdvSearch = new Button();
-            Column5 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
-            Column8 = new DataGridViewTextBoxColumn();
-            Column9 = new DataGridViewTextBoxColumn();
-            Column7 = new DataGridViewTextBoxColumn();
+            cntxDueTx = new ContextMenuStrip(components);
+            markAsPaidToolStripMenuItem = new ToolStripMenuItem();
+            dueTxPayOnDueDateToolStripMenuItem = new ToolStripMenuItem();
+            dueTxPayAsTodayToolStripMenuItem = new ToolStripMenuItem();
+            dueTxOpenForEditToolStripMenuItem = new ToolStripMenuItem();
+            dueTxReverseTransactionToolStripMenuItem = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -75,6 +81,7 @@ namespace DemoProject
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTxDue).BeginInit();
             cntxEditDelete.SuspendLayout();
+            cntxDueTx.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -121,9 +128,9 @@ namespace DemoProject
             // 
             // Column3
             // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle5;
             Column3.HeaderText = "Balance";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
@@ -230,6 +237,52 @@ namespace DemoProject
             grdTxRecent.TabIndex = 2;
             grdTxRecent.CellDoubleClick += grdTxRecent_CellDoubleClick;
             // 
+            // Column5
+            // 
+            Column5.HeaderText = "Status";
+            Column5.Name = "Column5";
+            Column5.ReadOnly = true;
+            Column5.Width = 70;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            dataGridViewCellStyle6.Format = "d";
+            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewTextBoxColumn4.HeaderText = "Eff. Date";
+            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            dataGridViewTextBoxColumn4.ReadOnly = true;
+            dataGridViewTextBoxColumn4.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            dataGridViewTextBoxColumn5.HeaderText = "Catgory";
+            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            dataGridViewTextBoxColumn5.ReadOnly = true;
+            // 
+            // Column8
+            // 
+            Column8.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Column8.HeaderText = "Description";
+            Column8.MinimumWidth = 250;
+            Column8.Name = "Column8";
+            Column8.ReadOnly = true;
+            // 
+            // Column9
+            // 
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle7.Format = "N2";
+            Column9.DefaultCellStyle = dataGridViewCellStyle7;
+            Column9.HeaderText = "Value";
+            Column9.Name = "Column9";
+            Column9.ReadOnly = true;
+            Column9.Width = 75;
+            // 
+            // Column7
+            // 
+            Column7.HeaderText = "Wallet";
+            Column7.Name = "Column7";
+            Column7.ReadOnly = true;
+            // 
             // btnAddTransaction
             // 
             btnAddTransaction.Location = new Point(201, 498);
@@ -268,11 +321,12 @@ namespace DemoProject
             grdTxDue.Size = new Size(271, 229);
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
+            grdTxDue.CellMouseClick += grdTxDue_CellMouseClick;
             // 
             // dataGridViewTextBoxColumn6
             // 
-            dataGridViewCellStyle4.Format = "d";
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Format = "d";
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle8;
             dataGridViewTextBoxColumn6.HeaderText = "Due Date";
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             dataGridViewTextBoxColumn6.ReadOnly = true;
@@ -290,19 +344,19 @@ namespace DemoProject
             // 
             cntxEditDelete.Items.AddRange(new ToolStripItem[] { editToolStripMenuItem, deleteToolStripMenuItem });
             cntxEditDelete.Name = "cntxEditDelete";
-            cntxEditDelete.Size = new Size(108, 48);
+            cntxEditDelete.Size = new Size(145, 48);
             // 
             // editToolStripMenuItem
             // 
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(107, 22);
-            editToolStripMenuItem.Text = "Edit";
+            editToolStripMenuItem.Size = new Size(144, 22);
+            editToolStripMenuItem.Text = "Open for Edit";
             editToolStripMenuItem.Click += editToolStripMenuItem_Click;
             // 
             // deleteToolStripMenuItem
             // 
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            deleteToolStripMenuItem.Size = new Size(107, 22);
+            deleteToolStripMenuItem.Size = new Size(144, 22);
             deleteToolStripMenuItem.Text = "Delete";
             deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
             // 
@@ -328,51 +382,46 @@ namespace DemoProject
             btnAdvSearch.UseVisualStyleBackColor = true;
             btnAdvSearch.Click += btnAdvSearch_Click;
             // 
-            // Column5
+            // cntxDueTx
             // 
-            Column5.HeaderText = "Status";
-            Column5.Name = "Column5";
-            Column5.ReadOnly = true;
-            Column5.Width = 70;
+            cntxDueTx.Items.AddRange(new ToolStripItem[] { markAsPaidToolStripMenuItem, dueTxOpenForEditToolStripMenuItem, dueTxReverseTransactionToolStripMenuItem });
+            cntxDueTx.Name = "cntxDueTx";
+            cntxDueTx.Size = new Size(181, 92);
             // 
-            // dataGridViewTextBoxColumn4
+            // markAsPaidToolStripMenuItem
             // 
-            dataGridViewCellStyle2.Format = "d";
-            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle2;
-            dataGridViewTextBoxColumn4.HeaderText = "Eff. Date";
-            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            dataGridViewTextBoxColumn4.ReadOnly = true;
-            dataGridViewTextBoxColumn4.Width = 80;
+            markAsPaidToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { dueTxPayOnDueDateToolStripMenuItem, dueTxPayAsTodayToolStripMenuItem });
+            markAsPaidToolStripMenuItem.Name = "markAsPaidToolStripMenuItem";
+            markAsPaidToolStripMenuItem.Size = new Size(180, 22);
+            markAsPaidToolStripMenuItem.Text = "Mark as Paid";
             // 
-            // dataGridViewTextBoxColumn5
+            // dueTxPayOnDueDateToolStripMenuItem
             // 
-            dataGridViewTextBoxColumn5.HeaderText = "Catgory";
-            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            dataGridViewTextBoxColumn5.ReadOnly = true;
+            dueTxPayOnDueDateToolStripMenuItem.Name = "dueTxPayOnDueDateToolStripMenuItem";
+            dueTxPayOnDueDateToolStripMenuItem.Size = new Size(180, 22);
+            dueTxPayOnDueDateToolStripMenuItem.Text = "On Due Date";
+            dueTxPayOnDueDateToolStripMenuItem.Click += dueTxPayOnDueDateToolStripMenuItem_Click;
             // 
-            // Column8
+            // dueTxPayAsTodayToolStripMenuItem
             // 
-            Column8.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Column8.HeaderText = "Description";
-            Column8.MinimumWidth = 250;
-            Column8.Name = "Column8";
-            Column8.ReadOnly = true;
+            dueTxPayAsTodayToolStripMenuItem.Name = "dueTxPayAsTodayToolStripMenuItem";
+            dueTxPayAsTodayToolStripMenuItem.Size = new Size(180, 22);
+            dueTxPayAsTodayToolStripMenuItem.Text = "As Today";
+            dueTxPayAsTodayToolStripMenuItem.Click += dueTxPayAsTodayToolStripMenuItem_Click;
             // 
-            // Column9
+            // dueTxOpenForEditToolStripMenuItem
             // 
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "N2";
-            Column9.DefaultCellStyle = dataGridViewCellStyle3;
-            Column9.HeaderText = "Value";
-            Column9.Name = "Column9";
-            Column9.ReadOnly = true;
-            Column9.Width = 75;
+            dueTxOpenForEditToolStripMenuItem.Name = "dueTxOpenForEditToolStripMenuItem";
+            dueTxOpenForEditToolStripMenuItem.Size = new Size(180, 22);
+            dueTxOpenForEditToolStripMenuItem.Text = "Open for Edit";
+            dueTxOpenForEditToolStripMenuItem.Click += dueTxOpenForEditToolStripMenuItem_Click;
             // 
-            // Column7
+            // dueTxReverseTransactionToolStripMenuItem
             // 
-            Column7.HeaderText = "Wallet";
-            Column7.Name = "Column7";
-            Column7.ReadOnly = true;
+            dueTxReverseTransactionToolStripMenuItem.Name = "dueTxReverseTransactionToolStripMenuItem";
+            dueTxReverseTransactionToolStripMenuItem.Size = new Size(180, 22);
+            dueTxReverseTransactionToolStripMenuItem.Text = "Reverse Transaction";
+            dueTxReverseTransactionToolStripMenuItem.Click += DueTxReverseTransactionToolStripMenuItem_Click;
             // 
             // frmMain
             // 
@@ -402,6 +451,7 @@ namespace DemoProject
             groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)grdTxDue).EndInit();
             cntxEditDelete.ResumeLayout(false);
+            cntxDueTx.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -437,5 +487,11 @@ namespace DemoProject
         private DataGridViewTextBoxColumn Column8;
         private DataGridViewTextBoxColumn Column9;
         private DataGridViewTextBoxColumn Column7;
+        private ContextMenuStrip cntxDueTx;
+        private ToolStripMenuItem markAsPaidToolStripMenuItem;
+        private ToolStripMenuItem dueTxPayOnDueDateToolStripMenuItem;
+        private ToolStripMenuItem dueTxPayAsTodayToolStripMenuItem;
+        private ToolStripMenuItem dueTxOpenForEditToolStripMenuItem;
+        private ToolStripMenuItem dueTxReverseTransactionToolStripMenuItem;
     }
 }
