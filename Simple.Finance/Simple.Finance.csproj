@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 
-		<Version>0.0.9</Version>
+		<Version>0.0.10</Version>
 		<Authors>RafaelEstevam.Net</Authors>
 		<Company>RafaelEstevam.Net</Company>
 		<Product>Simple C# personal finance manager</Product>
