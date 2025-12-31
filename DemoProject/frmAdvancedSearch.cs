@@ -83,41 +83,42 @@ namespace DemoProject
             if (chkHideUnpaids.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Unpaid);
             if (chkHideReversed.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Reversed);
 
+            var dicWallets = manager.GetWalletsDict();
             var dicCategories = manager.GetCategoriesDict();
 
             txs = txs.OrderBy(o => o.EfectiveDate);
-
+            decimal balance = 0;
             foreach (var tx in txs)
             {
                 DateTime? paymentDate = null;
-                decimal value = tx.DueValue;
                 string add = "";
 
                 if (tx.Type == Transac.TransactionType.Simple)
                 {
-                    if (tx.Status == Transac.PaymentStatus.Paid)
-                    {
-                        paymentDate = tx.PaymentDate;
-                        value = tx.PaidValue;
-                        add = "[Pd] ";
-                    }
+                    if (tx.Status == Transac.PaymentStatus.Paid) add = "[Pd] ";
                 }
                 else if (tx.Type == Transac.TransactionType.WalletTransfer)
                 {
-                    if (tx.DueValue < 0)
-                    {
-                        add = "▶ ";
-                    }
-                    else
-                    {
-                        add = "◀ ";
-                    }
+                    if (tx.DueValue < 0) add = "▶ ";
+                    else add = "◀ ";
                 }
 
-                int ix = grdTransactions.Rows.Add(tx.GetCategoryName(dicCategories), add + tx.Description, tx.DueDate, value, paymentDate);
+                if (tx.Status == Transac.PaymentStatus.Paid)
+                {
+                    paymentDate = tx.PaymentDate;
+                    balance += tx.PaidValue;
+                }
+
+                int ix = grdTransactions.Rows.Add(tx.GetWalletName(dicWallets),
+                                                  tx.GetCategoryName(dicCategories),
+                                                  add + tx.Description,
+                                                  tx.DueDate,
+                                                  tx.EfectiveValue,
+                                                  paymentDate,
+                                                  balance);
                 grdTransactions.Rows[ix].Tag = tx;
 
-                if (tx.Status == Transac.PaymentStatus.Paid) grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.LightGreen;
+                if (tx.Status == Transac.PaymentStatus.Paid) grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.PaleGreen;
                 else if (tx.Status == Transac.PaymentStatus.Unpaid)
                 {
                     if (tx.DueDate.Date < DateTime.Now.Date)

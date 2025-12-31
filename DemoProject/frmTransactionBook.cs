@@ -4,6 +4,7 @@ using Simple.Finance.Tables;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -47,9 +48,31 @@ namespace DemoProject
             decimal balance = 0;
             foreach (var tx in txs)
             {
+                if (tx.Status == Transac.PaymentStatus.Reversed) continue;
+                string add = "";
+
+                if (tx.Type == Transac.TransactionType.Simple)
+                {
+                    if (tx.Status == Transac.PaymentStatus.Paid) add = "[Pd] ";
+                }
+                else if (tx.Type == Transac.TransactionType.WalletTransfer)
+                {
+                    if (tx.DueValue < 0) add = "▶ ";
+                    else add = "◀ ";
+                }
+
                 balance += tx.EfectiveValue;
-                int ix = grdTransactions.Rows.Add(tx.EfectiveDate, tx.GetCategoryName(categories), tx.Description, tx.EfectiveValue, balance);
+                int ix = grdTransactions.Rows.Add(tx.EfectiveDate, tx.GetCategoryName(categories), add + tx.Description, tx.EfectiveValue, balance);
                 grdTransactions.Rows[ix].Tag = tx;
+
+                if (tx.Status == Transac.PaymentStatus.Paid) grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.PaleGreen;
+                else if (tx.Status == Transac.PaymentStatus.Unpaid)
+                {
+                    if (tx.DueDate.Date < DateTime.Now.Date)
+                    {
+                        grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.MistyRose;
+                    }
+                }
             }
         }
 

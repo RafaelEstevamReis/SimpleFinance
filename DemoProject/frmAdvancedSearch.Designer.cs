@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             groupBox1 = new System.Windows.Forms.GroupBox();
             label4 = new System.Windows.Forms.Label();
             dtTo = new System.Windows.Forms.DateTimePicker();
@@ -48,11 +49,6 @@
             cboReferenceItem = new System.Windows.Forms.ComboBox();
             btnSearch = new System.Windows.Forms.Button();
             grdTransactions = new System.Windows.Forms.DataGridView();
-            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             btnAddTransaction = new System.Windows.Forms.Button();
             label3 = new System.Windows.Forms.Label();
             txtTotalPaid = new DemoProject.Components.MoneyBox();
@@ -64,6 +60,13 @@
             label8 = new System.Windows.Forms.Label();
             txtTotalSelected = new DemoProject.Components.MoneyBox();
             label9 = new System.Windows.Forms.Label();
+            Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
@@ -156,6 +159,8 @@
             // chkHideReversed
             // 
             chkHideReversed.AutoSize = true;
+            chkHideReversed.Checked = true;
+            chkHideReversed.CheckState = System.Windows.Forms.CheckState.Checked;
             chkHideReversed.Location = new System.Drawing.Point(202, 77);
             chkHideReversed.Name = "chkHideReversed";
             chkHideReversed.Size = new System.Drawing.Size(106, 19);
@@ -225,7 +230,7 @@
             // 
             // btnSearch
             // 
-            btnSearch.Location = new System.Drawing.Point(728, 34);
+            btnSearch.Location = new System.Drawing.Point(889, 34);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new System.Drawing.Size(75, 23);
             btnSearch.TabIndex = 2;
@@ -241,16 +246,154 @@
             grdTransactions.AllowUserToResizeRows = false;
             grdTransactions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grdTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { Column2, Column3, Column1, Column4, Column5 });
+            grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { Column6, Column2, Column3, Column1, Column4, Column5, Column7 });
             grdTransactions.Location = new System.Drawing.Point(0, 120);
             grdTransactions.Name = "grdTransactions";
             grdTransactions.ReadOnly = true;
             grdTransactions.RowHeadersVisible = false;
             grdTransactions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            grdTransactions.Size = new System.Drawing.Size(815, 365);
+            grdTransactions.Size = new System.Drawing.Size(976, 398);
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
             grdTransactions.SelectionChanged += grdTransactions_SelectionChanged;
+            // 
+            // btnAddTransaction
+            // 
+            btnAddTransaction.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnAddTransaction.Location = new System.Drawing.Point(857, 524);
+            btnAddTransaction.Name = "btnAddTransaction";
+            btnAddTransaction.Size = new System.Drawing.Size(116, 31);
+            btnAddTransaction.TabIndex = 9;
+            btnAddTransaction.Text = "New Transaction";
+            btnAddTransaction.UseVisualStyleBackColor = true;
+            btnAddTransaction.Click += btnAddTransaction_Click;
+            // 
+            // label3
+            // 
+            label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(6, 519);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(61, 15);
+            label3.TabIndex = 6;
+            label3.Text = "Total Paid:";
+            // 
+            // txtTotalPaid
+            // 
+            txtTotalPaid.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            txtTotalPaid.DecimalPlaces = 2;
+            txtTotalPaid.Location = new System.Drawing.Point(6, 534);
+            txtTotalPaid.MoneySign = "";
+            txtTotalPaid.Name = "txtTotalPaid";
+            txtTotalPaid.ReadOnly = true;
+            txtTotalPaid.Size = new System.Drawing.Size(100, 23);
+            txtTotalPaid.TabIndex = 4;
+            txtTotalPaid.Text = "0,00";
+            txtTotalPaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            txtTotalPaid.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            // 
+            // txtTotalUnpaid
+            // 
+            txtTotalUnpaid.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            txtTotalUnpaid.DecimalPlaces = 2;
+            txtTotalUnpaid.Location = new System.Drawing.Point(112, 534);
+            txtTotalUnpaid.MoneySign = "";
+            txtTotalUnpaid.Name = "txtTotalUnpaid";
+            txtTotalUnpaid.ReadOnly = true;
+            txtTotalUnpaid.Size = new System.Drawing.Size(100, 23);
+            txtTotalUnpaid.TabIndex = 5;
+            txtTotalUnpaid.Text = "0,00";
+            txtTotalUnpaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            txtTotalUnpaid.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            // 
+            // label6
+            // 
+            label6.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(112, 519);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(76, 15);
+            label6.TabIndex = 8;
+            label6.Text = "Total Unpaid:";
+            // 
+            // txtTotalIncome
+            // 
+            txtTotalIncome.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            txtTotalIncome.DecimalPlaces = 2;
+            txtTotalIncome.Location = new System.Drawing.Point(218, 534);
+            txtTotalIncome.MoneySign = "";
+            txtTotalIncome.Name = "txtTotalIncome";
+            txtTotalIncome.ReadOnly = true;
+            txtTotalIncome.Size = new System.Drawing.Size(100, 23);
+            txtTotalIncome.TabIndex = 6;
+            txtTotalIncome.Text = "0,00";
+            txtTotalIncome.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            txtTotalIncome.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            // 
+            // label7
+            // 
+            label7.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(218, 519);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(71, 15);
+            label7.TabIndex = 10;
+            label7.Text = "Total Icome:";
+            // 
+            // txtTotalExpenses
+            // 
+            txtTotalExpenses.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            txtTotalExpenses.DecimalPlaces = 2;
+            txtTotalExpenses.Location = new System.Drawing.Point(324, 534);
+            txtTotalExpenses.MoneySign = "";
+            txtTotalExpenses.Name = "txtTotalExpenses";
+            txtTotalExpenses.ReadOnly = true;
+            txtTotalExpenses.Size = new System.Drawing.Size(100, 23);
+            txtTotalExpenses.TabIndex = 7;
+            txtTotalExpenses.Text = "0,00";
+            txtTotalExpenses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            txtTotalExpenses.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            // 
+            // label8
+            // 
+            label8.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(324, 519);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(86, 15);
+            label8.TabIndex = 12;
+            label8.Text = "Total Expenses:";
+            // 
+            // txtTotalSelected
+            // 
+            txtTotalSelected.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            txtTotalSelected.DecimalPlaces = 2;
+            txtTotalSelected.Location = new System.Drawing.Point(430, 534);
+            txtTotalSelected.MoneySign = "";
+            txtTotalSelected.Name = "txtTotalSelected";
+            txtTotalSelected.ReadOnly = true;
+            txtTotalSelected.Size = new System.Drawing.Size(100, 23);
+            txtTotalSelected.TabIndex = 8;
+            txtTotalSelected.Text = "0,00";
+            txtTotalSelected.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            txtTotalSelected.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            // 
+            // label9
+            // 
+            label9.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(430, 519);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(82, 15);
+            label9.TabIndex = 14;
+            label9.Text = "Total Selected:";
+            // 
+            // Column6
+            // 
+            Column6.HeaderText = "Wallet";
+            Column6.Name = "Column6";
+            Column6.ReadOnly = true;
+            Column6.Width = 150;
             // 
             // Column2
             // 
@@ -268,9 +411,9 @@
             // 
             // Column1
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "d";
-            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Format = "d";
+            Column1.DefaultCellStyle = dataGridViewCellStyle5;
             Column1.HeaderText = "Due Date";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
@@ -278,159 +421,37 @@
             // 
             // Column4
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Format = "N2";
+            Column4.DefaultCellStyle = dataGridViewCellStyle6;
             Column4.HeaderText = "Value";
             Column4.Name = "Column4";
             Column4.ReadOnly = true;
             // 
             // Column5
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "d";
-            Column5.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle7.Format = "d";
+            Column5.DefaultCellStyle = dataGridViewCellStyle7;
             Column5.HeaderText = "Paid Date";
             Column5.Name = "Column5";
             Column5.ReadOnly = true;
             Column5.Width = 80;
             // 
-            // btnAddTransaction
+            // Column7
             // 
-            btnAddTransaction.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnAddTransaction.Location = new System.Drawing.Point(696, 491);
-            btnAddTransaction.Name = "btnAddTransaction";
-            btnAddTransaction.Size = new System.Drawing.Size(116, 31);
-            btnAddTransaction.TabIndex = 9;
-            btnAddTransaction.Text = "New Transaction";
-            btnAddTransaction.UseVisualStyleBackColor = true;
-            btnAddTransaction.Click += btnAddTransaction_Click;
-            // 
-            // label3
-            // 
-            label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(6, 486);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(61, 15);
-            label3.TabIndex = 6;
-            label3.Text = "Total Paid:";
-            // 
-            // txtTotalPaid
-            // 
-            txtTotalPaid.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            txtTotalPaid.DecimalPlaces = 2;
-            txtTotalPaid.Location = new System.Drawing.Point(6, 501);
-            txtTotalPaid.MoneySign = "";
-            txtTotalPaid.Name = "txtTotalPaid";
-            txtTotalPaid.ReadOnly = true;
-            txtTotalPaid.Size = new System.Drawing.Size(100, 23);
-            txtTotalPaid.TabIndex = 4;
-            txtTotalPaid.Text = "0,00";
-            txtTotalPaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            txtTotalPaid.Value = new decimal(new int[] { 0, 0, 0, 0 });
-            // 
-            // txtTotalUnpaid
-            // 
-            txtTotalUnpaid.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            txtTotalUnpaid.DecimalPlaces = 2;
-            txtTotalUnpaid.Location = new System.Drawing.Point(112, 501);
-            txtTotalUnpaid.MoneySign = "";
-            txtTotalUnpaid.Name = "txtTotalUnpaid";
-            txtTotalUnpaid.ReadOnly = true;
-            txtTotalUnpaid.Size = new System.Drawing.Size(100, 23);
-            txtTotalUnpaid.TabIndex = 5;
-            txtTotalUnpaid.Text = "0,00";
-            txtTotalUnpaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            txtTotalUnpaid.Value = new decimal(new int[] { 0, 0, 0, 0 });
-            // 
-            // label6
-            // 
-            label6.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(112, 486);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(76, 15);
-            label6.TabIndex = 8;
-            label6.Text = "Total Unpaid:";
-            // 
-            // txtTotalIncome
-            // 
-            txtTotalIncome.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            txtTotalIncome.DecimalPlaces = 2;
-            txtTotalIncome.Location = new System.Drawing.Point(218, 501);
-            txtTotalIncome.MoneySign = "";
-            txtTotalIncome.Name = "txtTotalIncome";
-            txtTotalIncome.ReadOnly = true;
-            txtTotalIncome.Size = new System.Drawing.Size(100, 23);
-            txtTotalIncome.TabIndex = 6;
-            txtTotalIncome.Text = "0,00";
-            txtTotalIncome.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            txtTotalIncome.Value = new decimal(new int[] { 0, 0, 0, 0 });
-            // 
-            // label7
-            // 
-            label7.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(218, 486);
-            label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(71, 15);
-            label7.TabIndex = 10;
-            label7.Text = "Total Icome:";
-            // 
-            // txtTotalExpenses
-            // 
-            txtTotalExpenses.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            txtTotalExpenses.DecimalPlaces = 2;
-            txtTotalExpenses.Location = new System.Drawing.Point(324, 501);
-            txtTotalExpenses.MoneySign = "";
-            txtTotalExpenses.Name = "txtTotalExpenses";
-            txtTotalExpenses.ReadOnly = true;
-            txtTotalExpenses.Size = new System.Drawing.Size(100, 23);
-            txtTotalExpenses.TabIndex = 7;
-            txtTotalExpenses.Text = "0,00";
-            txtTotalExpenses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            txtTotalExpenses.Value = new decimal(new int[] { 0, 0, 0, 0 });
-            // 
-            // label8
-            // 
-            label8.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(324, 486);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(86, 15);
-            label8.TabIndex = 12;
-            label8.Text = "Total Expenses:";
-            // 
-            // txtTotalSelected
-            // 
-            txtTotalSelected.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            txtTotalSelected.DecimalPlaces = 2;
-            txtTotalSelected.Location = new System.Drawing.Point(430, 501);
-            txtTotalSelected.MoneySign = "";
-            txtTotalSelected.Name = "txtTotalSelected";
-            txtTotalSelected.ReadOnly = true;
-            txtTotalSelected.Size = new System.Drawing.Size(100, 23);
-            txtTotalSelected.TabIndex = 8;
-            txtTotalSelected.Text = "0,00";
-            txtTotalSelected.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            txtTotalSelected.Value = new decimal(new int[] { 0, 0, 0, 0 });
-            // 
-            // label9
-            // 
-            label9.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(430, 486);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(82, 15);
-            label9.TabIndex = 14;
-            label9.Text = "Total Selected:";
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle8.Format = "N2";
+            Column7.DefaultCellStyle = dataGridViewCellStyle8;
+            Column7.HeaderText = "Balance";
+            Column7.Name = "Column7";
+            Column7.ReadOnly = true;
             // 
             // frmAdvancedSearch
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(815, 528);
+            ClientSize = new System.Drawing.Size(976, 561);
             Controls.Add(txtTotalSelected);
             Controls.Add(label9);
             Controls.Add(txtTotalExpenses);
@@ -478,11 +499,6 @@
         private System.Windows.Forms.ComboBox cboReferenceItem;
         private System.Windows.Forms.ComboBox cboReferenceType;
         private System.Windows.Forms.DataGridView grdTransactions;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
         private System.Windows.Forms.CheckBox chkFilterReference;
         private System.Windows.Forms.Button btnAddTransaction;
         private System.Windows.Forms.Label label3;
@@ -496,5 +512,12 @@
         private Components.MoneyBox txtTotalSelected;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox chkHideReversed;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
     }
 }
