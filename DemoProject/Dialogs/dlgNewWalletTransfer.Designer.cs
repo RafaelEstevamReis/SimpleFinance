@@ -54,7 +54,7 @@
             btnCancel.Location = new System.Drawing.Point(195, 300);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
-            btnCancel.TabIndex = 13;
+            btnCancel.TabIndex = 8;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -63,7 +63,7 @@
             btnSave.Location = new System.Drawing.Point(93, 300);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
-            btnSave.TabIndex = 12;
+            btnSave.TabIndex = 7;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
@@ -75,7 +75,7 @@
             txtValue.MoneySign = "";
             txtValue.Name = "txtValue";
             txtValue.Size = new System.Drawing.Size(101, 23);
-            txtValue.TabIndex = 33;
+            txtValue.TabIndex = 5;
             txtValue.Text = "0,00";
             txtValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             txtValue.Value = new decimal(new int[] { 0, 0, 0, 0 });
@@ -96,7 +96,7 @@
             cboSourceCategory.Location = new System.Drawing.Point(134, 62);
             cboSourceCategory.Name = "cboSourceCategory";
             cboSourceCategory.Size = new System.Drawing.Size(219, 23);
-            cboSourceCategory.TabIndex = 30;
+            cboSourceCategory.TabIndex = 1;
             // 
             // cboSourceWallet
             // 
@@ -105,7 +105,7 @@
             cboSourceWallet.Location = new System.Drawing.Point(134, 33);
             cboSourceWallet.Name = "cboSourceWallet";
             cboSourceWallet.Size = new System.Drawing.Size(219, 23);
-            cboSourceWallet.TabIndex = 29;
+            cboSourceWallet.TabIndex = 0;
             // 
             // label12
             // 
@@ -133,7 +133,7 @@
             dtDate.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDate.Name = "dtDate";
             dtDate.Size = new System.Drawing.Size(116, 23);
-            dtDate.TabIndex = 31;
+            dtDate.TabIndex = 4;
             // 
             // label9
             // 
@@ -150,7 +150,7 @@
             txtName.MaxLength = 64;
             txtName.Name = "txtName";
             txtName.Size = new System.Drawing.Size(345, 23);
-            txtName.TabIndex = 34;
+            txtName.TabIndex = 6;
             // 
             // label1
             // 
@@ -168,7 +168,7 @@
             cboDestinationCategory.Location = new System.Drawing.Point(134, 148);
             cboDestinationCategory.Name = "cboDestinationCategory";
             cboDestinationCategory.Size = new System.Drawing.Size(219, 23);
-            cboDestinationCategory.TabIndex = 40;
+            cboDestinationCategory.TabIndex = 3;
             // 
             // cboDestinationWallet
             // 
@@ -177,7 +177,7 @@
             cboDestinationWallet.Location = new System.Drawing.Point(134, 119);
             cboDestinationWallet.Name = "cboDestinationWallet";
             cboDestinationWallet.Size = new System.Drawing.Size(219, 23);
-            cboDestinationWallet.TabIndex = 39;
+            cboDestinationWallet.TabIndex = 2;
             // 
             // label2
             // 

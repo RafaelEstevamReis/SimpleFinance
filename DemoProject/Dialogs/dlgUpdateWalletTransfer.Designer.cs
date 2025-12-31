@@ -45,7 +45,7 @@
             txtValue.MoneySign = "";
             txtValue.Name = "txtValue";
             txtValue.Size = new System.Drawing.Size(101, 23);
-            txtValue.TabIndex = 43;
+            txtValue.TabIndex = 1;
             txtValue.Text = "0,00";
             txtValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             txtValue.Value = new decimal(new int[] { 0, 0, 0, 0 });
@@ -67,7 +67,7 @@
             dtDate.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDate.Name = "dtDate";
             dtDate.Size = new System.Drawing.Size(116, 23);
-            dtDate.TabIndex = 41;
+            dtDate.TabIndex = 0;
             // 
             // label9
             // 
@@ -84,7 +84,7 @@
             txtName.MaxLength = 64;
             txtName.Name = "txtName";
             txtName.Size = new System.Drawing.Size(345, 23);
-            txtName.TabIndex = 44;
+            txtName.TabIndex = 2;
             // 
             // label1
             // 
@@ -101,7 +101,7 @@
             btnCancel.Location = new System.Drawing.Point(195, 111);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
-            btnCancel.TabIndex = 40;
+            btnCancel.TabIndex = 4;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -110,7 +110,7 @@
             btnSave.Location = new System.Drawing.Point(93, 111);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
-            btnSave.TabIndex = 39;
+            btnSave.TabIndex = 3;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
