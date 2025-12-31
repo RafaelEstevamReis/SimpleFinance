@@ -82,11 +82,12 @@ namespace DemoProject
             if (chkHidePaids.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Paid);
             if (chkHideUnpaids.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Unpaid);
             if (chkHideReversed.Checked) txs = txs.Where(o => o.Status != Transac.PaymentStatus.Reversed);
+            if (txtDescription.TextLength > 0) txs = txs.Where(o => o.Description.Contains(txtDescription.Text, StringComparison.InvariantCultureIgnoreCase));
 
             var dicWallets = manager.GetWalletsDict();
             var dicCategories = manager.GetCategoriesDict();
 
-            txs = txs.OrderBy(o => o.EfectiveDate);
+            txs = txs.OrderBy(o => o.EfectiveDate.Date).ThenByDescending(o => o.DueValue);
             decimal balance = 0;
             foreach (var tx in txs)
             {
@@ -107,6 +108,10 @@ namespace DemoProject
                 {
                     paymentDate = tx.PaymentDate;
                     balance += tx.PaidValue;
+                }
+                else if (tx.Status == Transac.PaymentStatus.Unpaid && chkIncludeUnpaidBalance.Checked)
+                {
+                    balance += tx.DueValue;
                 }
 
                 int ix = grdTransactions.Rows.Add(tx.GetWalletName(dicWallets),
@@ -129,6 +134,11 @@ namespace DemoProject
                 else if (tx.Status == Transac.PaymentStatus.Reversed)
                 {
                     grdTransactions.Rows[ix].DefaultCellStyle.Font = new Font(this.Font, FontStyle.Strikeout);
+                }
+
+                if (balance < 0)
+                {
+                    grdTransactions[clnBalance.Index, ix].Style.ForeColor = Color.DarkRed;
                 }
             }
             // Restore grid positions

@@ -49,6 +49,13 @@
             cboReferenceItem = new System.Windows.Forms.ComboBox();
             btnSearch = new System.Windows.Forms.Button();
             grdTransactions = new System.Windows.Forms.DataGridView();
+            Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            clnBalance = new System.Windows.Forms.DataGridViewTextBoxColumn();
             btnAddTransaction = new System.Windows.Forms.Button();
             label3 = new System.Windows.Forms.Label();
             txtTotalPaid = new DemoProject.Components.MoneyBox();
@@ -60,16 +67,13 @@
             label8 = new System.Windows.Forms.Label();
             txtTotalSelected = new DemoProject.Components.MoneyBox();
             label9 = new System.Windows.Forms.Label();
-            Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            groupBox3 = new System.Windows.Forms.GroupBox();
+            chkIncludeUnpaidBalance = new System.Windows.Forms.CheckBox();
+            txtDescription = new System.Windows.Forms.TextBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
+            groupBox3.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -142,12 +146,10 @@
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(chkHideReversed);
+            groupBox2.Controls.Add(txtDescription);
             groupBox2.Controls.Add(cboReferenceType);
             groupBox2.Controls.Add(chkFilterReference);
             groupBox2.Controls.Add(label5);
-            groupBox2.Controls.Add(chkHideUnpaids);
-            groupBox2.Controls.Add(chkHidePaids);
             groupBox2.Controls.Add(cboReferenceItem);
             groupBox2.Location = new System.Drawing.Point(226, 2);
             groupBox2.Name = "groupBox2";
@@ -161,10 +163,10 @@
             chkHideReversed.AutoSize = true;
             chkHideReversed.Checked = true;
             chkHideReversed.CheckState = System.Windows.Forms.CheckState.Checked;
-            chkHideReversed.Location = new System.Drawing.Point(202, 77);
+            chkHideReversed.Location = new System.Drawing.Point(6, 56);
             chkHideReversed.Name = "chkHideReversed";
             chkHideReversed.Size = new System.Drawing.Size(106, 19);
-            chkHideReversed.TabIndex = 4;
+            chkHideReversed.TabIndex = 3;
             chkHideReversed.Text = "Hide Reverseds";
             chkHideReversed.UseVisualStyleBackColor = true;
             // 
@@ -194,27 +196,27 @@
             label5.AutoSize = true;
             label5.Location = new System.Drawing.Point(6, 59);
             label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(62, 15);
+            label5.Size = new System.Drawing.Size(120, 15);
             label5.TabIndex = 7;
-            label5.Text = "Additional";
+            label5.Text = "Description Contains:";
             // 
             // chkHideUnpaids
             // 
             chkHideUnpaids.AutoSize = true;
-            chkHideUnpaids.Location = new System.Drawing.Point(99, 77);
+            chkHideUnpaids.Location = new System.Drawing.Point(89, 37);
             chkHideUnpaids.Name = "chkHideUnpaids";
             chkHideUnpaids.Size = new System.Drawing.Size(97, 19);
-            chkHideUnpaids.TabIndex = 3;
+            chkHideUnpaids.TabIndex = 2;
             chkHideUnpaids.Text = "Hide Unpaids";
             chkHideUnpaids.UseVisualStyleBackColor = true;
             // 
             // chkHidePaids
             // 
             chkHidePaids.AutoSize = true;
-            chkHidePaids.Location = new System.Drawing.Point(11, 77);
+            chkHidePaids.Location = new System.Drawing.Point(6, 37);
             chkHidePaids.Name = "chkHidePaids";
             chkHidePaids.Size = new System.Drawing.Size(82, 19);
-            chkHidePaids.TabIndex = 2;
+            chkHidePaids.TabIndex = 1;
             chkHidePaids.Text = "Hide Paids";
             chkHidePaids.UseVisualStyleBackColor = true;
             // 
@@ -233,7 +235,7 @@
             btnSearch.Location = new System.Drawing.Point(889, 34);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new System.Drawing.Size(75, 23);
-            btnSearch.TabIndex = 2;
+            btnSearch.TabIndex = 3;
             btnSearch.Text = "Search";
             btnSearch.UseVisualStyleBackColor = true;
             btnSearch.Click += btnSearch_Click;
@@ -246,7 +248,7 @@
             grdTransactions.AllowUserToResizeRows = false;
             grdTransactions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grdTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { Column6, Column2, Column3, Column1, Column4, Column5, Column7 });
+            grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { Column6, Column2, Column3, Column1, Column4, Column5, clnBalance });
             grdTransactions.Location = new System.Drawing.Point(0, 120);
             grdTransactions.Name = "grdTransactions";
             grdTransactions.ReadOnly = true;
@@ -256,6 +258,65 @@
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
             grdTransactions.SelectionChanged += grdTransactions_SelectionChanged;
+            // 
+            // Column6
+            // 
+            Column6.HeaderText = "Wallet";
+            Column6.Name = "Column6";
+            Column6.ReadOnly = true;
+            Column6.Width = 150;
+            // 
+            // Column2
+            // 
+            Column2.HeaderText = "Category";
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            Column2.Width = 150;
+            // 
+            // Column3
+            // 
+            Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            Column3.HeaderText = "Description";
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            // 
+            // Column1
+            // 
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Format = "d";
+            Column1.DefaultCellStyle = dataGridViewCellStyle5;
+            Column1.HeaderText = "Due Date";
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            Column1.Width = 80;
+            // 
+            // Column4
+            // 
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Format = "N2";
+            Column4.DefaultCellStyle = dataGridViewCellStyle6;
+            Column4.HeaderText = "Value";
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            // 
+            // Column5
+            // 
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle7.Format = "d";
+            Column5.DefaultCellStyle = dataGridViewCellStyle7;
+            Column5.HeaderText = "Paid Date";
+            Column5.Name = "Column5";
+            Column5.ReadOnly = true;
+            Column5.Width = 80;
+            // 
+            // clnBalance
+            // 
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle8.Format = "N2";
+            clnBalance.DefaultCellStyle = dataGridViewCellStyle8;
+            clnBalance.HeaderText = "Balance";
+            clnBalance.Name = "clnBalance";
+            clnBalance.ReadOnly = true;
             // 
             // btnAddTransaction
             // 
@@ -388,70 +449,42 @@
             label9.TabIndex = 14;
             label9.Text = "Total Selected:";
             // 
-            // Column6
+            // groupBox3
             // 
-            Column6.HeaderText = "Wallet";
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            Column6.Width = 150;
+            groupBox3.Controls.Add(chkHideReversed);
+            groupBox3.Controls.Add(chkIncludeUnpaidBalance);
+            groupBox3.Controls.Add(chkHidePaids);
+            groupBox3.Controls.Add(chkHideUnpaids);
+            groupBox3.Location = new System.Drawing.Point(587, 2);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new System.Drawing.Size(278, 112);
+            groupBox3.TabIndex = 2;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Display";
             // 
-            // Column2
+            // chkIncludeUnpaidBalance
             // 
-            Column2.HeaderText = "Category";
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
-            Column2.Width = 150;
+            chkIncludeUnpaidBalance.AutoSize = true;
+            chkIncludeUnpaidBalance.Location = new System.Drawing.Point(6, 18);
+            chkIncludeUnpaidBalance.Name = "chkIncludeUnpaidBalance";
+            chkIncludeUnpaidBalance.Size = new System.Drawing.Size(168, 19);
+            chkIncludeUnpaidBalance.TabIndex = 0;
+            chkIncludeUnpaidBalance.Text = "Include Unpaids in Balance";
+            chkIncludeUnpaidBalance.UseVisualStyleBackColor = true;
             // 
-            // Column3
+            // txtDescription
             // 
-            Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            Column3.HeaderText = "Description";
-            Column3.Name = "Column3";
-            Column3.ReadOnly = true;
-            // 
-            // Column1
-            // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "d";
-            Column1.DefaultCellStyle = dataGridViewCellStyle5;
-            Column1.HeaderText = "Due Date";
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
-            Column1.Width = 80;
-            // 
-            // Column4
-            // 
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle6;
-            Column4.HeaderText = "Value";
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
-            // 
-            // Column5
-            // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle7.Format = "d";
-            Column5.DefaultCellStyle = dataGridViewCellStyle7;
-            Column5.HeaderText = "Paid Date";
-            Column5.Name = "Column5";
-            Column5.ReadOnly = true;
-            Column5.Width = 80;
-            // 
-            // Column7
-            // 
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle8.Format = "N2";
-            Column7.DefaultCellStyle = dataGridViewCellStyle8;
-            Column7.HeaderText = "Balance";
-            Column7.Name = "Column7";
-            Column7.ReadOnly = true;
+            txtDescription.Location = new System.Drawing.Point(6, 76);
+            txtDescription.Name = "txtDescription";
+            txtDescription.Size = new System.Drawing.Size(343, 23);
+            txtDescription.TabIndex = 2;
             // 
             // frmAdvancedSearch
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(976, 561);
+            Controls.Add(groupBox3);
             Controls.Add(txtTotalSelected);
             Controls.Add(label9);
             Controls.Add(txtTotalExpenses);
@@ -478,6 +511,8 @@
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).EndInit();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -512,12 +547,15 @@
         private Components.MoneyBox txtTotalSelected;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox chkHideReversed;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.CheckBox chkIncludeUnpaidBalance;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clnBalance;
+        private System.Windows.Forms.TextBox txtDescription;
     }
 }

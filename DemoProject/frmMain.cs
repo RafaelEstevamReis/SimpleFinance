@@ -149,7 +149,7 @@ namespace DemoProject
             {
                 if (tx.Status == Transac.PaymentStatus.Reversed) continue;
                 if (tx.Status == Transac.PaymentStatus.Paid) continue;
-                int ix = grdTxDue.Rows.Add(tx.DueDate, tx.Description);
+                int ix = grdTxDue.Rows.Add(tx.DueDate, tx.DueValue, tx.Description);
                 grdTxDue.Rows[ix].Tag = tx;
             }
         }
