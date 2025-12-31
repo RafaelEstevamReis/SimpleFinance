@@ -221,6 +221,10 @@ namespace DemoProject
         private void btnAddWallet_Click(object sender, EventArgs e) => newWallet();
         private void btnAddCategory_Click(object sender, EventArgs e) => newCategory();
         private void btnAddTransaction_Click(object sender, EventArgs e) => newTransaction();
+        private void btnNewWalletTransfer_Click(object sender, EventArgs e)
+        {
+            Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
+        }
 
         void doGridClickEvent(DataGridView? sender, DataGridViewCellMouseEventArgs e)
         {
@@ -326,18 +330,19 @@ namespace DemoProject
             if (t.Type == Transac.TransactionType.Special)
             {
                 MessageBox.Show("Special transactions cannot be edited here");
-                return;
             }
-            if (t.Type == Transac.TransactionType.WalletTransfer)
+            else if (t.Type == Transac.TransactionType.WalletTransfer)
             {
-                MessageBox.Show("Transfer transactions cannot be edited here");
-                return;
+                Dialogs.dlgUpdateWalletTransfer.ShowDialog(manager, t);
             }
-
-            var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
-            if (result != DialogResult.OK) return;
-
-            //manager.CreateUpdateTransaction(t);
+            else if (t.Type == Transac.TransactionType.Simple)
+            {
+                Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+            }
+            else
+            {
+                MessageBox.Show("This transaction cannot be edited here");
+            }
         }
 
         private void deleteCategory(Category c)

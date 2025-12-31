@@ -78,19 +78,21 @@ namespace DemoProject
             if (t.Type == Transac.TransactionType.Special)
             {
                 MessageBox.Show("Special transactions cannot be edited here");
-                return;
             }
-            if (t.Type == Transac.TransactionType.WalletTransfer)
+            else if (t.Type == Transac.TransactionType.WalletTransfer)
             {
-                MessageBox.Show("Transfer transactions cannot be edited here");
-                return;
+                Dialogs.dlgUpdateWalletTransfer.ShowDialog(manager, t);
+                refresh();
             }
-
-            var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
-            if (result != DialogResult.OK) return;
-
-            //manager.CreateUpdateTransaction(t);
-            refresh();
+            else if (t.Type == Transac.TransactionType.Simple)
+            {
+                Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+                refresh();
+            }
+            else
+            {
+                MessageBox.Show("This transaction cannot be edited here");
+            }
         }
     }
 }

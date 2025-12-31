@@ -85,7 +85,7 @@ namespace DemoProject
 
             var dicCategories = manager.GetCategoriesDict();
 
-            txs = txs.OrderBy(o => o.EfectiveValue);
+            txs = txs.OrderBy(o => o.EfectiveDate);
 
             foreach (var tx in txs)
             {
@@ -93,11 +93,25 @@ namespace DemoProject
                 decimal value = tx.DueValue;
                 string add = "";
 
-                if (tx.Status == Transac.PaymentStatus.Paid)
+                if (tx.Type == Transac.TransactionType.Simple)
                 {
-                    paymentDate = tx.PaymentDate;
-                    value = tx.PaidValue;
-                    add = "[Pd] ";
+                    if (tx.Status == Transac.PaymentStatus.Paid)
+                    {
+                        paymentDate = tx.PaymentDate;
+                        value = tx.PaidValue;
+                        add = "[Pd] ";
+                    }
+                }
+                else if (tx.Type == Transac.TransactionType.WalletTransfer)
+                {
+                    if (tx.DueValue < 0)
+                    {
+                        add = "▶ ";
+                    }
+                    else
+                    {
+                        add = "◀ ";
+                    }
                 }
 
                 int ix = grdTransactions.Rows.Add(tx.GetCategoryName(dicCategories), add + tx.Description, tx.DueDate, value, paymentDate);
@@ -171,19 +185,21 @@ namespace DemoProject
             if (t.Type == Transac.TransactionType.Special)
             {
                 MessageBox.Show("Special transactions cannot be edited here");
-                return;
             }
-            if (t.Type == Transac.TransactionType.WalletTransfer)
+            else if (t.Type == Transac.TransactionType.WalletTransfer)
             {
-                MessageBox.Show("Transfer transactions cannot be edited here");
-                return;
+                Dialogs.dlgUpdateWalletTransfer.ShowDialog(manager, t);
+                search();
             }
-
-            var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
-            if (result != DialogResult.OK) return;
-
-            //manager.CreateUpdateTransaction(t);
-            search();
+            else if (t.Type == Transac.TransactionType.Simple)
+            {
+                Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+                search();
+            }
+            else
+            {
+                MessageBox.Show("This transaction cannot be edited here");
+            }
         }
 
         public static DialogResult ShowDialog(Manager manager)

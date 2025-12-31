@@ -68,7 +68,7 @@ namespace DemoProject.Dialogs
 
             if (txtDue.Value <= 0)
             {
-                MessageBox.Show("Due Value must be longer than 1");
+                MessageBox.Show("Due Value must be greater than zero");
                 return;
             }
 

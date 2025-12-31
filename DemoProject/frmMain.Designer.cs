@@ -72,6 +72,7 @@ namespace DemoProject
             dueTxPayAsTodayToolStripMenuItem = new ToolStripMenuItem();
             dueTxOpenForEditToolStripMenuItem = new ToolStripMenuItem();
             dueTxReverseTransactionToolStripMenuItem = new ToolStripMenuItem();
+            btnNewWalletTransfer = new Button();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -287,7 +288,7 @@ namespace DemoProject
             // 
             btnAddTransaction.Location = new Point(201, 498);
             btnAddTransaction.Name = "btnAddTransaction";
-            btnAddTransaction.Size = new Size(116, 31);
+            btnAddTransaction.Size = new Size(124, 31);
             btnAddTransaction.TabIndex = 3;
             btnAddTransaction.Text = "New Transaction";
             btnAddTransaction.UseVisualStyleBackColor = true;
@@ -386,48 +387,59 @@ namespace DemoProject
             // 
             cntxDueTx.Items.AddRange(new ToolStripItem[] { markAsPaidToolStripMenuItem, dueTxOpenForEditToolStripMenuItem, dueTxReverseTransactionToolStripMenuItem });
             cntxDueTx.Name = "cntxDueTx";
-            cntxDueTx.Size = new Size(181, 92);
+            cntxDueTx.Size = new Size(178, 70);
             // 
             // markAsPaidToolStripMenuItem
             // 
             markAsPaidToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { dueTxPayOnDueDateToolStripMenuItem, dueTxPayAsTodayToolStripMenuItem });
             markAsPaidToolStripMenuItem.Name = "markAsPaidToolStripMenuItem";
-            markAsPaidToolStripMenuItem.Size = new Size(180, 22);
+            markAsPaidToolStripMenuItem.Size = new Size(177, 22);
             markAsPaidToolStripMenuItem.Text = "Mark as Paid";
             // 
             // dueTxPayOnDueDateToolStripMenuItem
             // 
             dueTxPayOnDueDateToolStripMenuItem.Name = "dueTxPayOnDueDateToolStripMenuItem";
-            dueTxPayOnDueDateToolStripMenuItem.Size = new Size(180, 22);
+            dueTxPayOnDueDateToolStripMenuItem.Size = new Size(141, 22);
             dueTxPayOnDueDateToolStripMenuItem.Text = "On Due Date";
             dueTxPayOnDueDateToolStripMenuItem.Click += dueTxPayOnDueDateToolStripMenuItem_Click;
             // 
             // dueTxPayAsTodayToolStripMenuItem
             // 
             dueTxPayAsTodayToolStripMenuItem.Name = "dueTxPayAsTodayToolStripMenuItem";
-            dueTxPayAsTodayToolStripMenuItem.Size = new Size(180, 22);
+            dueTxPayAsTodayToolStripMenuItem.Size = new Size(141, 22);
             dueTxPayAsTodayToolStripMenuItem.Text = "As Today";
             dueTxPayAsTodayToolStripMenuItem.Click += dueTxPayAsTodayToolStripMenuItem_Click;
             // 
             // dueTxOpenForEditToolStripMenuItem
             // 
             dueTxOpenForEditToolStripMenuItem.Name = "dueTxOpenForEditToolStripMenuItem";
-            dueTxOpenForEditToolStripMenuItem.Size = new Size(180, 22);
+            dueTxOpenForEditToolStripMenuItem.Size = new Size(177, 22);
             dueTxOpenForEditToolStripMenuItem.Text = "Open for Edit";
             dueTxOpenForEditToolStripMenuItem.Click += dueTxOpenForEditToolStripMenuItem_Click;
             // 
             // dueTxReverseTransactionToolStripMenuItem
             // 
             dueTxReverseTransactionToolStripMenuItem.Name = "dueTxReverseTransactionToolStripMenuItem";
-            dueTxReverseTransactionToolStripMenuItem.Size = new Size(180, 22);
+            dueTxReverseTransactionToolStripMenuItem.Size = new Size(177, 22);
             dueTxReverseTransactionToolStripMenuItem.Text = "Reverse Transaction";
             dueTxReverseTransactionToolStripMenuItem.Click += DueTxReverseTransactionToolStripMenuItem_Click;
+            // 
+            // btnNewWalletTransfer
+            // 
+            btnNewWalletTransfer.Location = new Point(331, 498);
+            btnNewWalletTransfer.Name = "btnNewWalletTransfer";
+            btnNewWalletTransfer.Size = new Size(124, 31);
+            btnNewWalletTransfer.TabIndex = 5;
+            btnNewWalletTransfer.Text = "New Wallet Transfer";
+            btnNewWalletTransfer.UseVisualStyleBackColor = true;
+            btnNewWalletTransfer.Click += btnNewWalletTransfer_Click;
             // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(949, 538);
+            Controls.Add(btnNewWalletTransfer);
             Controls.Add(btnAdvSearch);
             Controls.Add(btnAddTransaction);
             Controls.Add(btnAddCategory);
@@ -493,5 +505,6 @@ namespace DemoProject
         private ToolStripMenuItem dueTxPayAsTodayToolStripMenuItem;
         private ToolStripMenuItem dueTxOpenForEditToolStripMenuItem;
         private ToolStripMenuItem dueTxReverseTransactionToolStripMenuItem;
+        private Button btnNewWalletTransfer;
     }
 }

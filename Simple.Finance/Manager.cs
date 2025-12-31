@@ -320,9 +320,9 @@ public class Manager
             Changed = DateTime.UtcNow,
             WalletId = sourceWallet,
             DueDate = date,
-            DueValue = value,
+            DueValue = -value,
             PaymentDate = date,
-            PaidValue = value,
+            PaidValue = -value,
             Description = description,
             Status = Tables.Transac.PaymentStatus.Paid,
             Type = Tables.Transac.TransactionType.Simple, // Start as Simple
@@ -366,27 +366,22 @@ public class Manager
         saveChangeLog(cnn, null, first);
         saveChangeLog(cnn, null, second);
     }
-
-    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate) => updateWalletTransfer(oneOfTransactions,
-            first =>
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description)
+    {
+        updateWalletTransfer(oneOfTransactions,
+            expenseUpdate =>
             {
-                first.DueValue = first.PaidValue = newValue * Math.Sign(first.PaidValue);
-                first.DueDate = first.PaymentDate = newDate;
+                expenseUpdate.DueValue = expenseUpdate.PaidValue = newValue * (-1);
+                expenseUpdate.DueDate = expenseUpdate.PaymentDate = newDate;
+                expenseUpdate.Description = description;
             },
-            second =>
+            incomeUpdate =>
             {
-                second.DueValue = second.PaidValue = newValue * Math.Sign(second.PaidValue);
-                second.DueDate = second.PaymentDate = newDate;
+                incomeUpdate.DueValue = incomeUpdate.PaidValue = newValue * (+1);
+                incomeUpdate.DueDate = incomeUpdate.PaymentDate = newDate;
+                incomeUpdate.Description = description;
             });
-    public void UpdateWalletTransfer(long oneOfTransactions, string description) => updateWalletTransfer(oneOfTransactions,
-            first =>
-            {
-                first.Description = description;
-            },
-            second =>
-            {
-                second.Description = description;
-            });
+    }
     public void ReverseWalletTransfer(long oneOfTransactions) => updateWalletTransfer(oneOfTransactions,
             first =>
             {
@@ -396,17 +391,18 @@ public class Manager
             {
                 second.Status = Tables.Transac.PaymentStatus.Reversed;
             });
-    void updateWalletTransfer(long oneOfTransactions, Action<Tables.Transac> firstUpdate, Action<Tables.Transac> secondUpdate)
+    void updateWalletTransfer(long oneOfTransactions, Action<Tables.Transac> expenseUpdate, Action<Tables.Transac> incomeUpdate)
     {
         using var cnn = db.GetConnection();
+
         var first = cnn.Get<Tables.Transac>(oneOfTransactions) ?? throw new ArgumentException("Invalid transaction");
         if (first.Type != Tables.Transac.TransactionType.WalletTransfer) throw new ArgumentException("Transaction is not a wallet transfer");
         var second = cnn.Get<Tables.Transac>(first.TypeOtherId) ?? throw new ArgumentException("Invalid second transaction");
 
-        firstUpdate(first);
-        first.Changed = DateTime.UtcNow;
+        expenseUpdate(first.DueValue < 0 ? first : second);
+        incomeUpdate(first.DueValue > 0 ? first : second);
 
-        secondUpdate(second);
+        first.Changed = DateTime.UtcNow;
         second.Changed = DateTime.UtcNow;
 
         var oldFirst = cnn.Get<Tables.Transac>(first.Id);
