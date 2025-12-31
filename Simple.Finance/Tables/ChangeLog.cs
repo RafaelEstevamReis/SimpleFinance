@@ -5,6 +5,7 @@ using System;
 
 public record ChangeLog
 {
+    [PrimaryKey]
     public long Id { get; set; }
     [Index("ixChangeLog_Event")]
     public DateTime Event { get; set; }
@@ -15,10 +16,11 @@ public record ChangeLog
 
 public record ChangeLogItem
 {
+    [PrimaryKey]
     public long Id { get; set; }
     [Index("ixChangeLogItem_LogId")]
     public long LogId { get; set; }
-    
+
     public string FieldName { get; set; } = string.Empty;
     public string OldValue { get; set; } = string.Empty;
     public string NewValue { get; set; } = string.Empty;

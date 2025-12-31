@@ -449,12 +449,13 @@ public class Manager
         var diff = ModelHelpers.ModelDiff(older, newer);
 
         var tableId = (long)type.GetProperties().Where(o => o.Name == "Id").First().GetValue(newer);
+        var tableName = type.FullName.Split('.')[^1];
 
         var logId = cnn.Insert(new Tables.ChangeLog
         {
             Id = 0,
             Event = DateTime.UtcNow,
-            TableName = type.FullName,
+            TableName = tableName,
             TableId = tableId,
         });
         var records = diff.Keys.Select(o => new Tables.ChangeLogItem
