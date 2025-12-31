@@ -10,13 +10,18 @@ using System.Linq;
 
 public class Manager
 {
-    private readonly ConnectionFactory db;
+    protected readonly ConnectionFactory db;
     private readonly string dbFile;
 
     /// <summary>
     /// Triggers an event when a item is updated in this instance
     /// </summary>
     public event EventHandler<ManagerNotificationEventArgs>? EventNotifier;
+    /// <summary>
+    /// Sets current `ExternalId` for all ChangeLogs insertions
+    /// Can be used to set "User who made the change"
+    /// </summary>
+    public long EventLogCurrentExternalId { get; set; } = 0;
 
     public Manager(string dbFile)
     {
@@ -53,7 +58,11 @@ public class Manager
            .Add<Tables.Person>()
            .Add<Tables.Transac>()
            .Commit();
+
+        InternalInitialize(cnn);
     }
+    protected virtual void InternalInitialize(ISqliteConnection cnn) { }
+
     static void compress(string dbFile, string destFile)
     {
         var fiOrg = new FileInfo(dbFile);
@@ -427,6 +436,7 @@ public class Manager
             cl.Event       AS Event,
             cl.TableName   AS TableName,
             cl.TableId     AS TableId,
+            cl.ExternalId  AS ExternalId,
             
             cli.Id         AS LogItemId,
             cli.FieldName  AS FieldName,
@@ -451,6 +461,7 @@ public class Manager
             cl.Event       AS Event,
             cl.TableName   AS TableName,
             cl.TableId     AS TableId,
+            cl.ExternalId  AS ExternalId,
             
             cli.Id         AS LogItemId,
             cli.FieldName  AS FieldName,
@@ -464,7 +475,7 @@ public class Manager
         using var cnn = db.GetConnection();
         return cnn.Query<Tables.TableLogRegistry>(sql, new { tableName, tableId });
     }
-    private bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer)
+    protected bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer)
     {
         var type = typeof(T);
         var diff = ModelHelpers.ModelDiff(older, newer);
@@ -477,6 +488,7 @@ public class Manager
             Event = DateTime.UtcNow,
             TableName = tableName,
             TableId = tableId,
+            ExternalId = EventLogCurrentExternalId,
         });
         var records = diff.Keys.Select(o => new Tables.ChangeLogItem
         {
@@ -512,7 +524,7 @@ public class Manager
             "Simple.Finance.Tables.Person" => ManagerNotificationEventArgs.EventNotificationItem.Person,
             "Simple.Finance.Tables.Transac" => ManagerNotificationEventArgs.EventNotificationItem.Transaction,
             "Simple.Finance.Tables.Wallet" => ManagerNotificationEventArgs.EventNotificationItem.Wallet,
-            _ => throw new NotImplementedException()
+            _ => ManagerNotificationEventArgs.EventNotificationItem.Other,
         };
 
         EventNotifier.Invoke(this, new ManagerNotificationEventArgs

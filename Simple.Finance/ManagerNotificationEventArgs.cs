@@ -10,6 +10,7 @@ public class ManagerNotificationEventArgs : EventArgs
         Category,
         Person,
         Transaction,
+        Other,
     }
     public enum EventNotificationAction
     {

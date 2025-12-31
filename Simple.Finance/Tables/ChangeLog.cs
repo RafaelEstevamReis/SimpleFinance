@@ -13,6 +13,7 @@ public record ChangeLog
     public string TableName { get; set; } = string.Empty;
     [Index("ixChangeLog_Table", 1)]
     public long TableId { get; set; }
+    public long ExternalId { get; set; }
 }
 public record ChangeLogItem
 {
@@ -32,6 +33,7 @@ public record TableLogRegistry
     public DateTime Event { get; set; }
     public string TableName { get; set; } = string.Empty;
     public long TableId { get; set; }
+    public long ExternalId { get; set; }
 
     public long LogItemId { get; set; }
     public string FieldName { get; set; } = string.Empty;
