@@ -67,7 +67,7 @@ public class SampleFunctions
 
         /* Transactions */
         var txVal = Math.Round((decimal)(Rnd.NextDouble() * 100), 2);
-        mgr.CreateUpdateTransaction(new Simple.Finance.Tables.Transac
+        long lastTxId = mgr.CreateUpdateTransaction(new Simple.Finance.Tables.Transac
         {
             Id = 0,
             CategoryId = oneOf(cats.Where(o => o.IsExpense)).Id,
@@ -82,7 +82,7 @@ public class SampleFunctions
         if (Rnd.NextDouble() < 0.1)
         {
             txVal = Math.Round((decimal)(250 + Rnd.NextDouble() * 500), 0);
-            mgr.CreateUpdateTransaction(new Simple.Finance.Tables.Transac
+            lastTxId = mgr.CreateUpdateTransaction(new Simple.Finance.Tables.Transac
             {
                 Id = 0,
                 CategoryId = oneOf(cats.Where(o => !o.IsExpense)).Id,
@@ -125,6 +125,23 @@ public class SampleFunctions
                 $"{total,8:F2}");
         }
 
+        /* History */
+        var recentEvents = mgr.GetLogs(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow)
+                              .TakeLast(10);
+        Console.WriteLine("Last 10 Events:");
+        foreach (var e in recentEvents)
+        {
+            Console.WriteLine($"{e.Event:g} [{e.TableName}] {e.TableId:000}# {e.FieldName}: '{e.OldValue}' => '{e.NewValue}'");
+
+        }
+        /* Events for last TX */
+        recentEvents = mgr.GetLogs<Simple.Finance.Tables.Transac>(lastTxId);
+        Console.WriteLine($"Last Events of TxID: {lastTxId}");
+        foreach (var e in recentEvents)
+        {
+            Console.WriteLine($"{e.Event:g} {e.FieldName}: '{e.OldValue}' => '{e.NewValue}'");
+
+        }
 
     }
     private static T oneOf<T>(T[] items)

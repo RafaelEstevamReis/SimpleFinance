@@ -419,33 +419,56 @@ public class Manager
 
     #region ChangeLog
 
-    public IEnumerable<Tables.ChangeLog> GetLogs(DateTime start, DateTime end)
+    public IEnumerable<Tables.TableLogRegistry> GetLogs(DateTime start, DateTime end)
     {
+        const string sql = @"
+        SELECT 
+            cl.Id          AS LogId,
+            cl.Event       AS Event,
+            cl.TableName   AS TableName,
+            cl.TableId     AS TableId,
+            
+            cli.Id         AS LogItemId,
+            cli.FieldName  AS FieldName,
+            cli.OldValue   AS OldValue,
+            cli.NewValue   AS NewValue
+        FROM ChangeLog cl
+        INNER JOIN ChangeLogItem cli ON cli.LogId = cl.Id
+        WHERE cl.Event BETWEEN @start AND @end
+        ORDER BY cl.Event, cli.Id, cli.FieldName";
+
         using var cnn = db.GetConnection();
-        return cnn.Query<Tables.ChangeLog>("SELECT * FROM ChangeLog WHERE Event BETWEEN @start AND @end ", new
-        {
-            start,
-            end
-        });
+        return cnn.Query<Tables.TableLogRegistry>(sql, new { start, end });
     }
-    public IEnumerable<Tables.ChangeLog> GetLogs<T>(DateTime start, DateTime end)
+    public IEnumerable<Tables.TableLogRegistry> GetLogs<T>(long tableId)
     {
-        var type = typeof(T);
+        var tableName = getTableName(typeof(T));
+
+        const string sql = @"
+        SELECT 
+            cl.Id          AS LogId,
+            cl.Event       AS Event,
+            cl.TableName   AS TableName,
+            cl.TableId     AS TableId,
+            
+            cli.Id         AS LogItemId,
+            cli.FieldName  AS FieldName,
+            cli.OldValue   AS OldValue,
+            cli.NewValue   AS NewValue
+        FROM ChangeLog cl
+        INNER JOIN ChangeLogItem cli ON cli.LogId = cl.Id
+        WHERE cl.TableName = @tableName AND cl.TableId = @tableId
+        ORDER BY cl.Event, cli.Id, cli.FieldName";
+
         using var cnn = db.GetConnection();
-        return cnn.Query<Tables.ChangeLog>("SELECT * FROM ChangeLog WHERE Table=@table AND (Event BETWEEN @start AND @end) ", new
-        {
-            table = type.FullName,
-            start,
-            end
-        });
+        return cnn.Query<Tables.TableLogRegistry>(sql, new { tableName, tableId });
     }
     private bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer)
     {
         var type = typeof(T);
         var diff = ModelHelpers.ModelDiff(older, newer);
-
         var tableId = (long)type.GetProperties().Where(o => o.Name == "Id").First().GetValue(newer);
-        var tableName = type.FullName.Split('.')[^1];
+        var tableName = getTableName(type);
 
         var logId = cnn.Insert(new Tables.ChangeLog
         {
@@ -467,6 +490,11 @@ public class Manager
 
         notify(type.FullName, older == null ? ManagerNotificationEventArgs.EventNotificationAction.New : ManagerNotificationEventArgs.EventNotificationAction.Update, tableId);
         return records.Length > 0;
+    }
+    private static string getTableName(Type table)
+    {
+        var tableName = table.FullName.Split('.')[^1];
+        return tableName;
     }
 
     #endregion
