@@ -17,7 +17,7 @@ namespace DemoProject.Dialogs
         {
             if (txtName.Text.Length < 1)
             {
-                MessageBox.Show("Wallet name bust be longer than 1");
+                MessageBox.Show("Wallet name must be longer than 1");
                 return;
             }
 

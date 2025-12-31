@@ -62,31 +62,31 @@ namespace DemoProject.Dialogs
 
             if (txtName.Text.Length < 1)
             {
-                MessageBox.Show("Transaction Description bust be longer than 1");
+                MessageBox.Show("Transaction Description must be longer than 1");
                 return;
             }
 
             if (txtDue.Value <= 0)
             {
-                MessageBox.Show("Due Value bust be longer than 1");
+                MessageBox.Show("Due Value must be longer than 1");
                 return;
             }
 
             if (cboWallet.SelectedValue == null)
             {
-                MessageBox.Show("Wallet bust be selected");
+                MessageBox.Show("Wallet must be selected");
                 return;
             }
             if (cboCategory.SelectedValue == null)
             {
-                MessageBox.Show("Category bust be selected");
+                MessageBox.Show("Category must be selected");
                 return;
             }
             if (rdoRecuringYes.Checked)
             {
                 if (cboRecuringPeriod.SelectedIndex < 0)
                 {
-                    MessageBox.Show("A recuring period bust be selected");
+                    MessageBox.Show("A recuring period must be selected");
                     return;
                 }
             }
@@ -154,16 +154,6 @@ namespace DemoProject.Dialogs
             DialogResult = DialogResult.OK;
         }
 
-        public static DialogResult ShowDialog(Transac transaction, Manager manager)
-        {
-            using var frm = new dlgEditTransaction();
-            frm.manager = manager;
-            frm.transaction = transaction;
-            frm.categories = manager.GetCategories().Where(o => !o.IsDeleted).ToArray();
-            frm.wallets = manager.GetWallets().Where(o => !o.IsDeleted).ToArray();
-            return frm.ShowDialog();
-        }
-
         private void rdoExpense_CheckedChanged(object sender, EventArgs e)
         {
             updateCategoryType();
@@ -197,5 +187,16 @@ namespace DemoProject.Dialogs
             Height = 445;
             lblAdvanced.Visible = false;
         }
+
+        public static DialogResult ShowDialog(Transac transaction, Manager manager)
+        {
+            using var frm = new dlgEditTransaction();
+            frm.manager = manager;
+            frm.transaction = transaction;
+            frm.categories = manager.GetCategories().Where(o => !o.IsDeleted).ToArray();
+            frm.wallets = manager.GetWallets().Where(o => !o.IsDeleted).ToArray();
+            return frm.ShowDialog();
+        }
+
     }
 }
