@@ -90,7 +90,7 @@ namespace DemoProject.Dialogs
                     return;
                 }
             }
-            if(isNew && rdoReversed.Checked)
+            if (isNew && rdoReversed.Checked)
             {
                 MessageBox.Show("A transaction cannot be created as Reversed");
                 return;
@@ -198,5 +198,15 @@ namespace DemoProject.Dialogs
             return frm.ShowDialog();
         }
 
+        private void lblChanged_Click(object sender, EventArgs e)
+        {
+            if(transaction.Id == 0)
+            {
+                MessageBox.Show("A new transaction do not have any logs");
+                return;
+            }
+
+            dlgTransactionHistory.ShowDialog(manager, transaction.Id);
+        }
     }
 }

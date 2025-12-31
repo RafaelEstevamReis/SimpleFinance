@@ -151,11 +151,15 @@
             // lblChanged
             // 
             lblChanged.AutoSize = true;
+            lblChanged.Cursor = System.Windows.Forms.Cursors.Hand;
+            lblChanged.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline);
+            lblChanged.ForeColor = System.Drawing.SystemColors.Highlight;
             lblChanged.Location = new System.Drawing.Point(251, 10);
             lblChanged.Name = "lblChanged";
             lblChanged.Size = new System.Drawing.Size(12, 15);
             lblChanged.TabIndex = 1;
             lblChanged.Text = "-";
+            lblChanged.Click += lblChanged_Click;
             // 
             // label6
             // 

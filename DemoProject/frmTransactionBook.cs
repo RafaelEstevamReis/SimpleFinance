@@ -21,7 +21,7 @@ namespace DemoProject
         }
         private void frmTransactionBook_Load(object sender, EventArgs e)
         {
-            dtDate.Value = DateHelpers.StartOfMonth(DateTime.Now);
+            dtDate.Value = DateTime.Now;
         }
         private void btnPrev_Click(object sender, EventArgs e)
         {
@@ -116,6 +116,29 @@ namespace DemoProject
             {
                 MessageBox.Show("This transaction cannot be edited here");
             }
+        }
+
+        private void btnNewTr_Click(object sender, EventArgs e)
+        {
+            cntxBtn.Show(Cursor.Position);
+        }
+
+        private void newTransactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var t = new Transac
+            {
+                Id = 0,
+                Created = DateTime.UtcNow,
+                Changed = DateTime.UtcNow,
+                DueDate = dtDate.Value.Date,
+                PaymentDate = dtDate.Value.Date,
+                Description = "New Transaction",
+            };
+            Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+        }
+        private void newWalletTransferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
         }
     }
 }

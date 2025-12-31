@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             dtDate = new System.Windows.Forms.DateTimePicker();
             btnNext = new System.Windows.Forms.Button();
             btnPrev = new System.Windows.Forms.Button();
@@ -40,7 +41,12 @@
             Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            btnNewTr = new System.Windows.Forms.Button();
+            cntxBtn = new System.Windows.Forms.ContextMenuStrip(components);
+            newTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            newWalletTransferToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
+            cntxBtn.SuspendLayout();
             SuspendLayout();
             // 
             // dtDate
@@ -93,8 +99,8 @@
             // 
             // Column1
             // 
-            dataGridViewCellStyle1.Format = "dd/MM HH:mm";
-            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Format = "dd/MM HH:mm";
+            Column1.DefaultCellStyle = dataGridViewCellStyle7;
             Column1.HeaderText = "Date";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
@@ -116,27 +122,60 @@
             // 
             // Column4
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle8.Format = "N2";
+            Column4.DefaultCellStyle = dataGridViewCellStyle8;
             Column4.HeaderText = "Value";
             Column4.Name = "Column4";
             Column4.ReadOnly = true;
             // 
             // Column5
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "N2";
-            Column5.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle9.Format = "N2";
+            Column5.DefaultCellStyle = dataGridViewCellStyle9;
             Column5.HeaderText = "Balance";
             Column5.Name = "Column5";
             Column5.ReadOnly = true;
+            // 
+            // btnNewTr
+            // 
+            btnNewTr.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnNewTr.Location = new System.Drawing.Point(690, 7);
+            btnNewTr.Name = "btnNewTr";
+            btnNewTr.Size = new System.Drawing.Size(32, 28);
+            btnNewTr.TabIndex = 4;
+            btnNewTr.Text = "*";
+            btnNewTr.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            btnNewTr.UseVisualStyleBackColor = true;
+            btnNewTr.Click += btnNewTr_Click;
+            // 
+            // cntxBtn
+            // 
+            cntxBtn.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { newTransactionToolStripMenuItem, newWalletTransferToolStripMenuItem });
+            cntxBtn.Name = "cntxBtn";
+            cntxBtn.Size = new System.Drawing.Size(181, 70);
+            // 
+            // newTransactionToolStripMenuItem
+            // 
+            newTransactionToolStripMenuItem.Name = "newTransactionToolStripMenuItem";
+            newTransactionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            newTransactionToolStripMenuItem.Text = "New Transaction";
+            newTransactionToolStripMenuItem.Click += newTransactionToolStripMenuItem_Click;
+            // 
+            // newWalletTransferToolStripMenuItem
+            // 
+            newWalletTransferToolStripMenuItem.Name = "newWalletTransferToolStripMenuItem";
+            newWalletTransferToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            newWalletTransferToolStripMenuItem.Text = "New Wallet Transfer";
+            newWalletTransferToolStripMenuItem.Click += newWalletTransferToolStripMenuItem_Click;
             // 
             // frmTransactionBook
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(726, 527);
+            Controls.Add(btnNewTr);
             Controls.Add(grdTransactions);
             Controls.Add(btnPrev);
             Controls.Add(btnNext);
@@ -147,6 +186,7 @@
             Text = "Transaction Book";
             Load += frmTransactionBook_Load;
             ((System.ComponentModel.ISupportInitialize)grdTransactions).EndInit();
+            cntxBtn.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -161,5 +201,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.Button btnNewTr;
+        private System.Windows.Forms.ContextMenuStrip cntxBtn;
+        private System.Windows.Forms.ToolStripMenuItem newTransactionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newWalletTransferToolStripMenuItem;
     }
 }

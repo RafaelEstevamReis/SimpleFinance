@@ -442,6 +442,7 @@ public class Manager
     }
     public IEnumerable<Tables.TableLogRegistry> GetLogs<T>(long tableId)
     {
+        if (tableId <= 0) return [];
         var tableName = getTableName(typeof(T));
 
         const string sql = @"
