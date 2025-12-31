@@ -181,7 +181,7 @@ public class Manager
         if (dateType == SearchTransactionsDate.EffectiveDate)
         {
             string paidOnes = $"( {nameof(Tables.Transac.Status)} = @statusPaid AND {nameof(Tables.Transac.PaymentDate)} BETWEEN @start AND @end )";
-            string unpaidOnes = $"( {nameof(Tables.Transac.Status)} = @statusUnpaid AND {nameof(Tables.Transac.DueDate)} BETWEEN @start AND @end )";
+            string unpaidOnes = $"( {nameof(Tables.Transac.Status)} <> @statusPaid AND {nameof(Tables.Transac.DueDate)} BETWEEN @start AND @end )";
 
             query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE ( {paidOnes} OR {unpaidOnes} )";
         }
@@ -192,7 +192,7 @@ public class Manager
             start,
             end,
             statusPaid = Tables.Transac.PaymentStatus.Paid,
-            statusUnpaid = Tables.Transac.PaymentStatus.Unpaid,
+            //statusUnpaid = Tables.Transac.PaymentStatus.Unpaid,
         });
     }
     public IEnumerable<Tables.Transac> GetTransactionsBy(SearchTransactionsByKind kind, long id, SearchTransactionsDate dateType, DateTime start, DateTime end)
