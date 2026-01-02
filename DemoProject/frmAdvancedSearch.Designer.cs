@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
             groupBox1 = new System.Windows.Forms.GroupBox();
             label4 = new System.Windows.Forms.Label();
             dtTo = new System.Windows.Forms.DateTimePicker();
@@ -40,13 +41,14 @@
             label1 = new System.Windows.Forms.Label();
             cboDate = new System.Windows.Forms.ComboBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
-            chkHideReversed = new System.Windows.Forms.CheckBox();
+            txtDescription = new System.Windows.Forms.TextBox();
             cboReferenceType = new System.Windows.Forms.ComboBox();
             chkFilterReference = new System.Windows.Forms.CheckBox();
             label5 = new System.Windows.Forms.Label();
+            cboReferenceItem = new System.Windows.Forms.ComboBox();
+            chkHideReversed = new System.Windows.Forms.CheckBox();
             chkHideUnpaids = new System.Windows.Forms.CheckBox();
             chkHidePaids = new System.Windows.Forms.CheckBox();
-            cboReferenceItem = new System.Windows.Forms.ComboBox();
             btnSearch = new System.Windows.Forms.Button();
             grdTransactions = new System.Windows.Forms.DataGridView();
             Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -69,11 +71,14 @@
             label9 = new System.Windows.Forms.Label();
             groupBox3 = new System.Windows.Forms.GroupBox();
             chkIncludeUnpaidBalance = new System.Windows.Forms.CheckBox();
-            txtDescription = new System.Windows.Forms.TextBox();
+            cntxGrid = new System.Windows.Forms.ContextMenuStrip(components);
+            changeDueValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            changeDueDayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
             groupBox3.SuspendLayout();
+            cntxGrid.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -158,17 +163,12 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Of:";
             // 
-            // chkHideReversed
+            // txtDescription
             // 
-            chkHideReversed.AutoSize = true;
-            chkHideReversed.Checked = true;
-            chkHideReversed.CheckState = System.Windows.Forms.CheckState.Checked;
-            chkHideReversed.Location = new System.Drawing.Point(6, 56);
-            chkHideReversed.Name = "chkHideReversed";
-            chkHideReversed.Size = new System.Drawing.Size(106, 19);
-            chkHideReversed.TabIndex = 3;
-            chkHideReversed.Text = "Hide Reverseds";
-            chkHideReversed.UseVisualStyleBackColor = true;
+            txtDescription.Location = new System.Drawing.Point(6, 76);
+            txtDescription.Name = "txtDescription";
+            txtDescription.Size = new System.Drawing.Size(343, 23);
+            txtDescription.TabIndex = 2;
             // 
             // cboReferenceType
             // 
@@ -200,26 +200,6 @@
             label5.TabIndex = 7;
             label5.Text = "Description Contains:";
             // 
-            // chkHideUnpaids
-            // 
-            chkHideUnpaids.AutoSize = true;
-            chkHideUnpaids.Location = new System.Drawing.Point(89, 37);
-            chkHideUnpaids.Name = "chkHideUnpaids";
-            chkHideUnpaids.Size = new System.Drawing.Size(97, 19);
-            chkHideUnpaids.TabIndex = 2;
-            chkHideUnpaids.Text = "Hide Unpaids";
-            chkHideUnpaids.UseVisualStyleBackColor = true;
-            // 
-            // chkHidePaids
-            // 
-            chkHidePaids.AutoSize = true;
-            chkHidePaids.Location = new System.Drawing.Point(6, 37);
-            chkHidePaids.Name = "chkHidePaids";
-            chkHidePaids.Size = new System.Drawing.Size(82, 19);
-            chkHidePaids.TabIndex = 1;
-            chkHidePaids.Text = "Hide Paids";
-            chkHidePaids.UseVisualStyleBackColor = true;
-            // 
             // cboReferenceItem
             // 
             cboReferenceItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -229,6 +209,38 @@
             cboReferenceItem.Name = "cboReferenceItem";
             cboReferenceItem.Size = new System.Drawing.Size(214, 23);
             cboReferenceItem.TabIndex = 1;
+            // 
+            // chkHideReversed
+            // 
+            chkHideReversed.AutoSize = true;
+            chkHideReversed.Checked = true;
+            chkHideReversed.CheckState = System.Windows.Forms.CheckState.Checked;
+            chkHideReversed.Location = new System.Drawing.Point(185, 15);
+            chkHideReversed.Name = "chkHideReversed";
+            chkHideReversed.Size = new System.Drawing.Size(101, 19);
+            chkHideReversed.TabIndex = 3;
+            chkHideReversed.Text = "Hide Reversed";
+            chkHideReversed.UseVisualStyleBackColor = true;
+            // 
+            // chkHideUnpaids
+            // 
+            chkHideUnpaids.AutoSize = true;
+            chkHideUnpaids.Location = new System.Drawing.Point(86, 17);
+            chkHideUnpaids.Name = "chkHideUnpaids";
+            chkHideUnpaids.Size = new System.Drawing.Size(92, 19);
+            chkHideUnpaids.TabIndex = 2;
+            chkHideUnpaids.Text = "Hide Unpaid";
+            chkHideUnpaids.UseVisualStyleBackColor = true;
+            // 
+            // chkHidePaids
+            // 
+            chkHidePaids.AutoSize = true;
+            chkHidePaids.Location = new System.Drawing.Point(6, 17);
+            chkHidePaids.Name = "chkHidePaids";
+            chkHidePaids.Size = new System.Drawing.Size(77, 19);
+            chkHidePaids.TabIndex = 1;
+            chkHidePaids.Text = "Hide Paid";
+            chkHidePaids.UseVisualStyleBackColor = true;
             // 
             // btnSearch
             // 
@@ -257,6 +269,7 @@
             grdTransactions.Size = new System.Drawing.Size(976, 398);
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
+            grdTransactions.CellMouseClick += grdTransactions_CellMouseClick;
             grdTransactions.SelectionChanged += grdTransactions_SelectionChanged;
             // 
             // Column6
@@ -282,9 +295,9 @@
             // 
             // Column1
             // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "d";
-            Column1.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle13.Format = "d";
+            Column1.DefaultCellStyle = dataGridViewCellStyle13;
             Column1.HeaderText = "Due Date";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
@@ -292,18 +305,18 @@
             // 
             // Column4
             // 
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle14.Format = "N2";
+            Column4.DefaultCellStyle = dataGridViewCellStyle14;
             Column4.HeaderText = "Value";
             Column4.Name = "Column4";
             Column4.ReadOnly = true;
             // 
             // Column5
             // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle7.Format = "d";
-            Column5.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle15.Format = "d";
+            Column5.DefaultCellStyle = dataGridViewCellStyle15;
             Column5.HeaderText = "Paid Date";
             Column5.Name = "Column5";
             Column5.ReadOnly = true;
@@ -311,9 +324,9 @@
             // 
             // clnBalance
             // 
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle8.Format = "N2";
-            clnBalance.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle16.Format = "N2";
+            clnBalance.DefaultCellStyle = dataGridViewCellStyle16;
             clnBalance.HeaderText = "Balance";
             clnBalance.Name = "clnBalance";
             clnBalance.ReadOnly = true;
@@ -457,7 +470,7 @@
             groupBox3.Controls.Add(chkHideUnpaids);
             groupBox3.Location = new System.Drawing.Point(587, 2);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new System.Drawing.Size(278, 112);
+            groupBox3.Size = new System.Drawing.Size(296, 112);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "Display";
@@ -465,19 +478,32 @@
             // chkIncludeUnpaidBalance
             // 
             chkIncludeUnpaidBalance.AutoSize = true;
-            chkIncludeUnpaidBalance.Location = new System.Drawing.Point(6, 18);
+            chkIncludeUnpaidBalance.Location = new System.Drawing.Point(6, 37);
             chkIncludeUnpaidBalance.Name = "chkIncludeUnpaidBalance";
             chkIncludeUnpaidBalance.Size = new System.Drawing.Size(168, 19);
             chkIncludeUnpaidBalance.TabIndex = 0;
             chkIncludeUnpaidBalance.Text = "Include Unpaids in Balance";
             chkIncludeUnpaidBalance.UseVisualStyleBackColor = true;
             // 
-            // txtDescription
+            // cntxGrid
             // 
-            txtDescription.Location = new System.Drawing.Point(6, 76);
-            txtDescription.Name = "txtDescription";
-            txtDescription.Size = new System.Drawing.Size(343, 23);
-            txtDescription.TabIndex = 2;
+            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem });
+            cntxGrid.Name = "cntxGrid";
+            cntxGrid.Size = new System.Drawing.Size(181, 70);
+            // 
+            // changeDueValueToolStripMenuItem
+            // 
+            changeDueValueToolStripMenuItem.Name = "changeDueValueToolStripMenuItem";
+            changeDueValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            changeDueValueToolStripMenuItem.Text = "Change Due Value";
+            changeDueValueToolStripMenuItem.Click += changeDueValueToolStripMenuItem_Click;
+            // 
+            // changeDueDayToolStripMenuItem
+            // 
+            changeDueDayToolStripMenuItem.Name = "changeDueDayToolStripMenuItem";
+            changeDueDayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            changeDueDayToolStripMenuItem.Text = "Change Due Day";
+            changeDueDayToolStripMenuItem.Click += changeDueDayToolStripMenuItem_Click;
             // 
             // frmAdvancedSearch
             // 
@@ -513,6 +539,7 @@
             ((System.ComponentModel.ISupportInitialize)grdTransactions).EndInit();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
+            cntxGrid.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -557,5 +584,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
         private System.Windows.Forms.DataGridViewTextBoxColumn clnBalance;
         private System.Windows.Forms.TextBox txtDescription;
+        private System.Windows.Forms.ContextMenuStrip cntxGrid;
+        private System.Windows.Forms.ToolStripMenuItem changeDueValueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeDueDayToolStripMenuItem;
     }
 }

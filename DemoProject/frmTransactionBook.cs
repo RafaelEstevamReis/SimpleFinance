@@ -76,14 +76,6 @@ namespace DemoProject
             }
         }
 
-        public static DialogResult ShowDialog(Manager manager)
-        {
-            using var frm = new frmTransactionBook();
-            frm.manager = manager;
-            frm.categories = manager.GetCategoriesDict();
-            return frm.ShowDialog();
-        }
-
         private void grdTransactions_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (sender == null) return;
@@ -140,5 +132,22 @@ namespace DemoProject
         {
             Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
         }
+
+        public static DialogResult ShowDialog(Manager manager)
+        {
+            using var frm = new frmTransactionBook();
+            frm.manager = manager;
+            frm.categories = manager.GetCategoriesDict();
+            return frm.ShowDialog();
+        }
+        public static void Show(Manager manager)
+        {
+            var frm = new frmTransactionBook();
+            frm.manager = manager;
+            frm.categories = manager.GetCategoriesDict();
+            frm.Show();
+            frm.FormClosed += (s, e) => frm.Dispose();
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Simple.Finance;
+﻿using DemoProject.Dialogs;
+using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using System;
@@ -160,13 +161,7 @@ namespace DemoProject
 
         private void grdTransactions_SelectionChanged(object sender, EventArgs e)
         {
-            var selectedCellsIndex = grdTransactions.SelectedCells
-                .Cast<DataGridViewCell>()
-                .Select(c => c.RowIndex)
-                .Distinct();
-
-            var trx = selectedCellsIndex.Select(ix => grdTransactions.Rows[ix].Tag as Transac)
-                                        .Where(o => o != null);
+            var trx = getSelectedTransactions();
             txtTotalSelected.Value = trx.Sum(o => o!.EfectiveValue);
         }
         private void grdTransactions_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -177,6 +172,24 @@ namespace DemoProject
             editTransaction(t);
         }
 
+        private void grdTransactions_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right) return;
+            if (e.RowIndex < 0) return;
+
+            cntxGrid.Show(Cursor.Position);
+        }
+        private Transac[] getSelectedTransactions()
+        {
+            var selectedCellsIndex = grdTransactions.SelectedCells
+                .Cast<DataGridViewCell>()
+                .Select(c => c.RowIndex)
+                .Distinct();
+
+            var trx = selectedCellsIndex.Select(ix => grdTransactions.Rows[ix].Tag as Transac)
+                                        .Where(o => o is not null);
+            return trx.ToArray();
+        }
         private void btnAddTransaction_Click(object sender, EventArgs e)
         {
             var t = new Transac()
@@ -213,11 +226,63 @@ namespace DemoProject
             }
         }
 
+
+        private void changeDueValueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+
+            var result = dlgValueBox.ShowDialog("New Due Value", 2, 0, out decimal newValue);
+            if (result != DialogResult.OK) return;
+
+            foreach (var tx in selected)
+            {
+                tx.DueValue = newValue * Math.Sign(tx.DueValue);
+            }
+
+            manager.CreateUpdateBulkTransaction(selected);
+            search();
+        }
+        private void changeDueDayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+
+            var result = dlgValueBox.ShowDialog("New Due Day", "New Due Day", 0, 0, o => o >= 1 && o <= 31, out decimal newValue);
+            if (result != DialogResult.OK) return;
+
+            foreach (var tx in selected)
+            {
+                var newDate = tx.DueDate.StartOfMonth().AddDays((int)newValue - 1);
+                if (newDate <= tx.DueDate.EndOfMonth()) tx.DueDate = newDate;
+                else tx.DueDate = tx.DueDate.EndOfMonth();
+            }
+
+            manager.CreateUpdateBulkTransaction(selected);
+            search();
+        }
+
+
         public static DialogResult ShowDialog(Manager manager)
         {
             using var frm = new frmAdvancedSearch();
             frm.manager = manager;
             return frm.ShowDialog();
+        }
+        public static void Show(Manager manager)
+        {
+            var frm = new frmAdvancedSearch();
+            frm.manager = manager;
+            frm.Show();
+            frm.FormClosed += (s, e) => frm.Dispose();
         }
 
     }
