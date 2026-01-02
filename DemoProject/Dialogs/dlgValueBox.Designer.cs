@@ -66,7 +66,7 @@
             // txtMoneybox
             // 
             txtMoneybox.DecimalPlaces = 2;
-            txtMoneybox.Location = new System.Drawing.Point(92, 33);
+            txtMoneybox.Location = new System.Drawing.Point(92, 34);
             txtMoneybox.MoneySign = "";
             txtMoneybox.Name = "txtMoneybox";
             txtMoneybox.Size = new System.Drawing.Size(100, 23);
@@ -85,9 +85,11 @@
             Controls.Add(btnSave);
             Controls.Add(lblTitle);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            KeyPreview = true;
             Name = "dlgValueBox";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Select Value";
+            KeyUp += dlgValueBox_KeyUp;
             ResumeLayout(false);
             PerformLayout();
         }
