@@ -464,6 +464,28 @@ public class Manager
         using var cnn = db.GetConnection();
         return cnn.Query<Tables.TableLogRegistry>(sql, new { start, end });
     }
+    public IEnumerable<Tables.TableLogRegistry> GetLogs(DateTime start, DateTime end, long externalId)
+    {
+        const string sql = @"
+        SELECT 
+            cl.Id          AS LogId,
+            cl.Event       AS Event,
+            cl.TableName   AS TableName,
+            cl.TableId     AS TableId,
+            cl.ExternalId  AS ExternalId,
+            
+            cli.Id         AS LogItemId,
+            cli.FieldName  AS FieldName,
+            cli.OldValue   AS OldValue,
+            cli.NewValue   AS NewValue
+        FROM ChangeLog cl
+        INNER JOIN ChangeLogItem cli ON cli.LogId = cl.Id
+        WHERE cl.Event BETWEEN @start AND @end AND cli.ExternalId = @externalId
+        ORDER BY cl.Event, cli.Id, cli.FieldName";
+
+        using var cnn = db.GetConnection();
+        return cnn.Query<Tables.TableLogRegistry>(sql, new { start, end, externalId });
+    }
     public IEnumerable<Tables.TableLogRegistry> GetLogs<T>(long tableId)
     {
         if (tableId <= 0) return [];
@@ -518,7 +540,7 @@ public class Manager
         if (notify) triggerNotification(tableName, older == null ? ManagerNotificationEventArgs.EventNotificationAction.New : ManagerNotificationEventArgs.EventNotificationAction.Update, tableId);
         return records.Length > 0;
     }
-    private static string getTableName(Type table)
+    protected static string getTableName(Type table)
     {
         var tableName = table.FullName.Split('.')[^1];
         return tableName;
@@ -528,7 +550,7 @@ public class Manager
 
     #region Notification
 
-    private void triggerNotification(string tableName, ManagerNotificationEventArgs.EventNotificationAction eventNotificationAction, long id)
+    protected void triggerNotification(string tableName, ManagerNotificationEventArgs.EventNotificationAction eventNotificationAction, long id)
     {
         if (EventNotifier == null) return;
 
