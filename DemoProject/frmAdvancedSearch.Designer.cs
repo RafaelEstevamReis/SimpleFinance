@@ -51,13 +51,6 @@
             chkHidePaids = new System.Windows.Forms.CheckBox();
             btnSearch = new System.Windows.Forms.Button();
             grdTransactions = new System.Windows.Forms.DataGridView();
-            Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            clnBalance = new System.Windows.Forms.DataGridViewTextBoxColumn();
             btnAddTransaction = new System.Windows.Forms.Button();
             label3 = new System.Windows.Forms.Label();
             txtTotalPaid = new DemoProject.Components.MoneyBox();
@@ -75,6 +68,13 @@
             changeDueValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             changeDueDayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             changeCategoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            clnBalance = new System.Windows.Forms.DataGridViewTextBoxColumn();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
@@ -273,65 +273,6 @@
             grdTransactions.CellMouseClick += grdTransactions_CellMouseClick;
             grdTransactions.SelectionChanged += grdTransactions_SelectionChanged;
             // 
-            // Column6
-            // 
-            Column6.HeaderText = "Wallet";
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            Column6.Width = 150;
-            // 
-            // Column2
-            // 
-            Column2.HeaderText = "Category";
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
-            Column2.Width = 150;
-            // 
-            // Column3
-            // 
-            Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            Column3.HeaderText = "Description";
-            Column3.Name = "Column3";
-            Column3.ReadOnly = true;
-            // 
-            // Column1
-            // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "d";
-            Column1.DefaultCellStyle = dataGridViewCellStyle1;
-            Column1.HeaderText = "Due Date";
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
-            Column1.Width = 80;
-            // 
-            // Column4
-            // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle2;
-            Column4.HeaderText = "Value";
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
-            // 
-            // Column5
-            // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "d";
-            Column5.DefaultCellStyle = dataGridViewCellStyle3;
-            Column5.HeaderText = "Paid Date";
-            Column5.Name = "Column5";
-            Column5.ReadOnly = true;
-            Column5.Width = 80;
-            // 
-            // clnBalance
-            // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Format = "N2";
-            clnBalance.DefaultCellStyle = dataGridViewCellStyle4;
-            clnBalance.HeaderText = "Balance";
-            clnBalance.Name = "clnBalance";
-            clnBalance.ReadOnly = true;
-            // 
             // btnAddTransaction
             // 
             btnAddTransaction.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
@@ -490,28 +431,87 @@
             // 
             cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem });
             cntxGrid.Name = "cntxGrid";
-            cntxGrid.Size = new System.Drawing.Size(181, 92);
+            cntxGrid.Size = new System.Drawing.Size(171, 70);
             // 
             // changeDueValueToolStripMenuItem
             // 
             changeDueValueToolStripMenuItem.Name = "changeDueValueToolStripMenuItem";
-            changeDueValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            changeDueValueToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             changeDueValueToolStripMenuItem.Text = "Change Due Value";
             changeDueValueToolStripMenuItem.Click += changeDueValueToolStripMenuItem_Click;
             // 
             // changeDueDayToolStripMenuItem
             // 
             changeDueDayToolStripMenuItem.Name = "changeDueDayToolStripMenuItem";
-            changeDueDayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            changeDueDayToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             changeDueDayToolStripMenuItem.Text = "Change Due Day";
             changeDueDayToolStripMenuItem.Click += changeDueDayToolStripMenuItem_Click;
             // 
             // changeCategoryToolStripMenuItem
             // 
             changeCategoryToolStripMenuItem.Name = "changeCategoryToolStripMenuItem";
-            changeCategoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            changeCategoryToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             changeCategoryToolStripMenuItem.Text = "Change Category";
             changeCategoryToolStripMenuItem.Click += changeCategoryToolStripMenuItem_Click;
+            // 
+            // Column6
+            // 
+            Column6.HeaderText = "Wallet";
+            Column6.Name = "Column6";
+            Column6.ReadOnly = true;
+            Column6.Width = 150;
+            // 
+            // Column2
+            // 
+            Column2.HeaderText = "Category";
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            Column2.Width = 150;
+            // 
+            // Column3
+            // 
+            Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            Column3.HeaderText = "Description";
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            // 
+            // Column1
+            // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "d";
+            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            Column1.HeaderText = "Due Date";
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            Column1.Width = 80;
+            // 
+            // Column4
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N2";
+            Column4.DefaultCellStyle = dataGridViewCellStyle2;
+            Column4.HeaderText = "Value";
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            // 
+            // Column5
+            // 
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "d";
+            Column5.DefaultCellStyle = dataGridViewCellStyle3;
+            Column5.HeaderText = "Paid Date";
+            Column5.Name = "Column5";
+            Column5.ReadOnly = true;
+            Column5.Width = 80;
+            // 
+            // clnBalance
+            // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "N2";
+            clnBalance.DefaultCellStyle = dataGridViewCellStyle4;
+            clnBalance.HeaderText = "Net Amount";
+            clnBalance.Name = "clnBalance";
+            clnBalance.ReadOnly = true;
             // 
             // frmAdvancedSearch
             // 
@@ -584,6 +584,11 @@
         private System.Windows.Forms.CheckBox chkHideReversed;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox chkIncludeUnpaidBalance;
+        private System.Windows.Forms.TextBox txtDescription;
+        private System.Windows.Forms.ContextMenuStrip cntxGrid;
+        private System.Windows.Forms.ToolStripMenuItem changeDueValueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeDueDayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeCategoryToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
@@ -591,10 +596,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
         private System.Windows.Forms.DataGridViewTextBoxColumn clnBalance;
-        private System.Windows.Forms.TextBox txtDescription;
-        private System.Windows.Forms.ContextMenuStrip cntxGrid;
-        private System.Windows.Forms.ToolStripMenuItem changeDueValueToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem changeDueDayToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem changeCategoryToolStripMenuItem;
     }
 }

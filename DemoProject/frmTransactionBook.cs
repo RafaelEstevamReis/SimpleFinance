@@ -22,6 +22,15 @@ namespace DemoProject
         private void frmTransactionBook_Load(object sender, EventArgs e)
         {
             dtDate.Value = DateTime.Now;
+            var allWallets = new Wallet()
+            {
+                Id = 0,
+                Name = "[All Wallets]"
+            };
+
+            cboWallet.DataSource = manager.GetWallets().Union([allWallets]).OrderBy(o => o.Id).ToList();
+            cboWallet.ValueMember = "Id";
+            cboWallet.DisplayMember = "Name";
         }
         private void btnPrev_Click(object sender, EventArgs e)
         {
@@ -35,15 +44,24 @@ namespace DemoProject
         {
             refresh();
         }
+        private void cboWallet_SelectedValueChanged(object sender, EventArgs e)
+        {
+            refresh();
+        }
         void refresh()
         {
             var start = DateHelpers.StartOfMonth(dtDate.Value);
             var end = start.AddMonths(1).AddSeconds(-1);
 
             grdTransactions.Rows.Clear();
-            var txs = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, start, end)
-                             .OrderBy(o => o.EfectiveDate)
-                             .ToArray();
+            IEnumerable<Transac> txs = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, start, end);
+
+            if (cboWallet.SelectedValue is long walletId && walletId > 0)
+            {
+                txs = txs.Where(o => o.WalletId == walletId);
+            }
+
+            txs = txs.OrderBy(o => o.EfectiveDate).ToArray();
 
             decimal balance = 0;
             foreach (var tx in txs)
