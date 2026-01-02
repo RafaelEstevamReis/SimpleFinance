@@ -32,23 +32,21 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             grdWallets = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
             Column3 = new DataGridViewTextBoxColumn();
-            btnAddWallet = new Button();
             groupBox2 = new GroupBox();
             grdCategories = new DataGridView();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             Column4 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            btnAddCategory = new Button();
             groupBox3 = new GroupBox();
             grdTxRecent = new DataGridView();
             Column5 = new DataGridViewTextBoxColumn();
@@ -57,9 +55,11 @@ namespace DemoProject
             Column8 = new DataGridViewTextBoxColumn();
             Column9 = new DataGridViewTextBoxColumn();
             Column7 = new DataGridViewTextBoxColumn();
-            btnAddTransaction = new Button();
             groupBox4 = new GroupBox();
             grdTxDue = new DataGridView();
+            dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
+            Column6 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
             cntxEditDelete = new ContextMenuStrip(components);
             editToolStripMenuItem = new ToolStripMenuItem();
             deleteToolStripMenuItem = new ToolStripMenuItem();
@@ -71,10 +71,16 @@ namespace DemoProject
             dueTxPayAsTodayToolStripMenuItem = new ToolStripMenuItem();
             dueTxOpenForEditToolStripMenuItem = new ToolStripMenuItem();
             dueTxReverseTransactionToolStripMenuItem = new ToolStripMenuItem();
-            btnNewWalletTransfer = new Button();
-            dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
-            Column6 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
+            btnAddNew = new Button();
+            cntxNew = new ContextMenuStrip(components);
+            newWalletToolStripMenuItem = new ToolStripMenuItem();
+            newCategoryToolStripMenuItem = new ToolStripMenuItem();
+            singleTransactionToolStripMenuItem = new ToolStripMenuItem();
+            walletTransferToolStripMenuItem = new ToolStripMenuItem();
+            bulkTransactionsToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem1 = new ToolStripSeparator();
+            toolStripMenuItem2 = new ToolStripSeparator();
+            importOFXToolStripMenuItem = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -85,6 +91,7 @@ namespace DemoProject
             ((System.ComponentModel.ISupportInitialize)grdTxDue).BeginInit();
             cntxEditDelete.SuspendLayout();
             cntxDueTx.SuspendLayout();
+            cntxNew.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -131,23 +138,13 @@ namespace DemoProject
             // 
             // Column3
             // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle11.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle11;
             Column3.HeaderText = "Balance";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
             Column3.Width = 75;
-            // 
-            // btnAddWallet
-            // 
-            btnAddWallet.Location = new Point(5, 498);
-            btnAddWallet.Name = "btnAddWallet";
-            btnAddWallet.Size = new Size(92, 31);
-            btnAddWallet.TabIndex = 1;
-            btnAddWallet.Text = "New Wallet";
-            btnAddWallet.UseVisualStyleBackColor = true;
-            btnAddWallet.Click += btnAddWallet_Click;
             // 
             // groupBox2
             // 
@@ -200,17 +197,6 @@ namespace DemoProject
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
-            // btnAddCategory
-            // 
-            btnAddCategory.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnAddCategory.Location = new Point(103, 498);
-            btnAddCategory.Name = "btnAddCategory";
-            btnAddCategory.Size = new Size(92, 31);
-            btnAddCategory.TabIndex = 2;
-            btnAddCategory.Text = "New Category";
-            btnAddCategory.UseVisualStyleBackColor = true;
-            btnAddCategory.Click += btnAddCategory_Click;
-            // 
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -249,8 +235,8 @@ namespace DemoProject
             // 
             // dataGridViewTextBoxColumn4
             // 
-            dataGridViewCellStyle2.Format = "d";
-            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle12.Format = "d";
+            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle12;
             dataGridViewTextBoxColumn4.HeaderText = "Eff. Date";
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             dataGridViewTextBoxColumn4.ReadOnly = true;
@@ -272,9 +258,9 @@ namespace DemoProject
             // 
             // Column9
             // 
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "N2";
-            Column9.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle13.Format = "N2";
+            Column9.DefaultCellStyle = dataGridViewCellStyle13;
             Column9.HeaderText = "Value";
             Column9.Name = "Column9";
             Column9.ReadOnly = true;
@@ -285,16 +271,6 @@ namespace DemoProject
             Column7.HeaderText = "Wallet";
             Column7.Name = "Column7";
             Column7.ReadOnly = true;
-            // 
-            // btnAddTransaction
-            // 
-            btnAddTransaction.Location = new Point(201, 498);
-            btnAddTransaction.Name = "btnAddTransaction";
-            btnAddTransaction.Size = new Size(124, 31);
-            btnAddTransaction.TabIndex = 3;
-            btnAddTransaction.Text = "New Transaction";
-            btnAddTransaction.UseVisualStyleBackColor = true;
-            btnAddTransaction.Click += btnAddTransaction_Click;
             // 
             // groupBox4
             // 
@@ -325,6 +301,33 @@ namespace DemoProject
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
             grdTxDue.CellMouseClick += grdTxDue_CellMouseClick;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            dataGridViewCellStyle14.Format = "dd/MM";
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewTextBoxColumn6.HeaderText = "Due";
+            dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            dataGridViewTextBoxColumn6.ReadOnly = true;
+            dataGridViewTextBoxColumn6.Width = 50;
+            // 
+            // Column6
+            // 
+            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle15.Format = "N2";
+            Column6.DefaultCellStyle = dataGridViewCellStyle15;
+            Column6.HeaderText = "Value";
+            Column6.Name = "Column6";
+            Column6.ReadOnly = true;
+            Column6.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn9
+            // 
+            dataGridViewTextBoxColumn9.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewTextBoxColumn9.HeaderText = "Description";
+            dataGridViewTextBoxColumn9.MinimumWidth = 250;
+            dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+            dataGridViewTextBoxColumn9.ReadOnly = true;
             // 
             // cntxEditDelete
             // 
@@ -409,53 +412,81 @@ namespace DemoProject
             dueTxReverseTransactionToolStripMenuItem.Text = "Reverse Transaction";
             dueTxReverseTransactionToolStripMenuItem.Click += DueTxReverseTransactionToolStripMenuItem_Click;
             // 
-            // btnNewWalletTransfer
+            // btnAddNew
             // 
-            btnNewWalletTransfer.Location = new Point(331, 498);
-            btnNewWalletTransfer.Name = "btnNewWalletTransfer";
-            btnNewWalletTransfer.Size = new Size(124, 31);
-            btnNewWalletTransfer.TabIndex = 5;
-            btnNewWalletTransfer.Text = "New Wallet Transfer";
-            btnNewWalletTransfer.UseVisualStyleBackColor = true;
-            btnNewWalletTransfer.Click += btnNewWalletTransfer_Click;
+            btnAddNew.Location = new Point(5, 498);
+            btnAddNew.Name = "btnAddNew";
+            btnAddNew.Size = new Size(92, 31);
+            btnAddNew.TabIndex = 7;
+            btnAddNew.Text = "Add New ▼";
+            btnAddNew.UseVisualStyleBackColor = true;
+            btnAddNew.Click += btnAddNew_Click;
             // 
-            // dataGridViewTextBoxColumn6
+            // cntxNew
             // 
-            dataGridViewCellStyle4.Format = "dd/MM";
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle4;
-            dataGridViewTextBoxColumn6.HeaderText = "Due";
-            dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            dataGridViewTextBoxColumn6.ReadOnly = true;
-            dataGridViewTextBoxColumn6.Width = 50;
+            cntxNew.Items.AddRange(new ToolStripItem[] { newWalletToolStripMenuItem, newCategoryToolStripMenuItem, toolStripMenuItem1, singleTransactionToolStripMenuItem, walletTransferToolStripMenuItem, bulkTransactionsToolStripMenuItem, toolStripMenuItem2, importOFXToolStripMenuItem });
+            cntxNew.Name = "btnNew";
+            cntxNew.Size = new Size(197, 170);
             // 
-            // Column6
+            // newWalletToolStripMenuItem
             // 
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "N2";
-            Column6.DefaultCellStyle = dataGridViewCellStyle5;
-            Column6.HeaderText = "Value";
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            Column6.Width = 80;
+            newWalletToolStripMenuItem.Name = "newWalletToolStripMenuItem";
+            newWalletToolStripMenuItem.Size = new Size(180, 22);
+            newWalletToolStripMenuItem.Text = "New Wallet";
+            newWalletToolStripMenuItem.Click += newWalletToolStripMenuItem_Click;
             // 
-            // dataGridViewTextBoxColumn9
+            // newCategoryToolStripMenuItem
             // 
-            dataGridViewTextBoxColumn9.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewTextBoxColumn9.HeaderText = "Description";
-            dataGridViewTextBoxColumn9.MinimumWidth = 250;
-            dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-            dataGridViewTextBoxColumn9.ReadOnly = true;
+            newCategoryToolStripMenuItem.Name = "newCategoryToolStripMenuItem";
+            newCategoryToolStripMenuItem.Size = new Size(180, 22);
+            newCategoryToolStripMenuItem.Text = "New Category";
+            newCategoryToolStripMenuItem.Click += newCategoryToolStripMenuItem_Click;
+            // 
+            // singleTransactionToolStripMenuItem
+            // 
+            singleTransactionToolStripMenuItem.Name = "singleTransactionToolStripMenuItem";
+            singleTransactionToolStripMenuItem.Size = new Size(196, 22);
+            singleTransactionToolStripMenuItem.Text = "New Single Transaction";
+            singleTransactionToolStripMenuItem.Click += singleTransactionToolStripMenuItem_Click;
+            // 
+            // walletTransferToolStripMenuItem
+            // 
+            walletTransferToolStripMenuItem.Name = "walletTransferToolStripMenuItem";
+            walletTransferToolStripMenuItem.Size = new Size(196, 22);
+            walletTransferToolStripMenuItem.Text = "New Wallet Transfer";
+            walletTransferToolStripMenuItem.Click += walletTransferToolStripMenuItem_Click;
+            // 
+            // bulkTransactionsToolStripMenuItem
+            // 
+            bulkTransactionsToolStripMenuItem.Name = "bulkTransactionsToolStripMenuItem";
+            bulkTransactionsToolStripMenuItem.Size = new Size(196, 22);
+            bulkTransactionsToolStripMenuItem.Text = "New Bulk Transactions";
+            bulkTransactionsToolStripMenuItem.Click += bulkTransactionsToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(177, 6);
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(193, 6);
+            // 
+            // importOFXToolStripMenuItem
+            // 
+            importOFXToolStripMenuItem.Name = "importOFXToolStripMenuItem";
+            importOFXToolStripMenuItem.Size = new Size(196, 22);
+            importOFXToolStripMenuItem.Text = "Import OFX";
+            importOFXToolStripMenuItem.Click += importOFXToolStripMenuItem_Click;
             // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(949, 538);
-            Controls.Add(btnNewWalletTransfer);
+            Controls.Add(btnAddNew);
             Controls.Add(btnAdvSearch);
-            Controls.Add(btnAddTransaction);
-            Controls.Add(btnAddCategory);
-            Controls.Add(btnAddWallet);
             Controls.Add(btnTransactionBook);
             Controls.Add(groupBox4);
             Controls.Add(groupBox3);
@@ -476,6 +507,7 @@ namespace DemoProject
             ((System.ComponentModel.ISupportInitialize)grdTxDue).EndInit();
             cntxEditDelete.ResumeLayout(false);
             cntxDueTx.ResumeLayout(false);
+            cntxNew.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -496,9 +528,6 @@ namespace DemoProject
         private ContextMenuStrip cntxEditDelete;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;
-        private Button btnAddWallet;
-        private Button btnAddCategory;
-        private Button btnAddTransaction;
         private DataGridView grdTxRecent;
         private DataGridView grdTxDue;
         private Button btnTransactionBook;
@@ -515,9 +544,18 @@ namespace DemoProject
         private ToolStripMenuItem dueTxPayAsTodayToolStripMenuItem;
         private ToolStripMenuItem dueTxOpenForEditToolStripMenuItem;
         private ToolStripMenuItem dueTxReverseTransactionToolStripMenuItem;
-        private Button btnNewWalletTransfer;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private DataGridViewTextBoxColumn Column6;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+        private Button btnAddNew;
+        private ContextMenuStrip cntxNew;
+        private ToolStripMenuItem newWalletToolStripMenuItem;
+        private ToolStripMenuItem newCategoryToolStripMenuItem;
+        private ToolStripMenuItem singleTransactionToolStripMenuItem;
+        private ToolStripMenuItem walletTransferToolStripMenuItem;
+        private ToolStripMenuItem bulkTransactionsToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem1;
+        private ToolStripSeparator toolStripMenuItem2;
+        private ToolStripMenuItem importOFXToolStripMenuItem;
     }
 }

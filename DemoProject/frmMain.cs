@@ -17,18 +17,6 @@ namespace DemoProject
             manager.EventNotifier += Manager_EventNotifier;
         }
 
-        private void Manager_EventNotifier(object? sender, ManagerNotificationEventArgs e)
-        {
-            // Trigger updates
-            if (e.Item == ManagerNotificationEventArgs.EventNotificationItem.Wallet) updateMyWallets();
-            if (e.Item == ManagerNotificationEventArgs.EventNotificationItem.Category) updateMyCategories();
-            if (e.Item == ManagerNotificationEventArgs.EventNotificationItem.Transaction)
-            {
-                updateMyWallets();
-                updateMyTransactions();
-            }
-        }
-
         private void frmMain_Load(object sender, EventArgs e)
         {
             checkDefaultItems();
@@ -37,8 +25,7 @@ namespace DemoProject
             updateMyCategories();
             updateMyTransactions();
         }
-
-        private void checkDefaultItems()
+        void checkDefaultItems()
         {
             /* Wallets */
             var wallets = manager.GetWallets().ToArray();
@@ -90,7 +77,17 @@ namespace DemoProject
                 });
             }
         }
-
+        void Manager_EventNotifier(object? sender, ManagerNotificationEventArgs e)
+        {
+            // Trigger updates
+            if (e.Item == ManagerNotificationEventArgs.EventNotificationItem.Wallet) updateMyWallets();
+            if (e.Item == ManagerNotificationEventArgs.EventNotificationItem.Category) updateMyCategories();
+            if (e.Item == ManagerNotificationEventArgs.EventNotificationItem.Transaction)
+            {
+                updateMyWallets();
+                updateMyTransactions();
+            }
+        }
         void updateMyWallets()
         {
             grdWallets.Rows.Clear();
@@ -218,12 +215,39 @@ namespace DemoProject
             manager.CreateUpdateTransaction(tx);
         }
 
-        private void btnAddWallet_Click(object sender, EventArgs e) => newWallet();
-        private void btnAddCategory_Click(object sender, EventArgs e) => newCategory();
-        private void btnAddTransaction_Click(object sender, EventArgs e) => newTransaction();
-        private void btnNewWalletTransfer_Click(object sender, EventArgs e)
+        private void btnAddNew_Click(object sender, EventArgs e)
+        {
+            cntxNew.Show(Cursor.Position);
+        }
+        private void newWalletToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newWallet();
+        }
+        private void newCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newCategory();
+        }
+        private void singleTransactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newTransaction();
+        }
+        private void walletTransferToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
+        }
+        private void bulkTransactionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, []);
+        }
+        private void importOFXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using var dlg = new OpenFileDialog();
+            dlg.Filter = "OFX Files |*.ofx";
+            var result = dlg.ShowDialog();
+            if (result != DialogResult.OK) return;
+
+            var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0);
+            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, trs);
         }
 
         void doGridClickEvent(DataGridView? sender, DataGridViewCellMouseEventArgs e)
