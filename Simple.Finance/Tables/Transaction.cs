@@ -70,4 +70,7 @@ public record Transac
         if (wallets.ContainsKey(WalletId)) return wallets[WalletId];
         return "[-]";
     }
+
+    public override string ToString() 
+        => $"#{Id:0000} [{Type}/{Status, -6}] {EfectiveDate:d} {EfectiveValue:N2} {Description}";
 }
