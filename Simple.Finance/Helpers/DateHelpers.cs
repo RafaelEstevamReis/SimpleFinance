@@ -1,6 +1,7 @@
 ﻿namespace Simple.Finance.Helpers;
 
 using System;
+using System.Linq;
 
 public static class DateHelpers
 {
@@ -43,4 +44,18 @@ public static class DateHelpers
         var start = StartOfHour(dt);
         return start.AddHours(1).AddMilliseconds(-1);
     }
+
+    public static DateTime MinOf(DateTime dt1, DateTime dt2)
+    {
+        if (dt1 < dt2) return dt1;
+        return dt2;
+    }
+    public static DateTime MaxOf(DateTime dt1, DateTime dt2)
+    {
+        if (dt1 > dt2) return dt1;
+        return dt2;
+    }
+
+    public static DateTime MaxOf(params DateTime[] dt) => dt.Max(o => o);
+    public static DateTime MinOf(params DateTime[] dt) => dt.Min(o => o);
 }
