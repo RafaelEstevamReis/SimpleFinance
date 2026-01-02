@@ -9,12 +9,13 @@ public record ChangeLog
     public long Id { get; set; }
     [Index("ixChangeLog_Event", 1)]
     public DateTime Event { get; set; }
+    [Index("ixChangeLog_Event", 2)]
+    public long ExternalId { get; set; }
+
     [Index("ixChangeLog_Table", 1)]
     public string TableName { get; set; } = string.Empty;
     [Index("ixChangeLog_Table", 2)]
     public long TableId { get; set; }
-    [Index("ixChangeLog_Event", 2)]
-    public long ExternalId { get; set; }
 }
 public record ChangeLogItem
 {
