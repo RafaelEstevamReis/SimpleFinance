@@ -323,7 +323,14 @@ public class OfxFile
         public DateTime? DatePosted()
         {
             if (DtPosted is null) return null;
-            return DateTime.ParseExact(DtPosted, "yyyyMMdd", CultureInfo.InvariantCulture);
+
+            if (DtPosted.Length >= 20 && DtPosted.Contains("["))
+            {
+                return DateTime.ParseExact(DtPosted.Substring(0, 8), "yyyyMMdd", CultureInfo.InvariantCulture);
+            }
+
+            if (DateTime.TryParseExact(DtPosted, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime dt)) return dt;
+            return DateTime.Parse(DtPosted, CultureInfo.InvariantCulture);
         }
     }
     [Serializable()]
