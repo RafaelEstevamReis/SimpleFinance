@@ -1,4 +1,5 @@
 using Simple.Finance;
+using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using System;
 using System.Linq;
@@ -121,26 +122,30 @@ namespace DemoProject
             var wallets = manager.GetWalletsDict();
             var categories = manager.GetCategoriesDict();
 
-            // Recent
+            // Recent effective or changed
             grdTxRecent.Rows.Clear();
-            var txs = manager.GetTransactions(Manager.SearchTransactionsDate.Changed, DateTime.UtcNow.AddDays(-180), DateTime.UtcNow.AddMinutes(1))
-                             .OrderByDescending(o => o.Changed)
-                             .Take(45)
-                             ;
+
+            var recentDuePaid = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow.AddMinutes(7));
+            var recentChanged = manager.GetTransactions(Manager.SearchTransactionsDate.Changed, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddMinutes(1));
+            var txs = recentDuePaid.Union(recentChanged).DistinctBy(o => o.Id).OrderBy(o => o.EfectiveDate);
             foreach (var tx in txs)
             {
-                if (tx.Status == Transac.PaymentStatus.Reversed) continue;
-
                 string category = tx.GetCategoryName(categories);
                 string wallet = tx.GetWalletName(wallets);
 
                 int ix = grdTxRecent.Rows.Add(tx.Status, tx.EfectiveDate, category, tx.Description, tx.EfectiveValue, wallet);
                 grdTxRecent.Rows[ix].Tag = tx;
+                
+                if (tx.Status == Transac.PaymentStatus.Reversed)
+                {
+                    grdTxRecent.Rows[ix].DefaultCellStyle.Font = new System.Drawing.Font(Font, System.Drawing.FontStyle.Strikeout);
+                }
             }
 
             // Due
             grdTxDue.Rows.Clear();
-            var txsDue = manager.GetTransactions(Manager.SearchTransactionsDate.DueDate, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow.AddDays(7))
+            var dtDue = DateHelpers.MaxOf(DateTime.UtcNow.EndOfMonth(), DateTime.UtcNow.AddDays(7));
+            var txsDue = manager.GetTransactions(Manager.SearchTransactionsDate.DueDate, DateTime.UtcNow.AddDays(-7), dtDue)
                                 .OrderBy(o => o.DueDate);
             foreach (var tx in txsDue)
             {
@@ -312,6 +317,7 @@ namespace DemoProject
             {
                 Id = 0,
                 Name = "New Category",
+                IsExpense = true,
             };
             var result = Dialogs.dlgEditCategory.ShowDialog(c);
             if (result == DialogResult.Cancel) return;
