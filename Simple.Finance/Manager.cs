@@ -11,6 +11,9 @@ using System.Linq;
 
 public class Manager
 {
+    /// <summary>
+    /// Internal Sqlite factory
+    /// </summary>
     protected readonly ConnectionFactory db;
     private readonly string dbFile;
 
@@ -62,6 +65,10 @@ public class Manager
 
         InternalInitialize(cnn);
     }
+    /// <summary>
+    /// Init function free for derived classes to use,
+    /// it runs after migrations and does nothing
+    /// </summary>
     protected virtual void InternalInitialize(ISqliteConnection cnn) { }
 
     static void compress(string dbFile, string destFile)
@@ -146,6 +153,8 @@ public class Manager
 
     public IEnumerable<Tables.Person> GetAllPersons()
     {
+        // Indexes will be bigger than the table itself and the same impact as tablescan
+        // just get all and filter later
         using var cnn = db.GetConnection();
         return cnn.GetAll<Tables.Person>();
     }
