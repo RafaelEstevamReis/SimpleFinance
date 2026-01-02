@@ -534,10 +534,10 @@ public class Manager
 
         var tableEnum = tableName switch
         {
-            "Simple.Finance.Tables.Category" => ManagerNotificationEventArgs.EventNotificationItem.Category,
-            "Simple.Finance.Tables.Person" => ManagerNotificationEventArgs.EventNotificationItem.Person,
-            "Simple.Finance.Tables.Transac" => ManagerNotificationEventArgs.EventNotificationItem.Transaction,
-            "Simple.Finance.Tables.Wallet" => ManagerNotificationEventArgs.EventNotificationItem.Wallet,
+            "Category" => ManagerNotificationEventArgs.EventNotificationItem.Category,
+            "Person" => ManagerNotificationEventArgs.EventNotificationItem.Person,
+            "Transac" => ManagerNotificationEventArgs.EventNotificationItem.Transaction,
+            "Wallet" => ManagerNotificationEventArgs.EventNotificationItem.Wallet,
             _ => ManagerNotificationEventArgs.EventNotificationItem.Other,
         };
 
