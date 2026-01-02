@@ -175,11 +175,11 @@ namespace DemoProject.Dialogs
         }
 
 
-        public static DialogResult ShowDialog(Manager manager, Transac[] trs)
+        public static DialogResult ShowDialog(Manager manager, IEnumerable<Transac> trs)
         {
             using var frm = new dlgAddBulkTransactions();
             frm.manager = manager;
-            frm.initTransactions = trs;
+            frm.initTransactions = trs.ToArray();
             return frm.ShowDialog();
         }
 

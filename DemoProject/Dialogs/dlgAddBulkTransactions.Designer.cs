@@ -117,6 +117,7 @@
             // 
             // clnValue
             // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
             dataGridViewCellStyle2.Format = "N2";
             clnValue.DefaultCellStyle = dataGridViewCellStyle2;
             clnValue.HeaderText = "Value";
