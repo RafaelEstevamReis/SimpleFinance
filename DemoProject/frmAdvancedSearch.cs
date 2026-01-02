@@ -177,6 +177,8 @@ namespace DemoProject
             if (e.Button != MouseButtons.Right) return;
             if (e.RowIndex < 0) return;
 
+            grdTransactions.Rows[e.RowIndex].Selected = true;
+
             cntxGrid.Show(Cursor.Position);
         }
         private Transac[] getSelectedTransactions()
