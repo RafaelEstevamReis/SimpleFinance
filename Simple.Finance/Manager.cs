@@ -4,6 +4,7 @@ using Simple.Finance.Helpers;
 using Simple.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -251,21 +252,31 @@ public class Manager
     public long CreateUpdateTransaction(Tables.Transac tx)
     {
         using var cnn = db.GetConnection();
-        return createUpdateTransaction(cnn, tx, generateLog: true);
+        return createUpdateTransaction(cnn, tx, generateLog: true, generateNotification: true);
     }
     public IEnumerable<long> CreateUpdateBulkTransaction(IEnumerable<Tables.Transac> txs)
     {
         List<long> lst = [];
-        using var cnn = db.GetConnection();
+        using (var cnn = db.GetConnection())
+        {
+            foreach (var tx in txs)
+            {
+                var id = createUpdateTransaction(cnn, tx, generateLog: true, generateNotification: false);
+                lst.Add(id);
+            }
+        }
+        // Notify All after closing the connection
+        var tableName = getTableName(typeof(Tables.Transac));
         foreach (var tx in txs)
         {
-            var id = createUpdateTransaction(cnn, tx, generateLog: true);
-            lst.Add(id);
+            triggerNotification(tableName, ManagerNotificationEventArgs.EventNotificationAction.Update, tx.Id);
         }
         return lst;
     }
-    private long createUpdateTransaction(ISqliteConnection cnn, Tables.Transac tx, bool generateLog)
+    private long createUpdateTransaction(ISqliteConnection cnn, Tables.Transac tx, bool generateLog, bool generateNotification)
     {
+        if (!generateLog && generateNotification) Debug.Fail("Cannot notify without log");
+
         var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transac>(tx.Id);
 
         // check wallet
@@ -309,7 +320,10 @@ public class Manager
 
         tx.Id = (int)cnn.Insert(tx, OnConflict.Replace);
 
-        if (generateLog) saveChangeLog(cnn, originalValue, tx);
+        if (generateLog)
+        {
+            saveChangeLog(cnn, originalValue, tx, generateNotification);
+        }
         return tx.Id;
     }
     public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date)
@@ -354,8 +368,8 @@ public class Manager
 
         using var cnn = db.GetConnection();
         // save transactions
-        txPay.Id = createUpdateTransaction(cnn, txPay, generateLog: false);
-        txReceive.Id = createUpdateTransaction(cnn, txReceive, generateLog: false);
+        txPay.Id = createUpdateTransaction(cnn, txPay, generateLog: false, generateNotification: false);
+        txReceive.Id = createUpdateTransaction(cnn, txReceive, generateLog: false, generateNotification: false);
         // Update as Transfer
         cnn.Execute($"UPDATE {nameof(Tables.Transac)} SET Type = @type, TypeOtherId = @other WHERE Id = @id ", new
         {
@@ -475,7 +489,7 @@ public class Manager
         using var cnn = db.GetConnection();
         return cnn.Query<Tables.TableLogRegistry>(sql, new { tableName, tableId });
     }
-    protected bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer)
+    protected bool saveChangeLog<T>(ISqliteConnection cnn, T? older, T newer, bool notify = true)
     {
         var type = typeof(T);
         var diff = ModelHelpers.ModelDiff(older, newer);
@@ -501,7 +515,7 @@ public class Manager
         .ToArray();
         cnn.BulkInsert(records);
 
-        notify(type.FullName, older == null ? ManagerNotificationEventArgs.EventNotificationAction.New : ManagerNotificationEventArgs.EventNotificationAction.Update, tableId);
+        if (notify) triggerNotification(tableName, older == null ? ManagerNotificationEventArgs.EventNotificationAction.New : ManagerNotificationEventArgs.EventNotificationAction.Update, tableId);
         return records.Length > 0;
     }
     private static string getTableName(Type table)
@@ -514,7 +528,7 @@ public class Manager
 
     #region Notification
 
-    private void notify(string tableName, ManagerNotificationEventArgs.EventNotificationAction eventNotificationAction, long id)
+    private void triggerNotification(string tableName, ManagerNotificationEventArgs.EventNotificationAction eventNotificationAction, long id)
     {
         if (EventNotifier == null) return;
 
