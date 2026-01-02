@@ -9,6 +9,8 @@ using System.Linq;
 
 public static class TransactionImporter
 {
+    public static IEnumerable<Transac> FromOFX(string filePath, long walletId, long categoryId)
+        => FromOFX(OfxFile.FromFile(filePath), walletId, categoryId);
     public static IEnumerable<Transac> FromOFX(OfxFile ofx, long walletId, long categoryId)
     {
         var acc = ofx.GetAllAccountTransactions();
