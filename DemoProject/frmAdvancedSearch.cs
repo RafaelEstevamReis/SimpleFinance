@@ -21,7 +21,7 @@ namespace DemoProject
         }
         private void frmAdvancedSearch_Load(object sender, EventArgs e)
         {
-            cboDate.SelectedIndex = 0;
+            cboDate.SelectedIndex = 4;
             cboReferenceType.SelectedIndex = 0;
             dtFrom.Value = DateHelpers.StartOfMonth(DateTime.Now);
             dtTo.Value = DateHelpers.EndOfMonth(dtFrom.Value);
@@ -153,6 +153,7 @@ namespace DemoProject
                 if (grdTransactions.Rows.Count > sri) grdTransactions.Rows[sri].Selected = true;
             }
             // Totals
+            txs = txs.Where(o => o.Status != Transac.PaymentStatus.Reversed); // Remove reversed from stats
             txtTotalPaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Paid).Sum(o => o.PaidValue);
             txtTotalUnpaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid).Sum(o => o.DueValue);
             txtTotalIncome.Value = txs.Where(o => o.DueValue > 0).Sum(o => o.EfectiveValue);
@@ -161,7 +162,7 @@ namespace DemoProject
 
         private void grdTransactions_SelectionChanged(object sender, EventArgs e)
         {
-            var trx = getSelectedTransactions();
+            var trx = getSelectedTransactions().Where(o => o.Status != Transac.PaymentStatus.Reversed).ToArray();
             txtTotalSelected.Value = trx.Sum(o => o!.EfectiveValue);
             lblTotalSelected.Text = $"Total Selected: ({trx.Length})";
         }
@@ -303,6 +304,52 @@ namespace DemoProject
             search();
         }
 
+        private void markAsPaidAsOfTodayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            markAsPaid(asToday: true);
+        }
+        private void markAsPaidAsOfOriginalDueDateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            markAsPaid(asToday: false);
+        }
+        void markAsPaid(bool asToday)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+
+            if (selected.Any(o => o.Status == Transac.PaymentStatus.Paid))
+            {
+                MessageBox.Show("Paid transactions cannot be paid");
+                return;
+            }
+            if (selected.Any(o => o.Status == Transac.PaymentStatus.Reversed))
+            {
+                MessageBox.Show("Reversed transactions cannot be paid");
+                return;
+            }
+
+            foreach (var tx in selected)
+            {
+                tx.Status = Transac.PaymentStatus.Paid;
+                if (asToday)
+                {
+                    tx.PaymentDate = DateTime.Now;
+                    tx.PaidValue = tx.DueValue;
+                }
+                else
+                {
+                    tx.PaymentDate = tx.DueDate.Date;
+                    tx.PaidValue = tx.DueValue;
+                }
+            }
+
+            manager.CreateUpdateBulkTransaction(selected);
+            search();
+        }
 
         public static DialogResult ShowDialog(Manager manager)
         {
