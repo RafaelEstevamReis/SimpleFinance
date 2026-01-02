@@ -123,9 +123,9 @@ namespace DemoProject.Dialogs
                 manager.CreateUpdateTransaction(transaction); // Save
 
                 var txForCopy = manager.GetTransactionById(transaction.Id);
-                Debug.Assert(txForCopy is not null);
                 if (txForCopy == null)
                 {
+                    Debug.Fail("Should not be null");
                     txForCopy = transaction;
                     txForCopy.Id = 0;
                 }
@@ -200,7 +200,7 @@ namespace DemoProject.Dialogs
 
         private void lblChanged_Click(object sender, EventArgs e)
         {
-            if(transaction.Id == 0)
+            if (transaction.Id == 0)
             {
                 MessageBox.Show("A new transaction do not have any logs");
                 return;

@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             groupBox1 = new System.Windows.Forms.GroupBox();
             label4 = new System.Windows.Forms.Label();
             dtTo = new System.Windows.Forms.DateTimePicker();
@@ -68,12 +68,13 @@
             txtTotalExpenses = new DemoProject.Components.MoneyBox();
             label8 = new System.Windows.Forms.Label();
             txtTotalSelected = new DemoProject.Components.MoneyBox();
-            label9 = new System.Windows.Forms.Label();
+            lblTotalSelected = new System.Windows.Forms.Label();
             groupBox3 = new System.Windows.Forms.GroupBox();
             chkIncludeUnpaidBalance = new System.Windows.Forms.CheckBox();
             cntxGrid = new System.Windows.Forms.ContextMenuStrip(components);
             changeDueValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             changeDueDayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            changeCategoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
@@ -295,9 +296,9 @@
             // 
             // Column1
             // 
-            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle13.Format = "d";
-            Column1.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "d";
+            Column1.DefaultCellStyle = dataGridViewCellStyle1;
             Column1.HeaderText = "Due Date";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
@@ -305,18 +306,18 @@
             // 
             // Column4
             // 
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle14.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N2";
+            Column4.DefaultCellStyle = dataGridViewCellStyle2;
             Column4.HeaderText = "Value";
             Column4.Name = "Column4";
             Column4.ReadOnly = true;
             // 
             // Column5
             // 
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle15.Format = "d";
-            Column5.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "d";
+            Column5.DefaultCellStyle = dataGridViewCellStyle3;
             Column5.HeaderText = "Paid Date";
             Column5.Name = "Column5";
             Column5.ReadOnly = true;
@@ -324,9 +325,9 @@
             // 
             // clnBalance
             // 
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle16.Format = "N2";
-            clnBalance.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "N2";
+            clnBalance.DefaultCellStyle = dataGridViewCellStyle4;
             clnBalance.HeaderText = "Balance";
             clnBalance.Name = "clnBalance";
             clnBalance.ReadOnly = true;
@@ -452,15 +453,15 @@
             txtTotalSelected.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             txtTotalSelected.Value = new decimal(new int[] { 0, 0, 0, 0 });
             // 
-            // label9
+            // lblTotalSelected
             // 
-            label9.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(430, 519);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(82, 15);
-            label9.TabIndex = 14;
-            label9.Text = "Total Selected:";
+            lblTotalSelected.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            lblTotalSelected.AutoSize = true;
+            lblTotalSelected.Location = new System.Drawing.Point(430, 519);
+            lblTotalSelected.Name = "lblTotalSelected";
+            lblTotalSelected.Size = new System.Drawing.Size(82, 15);
+            lblTotalSelected.TabIndex = 14;
+            lblTotalSelected.Text = "Total Selected:";
             // 
             // groupBox3
             // 
@@ -487,9 +488,9 @@
             // 
             // cntxGrid
             // 
-            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem });
+            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem });
             cntxGrid.Name = "cntxGrid";
-            cntxGrid.Size = new System.Drawing.Size(181, 70);
+            cntxGrid.Size = new System.Drawing.Size(181, 92);
             // 
             // changeDueValueToolStripMenuItem
             // 
@@ -505,6 +506,13 @@
             changeDueDayToolStripMenuItem.Text = "Change Due Day";
             changeDueDayToolStripMenuItem.Click += changeDueDayToolStripMenuItem_Click;
             // 
+            // changeCategoryToolStripMenuItem
+            // 
+            changeCategoryToolStripMenuItem.Name = "changeCategoryToolStripMenuItem";
+            changeCategoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            changeCategoryToolStripMenuItem.Text = "Change Category";
+            changeCategoryToolStripMenuItem.Click += changeCategoryToolStripMenuItem_Click;
+            // 
             // frmAdvancedSearch
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -512,7 +520,7 @@
             ClientSize = new System.Drawing.Size(976, 561);
             Controls.Add(groupBox3);
             Controls.Add(txtTotalSelected);
-            Controls.Add(label9);
+            Controls.Add(lblTotalSelected);
             Controls.Add(txtTotalExpenses);
             Controls.Add(label8);
             Controls.Add(txtTotalIncome);
@@ -572,7 +580,7 @@
         private Components.MoneyBox txtTotalExpenses;
         private System.Windows.Forms.Label label8;
         private Components.MoneyBox txtTotalSelected;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblTotalSelected;
         private System.Windows.Forms.CheckBox chkHideReversed;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox chkIncludeUnpaidBalance;
@@ -587,5 +595,6 @@
         private System.Windows.Forms.ContextMenuStrip cntxGrid;
         private System.Windows.Forms.ToolStripMenuItem changeDueValueToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changeDueDayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeCategoryToolStripMenuItem;
     }
 }

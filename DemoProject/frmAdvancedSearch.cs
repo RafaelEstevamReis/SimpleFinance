@@ -163,6 +163,7 @@ namespace DemoProject
         {
             var trx = getSelectedTransactions();
             txtTotalSelected.Value = trx.Sum(o => o!.EfectiveValue);
+            lblTotalSelected.Text = $"Total Selected: ({trx.Length})";
         }
         private void grdTransactions_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -228,7 +229,6 @@ namespace DemoProject
             }
         }
 
-
         private void changeDueValueToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selected = getSelectedTransactions();
@@ -266,6 +266,37 @@ namespace DemoProject
                 var newDate = tx.DueDate.StartOfMonth().AddDays((int)newValue - 1);
                 if (newDate <= tx.DueDate.EndOfMonth()) tx.DueDate = newDate;
                 else tx.DueDate = tx.DueDate.EndOfMonth();
+            }
+
+            manager.CreateUpdateBulkTransaction(selected);
+            search();
+        }
+        private void changeCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+
+            var sign = Math.Sign(selected[0].DueValue);
+            if (selected.Any(k => Math.Sign(k.DueValue) != sign))
+            {
+                MessageBox.Show("All transactions must be either 'Expense' or 'Income'");
+                return;
+            }
+
+            var categories = manager.GetCategories()
+                                    .Where(o => sign > 0 ? !o.IsExpense : o.IsExpense)
+                                    .ToArray()
+                                    ;
+            var result = dlgComboBox.ShowDialog("New Category", categories, out long newValue);
+            if (result != DialogResult.OK) return;
+
+            foreach (var tx in selected)
+            {
+                tx.CategoryId = newValue;
             }
 
             manager.CreateUpdateBulkTransaction(selected);

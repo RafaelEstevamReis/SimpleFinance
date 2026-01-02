@@ -12,6 +12,15 @@ namespace DemoProject.Dialogs
         {
             InitializeComponent();
         }
+        private void dlgValueBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                btnSave.PerformClick();
+            }
+        }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -28,16 +37,6 @@ namespace DemoProject.Dialogs
             }
 
             DialogResult = DialogResult.OK;
-        }
-
-        private void dlgValueBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Enter)
-            {
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-                btnSave.PerformClick();
-            }
         }
 
         public static DialogResult ShowDialog(string caption, decimal inputValue, out decimal outputValue)
