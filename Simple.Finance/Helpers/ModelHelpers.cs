@@ -12,6 +12,9 @@ public static class ModelHelpers
 
         foreach (var p in type.GetProperties())
         {
+            // Ignore Getter only
+            if (!p.CanWrite) continue;
+
             var fOld = older == null ? null : p.GetValue(older);
             var fNew = p.GetValue(newer);
 
