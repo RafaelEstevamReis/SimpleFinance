@@ -9,8 +9,8 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgAddBulkTransactions : Form
     {
+        private Manager manager = null!;
         private Category[] categories = [];
-        private Wallet[] wallets;
         private Transac[] initTransactions = [];
 
         public dlgAddBulkTransactions()
@@ -19,7 +19,8 @@ namespace DemoProject.Dialogs
         }
         private void dlgAddBulkTransactions_Load(object sender, EventArgs e)
         {
-            cboWallet.DataSource = wallets;
+            categories = manager.GetCategories().ToArray();
+            cboWallet.DataSource = manager.GetWallets().ToArray();
             cboWallet.ValueMember = "Id";
             cboWallet.DisplayMember = "Name";
 
@@ -57,9 +58,8 @@ namespace DemoProject.Dialogs
                 {
                     updateCategoryCell(e.RowIndex, bExpense);
                 }
-
+                return;
             }
-
         }
 
         private void updateCategoryCell(int rowIndex, bool isExpense)
@@ -112,26 +112,73 @@ namespace DemoProject.Dialogs
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (cboWallet.SelectedIndex < 0)
+            {
+                MessageBox.Show("Select a wallet");
+                return;
+            }
+            var wallet = (long)cboWallet.SelectedValue!;
+
             List<Transac> lst = [];
             foreach (DataGridViewRow row in grdData.Rows)
             {
+                // is empty?
+                if (row.Cells[clnDate.Index].Value == null) continue;
+
                 DateTime date = (DateTime)row.Cells[clnDate.Index].Value;
-                Types type = (Types)row.Cells[clnType.Index].Value;
+                bool isExpense = (bool)row.Cells[clnType.Index].Value;
                 long category = (long)row.Cells[clnCategory.Index].Value;
                 string description = row.Cells[clnDescription.Index].Value?.ToString() ?? "";
-                decimal value = (decimal)row.Cells[clnDescription.Index].Value;
+                decimal value = (decimal)row.Cells[clnValue.Index].Value;
                 bool paid = (bool)row.Cells[clnPaid.Index].Value;
 
+                if (description.Length < 1)
+                {
+                    MessageBox.Show("Description must be at least 1 character long");
+                    return;
+                }
 
+                var tr = new Transac
+                {
+                    Id = 0,
+                    Created = DateTime.UtcNow,
+                    Description = description,
+                    CategoryId = category,
+                    WalletId = wallet,
+                    Type = Transac.TransactionType.Simple,
+                    Status = Transac.PaymentStatus.Unpaid,
+                    DueDate = date.Date,
+                    DueValue = value * (isExpense ? -1 : 1),
+                    PaymentDate = DateTime.UtcNow.Date,
+                    PaidValue = 0,
+                };
+                if (paid)
+                {
+                    tr.Status = Transac.PaymentStatus.Paid;
+                    tr.PaidValue = tr.DueValue;
+                    tr.PaymentDate = tr.DueDate;
+                }
+                lst.Add(tr);
             }
+
+            if (lst.Count == 0)
+            {
+                MessageBox.Show("Must be at least one transaction");
+                return;
+            }
+
+            var result = MessageBox.Show($"Confirm creation of {lst.Count} new transactions?", "Create transactions?", MessageBoxButtons.YesNo);
+            if (result != DialogResult.Yes) return;
+
+            manager.CreateUpdateBulkTransaction(lst);
+            DialogResult = DialogResult.OK;
         }
 
 
         public static DialogResult ShowDialog(Manager manager, Transac[] trs)
         {
             using var frm = new dlgAddBulkTransactions();
-            frm.categories = manager.GetCategories().ToArray();
-            frm.wallets = manager.GetWallets().ToArray();
+            frm.manager = manager;
             frm.initTransactions = trs;
             return frm.ShowDialog();
         }
