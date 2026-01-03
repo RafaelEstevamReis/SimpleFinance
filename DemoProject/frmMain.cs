@@ -162,7 +162,7 @@ namespace DemoProject
         void updateChart()
         {
             int daysBefore = 10;
-            int daysAfter = 90;
+            int daysAfter = 120;
 
             var dateBefore = DateTime.UtcNow.AddDays(-daysBefore).EndOfDay();
             var balance = manager.GetWalletsBalance(dateBefore);

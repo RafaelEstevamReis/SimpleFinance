@@ -107,9 +107,9 @@ namespace DemoProject
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox1.Controls.Add(grdWallets);
-            groupBox1.Location = new Point(656, 12);
+            groupBox1.Location = new Point(656, 6);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(318, 119);
+            groupBox1.Size = new Size(318, 125);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "My Wallets";
@@ -128,7 +128,7 @@ namespace DemoProject
             grdWallets.ReadOnly = true;
             grdWallets.RowHeadersVisible = false;
             grdWallets.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdWallets.Size = new Size(312, 97);
+            grdWallets.Size = new Size(312, 103);
             grdWallets.TabIndex = 0;
             grdWallets.CellDoubleClick += grdWallets_CellDoubleClick;
             grdWallets.CellMouseClick += grdWallets_CellMouseClick;
@@ -165,7 +165,7 @@ namespace DemoProject
             groupBox2.Controls.Add(grdCategories);
             groupBox2.Location = new Point(656, 134);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(318, 162);
+            groupBox2.Size = new Size(318, 159);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "My Categories";
@@ -184,7 +184,7 @@ namespace DemoProject
             grdCategories.ReadOnly = true;
             grdCategories.RowHeadersVisible = false;
             grdCategories.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdCategories.Size = new Size(312, 140);
+            grdCategories.Size = new Size(312, 137);
             grdCategories.TabIndex = 1;
             grdCategories.CellDoubleClick += grdCategories_CellDoubleClick;
             grdCategories.CellMouseClick += grdCategories_CellMouseClick;
@@ -291,9 +291,9 @@ namespace DemoProject
             // 
             groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox4.Controls.Add(grdTxDue);
-            groupBox4.Location = new Point(656, 302);
+            groupBox4.Location = new Point(656, 296);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(318, 266);
+            groupBox4.Size = new Size(318, 272);
             groupBox4.TabIndex = 2;
             groupBox4.TabStop = false;
             groupBox4.Text = "Due Transactions";
@@ -312,7 +312,7 @@ namespace DemoProject
             grdTxDue.ReadOnly = true;
             grdTxDue.RowHeadersVisible = false;
             grdTxDue.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxDue.Size = new Size(312, 244);
+            grdTxDue.Size = new Size(312, 250);
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
             grdTxDue.CellMouseClick += grdTxDue_CellMouseClick;
@@ -500,12 +500,12 @@ namespace DemoProject
             // 
             groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox5.Controls.Add(chtAssets);
-            groupBox5.Location = new Point(5, 12);
+            groupBox5.Location = new Point(5, 6);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(645, 310);
+            groupBox5.Size = new Size(645, 319);
             groupBox5.TabIndex = 8;
             groupBox5.TabStop = false;
-            groupBox5.Text = "Charts";
+            groupBox5.Text = "Assets";
             // 
             // chtAssets
             // 
@@ -524,7 +524,7 @@ namespace DemoProject
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             chtAssets.Series.Add(series1);
-            chtAssets.Size = new Size(639, 288);
+            chtAssets.Size = new Size(639, 297);
             chtAssets.TabIndex = 0;
             chtAssets.Text = "chart1";
             // 

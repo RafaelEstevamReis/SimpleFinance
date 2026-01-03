@@ -559,7 +559,7 @@
             MaximizeBox = false;
             Name = "frmAdvancedSearch";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            Text = "AdvancedSearch";
+            Text = "Advanced Search";
             Load += frmAdvancedSearch_Load;
             Shown += frmAdvancedSearch_Shown;
             groupBox1.ResumeLayout(false);
