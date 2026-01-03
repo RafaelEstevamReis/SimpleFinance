@@ -557,6 +557,7 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             MaximizeBox = false;
+            MinimumSize = new System.Drawing.Size(990, 600);
             Name = "frmAdvancedSearch";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Advanced Search";
