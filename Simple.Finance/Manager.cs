@@ -335,7 +335,7 @@ public class Manager
         }
         return tx.Id;
     }
-    public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date)
+    public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date, bool paid)
     {
         var categories = GetCategories().ToArray();
         var srcCat = categories.FirstOrDefault(o => o.Id == sourceCategory) ?? throw new ArgumentException("Invalid sourceCategory");
@@ -356,7 +356,7 @@ public class Manager
             PaymentDate = date,
             PaidValue = -value,
             Description = description,
-            Status = Tables.Transac.PaymentStatus.Paid,
+            Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid,
             Type = Tables.Transac.TransactionType.Simple, // Start as Simple
         };
         var txReceive = new Tables.Transac()
@@ -371,7 +371,7 @@ public class Manager
             PaymentDate = date,
             PaidValue = value,
             Description = description,
-            Status = Tables.Transac.PaymentStatus.Paid,
+            Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid,
             Type = Tables.Transac.TransactionType.Simple, // Start as Simple
         };
 
@@ -398,7 +398,7 @@ public class Manager
         saveChangeLog(cnn, null, first);
         saveChangeLog(cnn, null, second);
     }
-    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description)
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description, bool paid)
     {
         updateWalletTransfer(oneOfTransactions,
             expenseUpdate =>
@@ -406,12 +406,14 @@ public class Manager
                 expenseUpdate.DueValue = expenseUpdate.PaidValue = newValue * (-1);
                 expenseUpdate.DueDate = expenseUpdate.PaymentDate = newDate;
                 expenseUpdate.Description = description;
+                expenseUpdate.Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid;
             },
             incomeUpdate =>
             {
                 incomeUpdate.DueValue = incomeUpdate.PaidValue = newValue * (+1);
                 incomeUpdate.DueDate = incomeUpdate.PaymentDate = newDate;
                 incomeUpdate.Description = description;
+                incomeUpdate.Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid;
             });
     }
     public void ReverseWalletTransfer(long oneOfTransactions) => updateWalletTransfer(oneOfTransactions,
