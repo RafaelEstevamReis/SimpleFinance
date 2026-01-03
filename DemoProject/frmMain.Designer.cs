@@ -542,6 +542,7 @@ namespace DemoProject
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             MaximizeBox = false;
+            MinimumSize = new Size(970, 520);
             Name = "frmMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Simple.Finance Demo";
