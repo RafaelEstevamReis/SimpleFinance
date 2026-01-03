@@ -62,16 +62,18 @@
             pnlPaid = new System.Windows.Forms.Panel();
             lblAdvanced = new System.Windows.Forms.Label();
             groupBox1 = new System.Windows.Forms.GroupBox();
-            udRecuringCopies = new System.Windows.Forms.NumericUpDown();
-            label14 = new System.Windows.Forms.Label();
+            pnlRecuring = new System.Windows.Forms.Panel();
             label13 = new System.Windows.Forms.Label();
+            udRecuringCopies = new System.Windows.Forms.NumericUpDown();
             cboRecuringPeriod = new System.Windows.Forms.ComboBox();
+            label14 = new System.Windows.Forms.Label();
             rdoRecuringYes = new System.Windows.Forms.RadioButton();
             rdoRecuringNo = new System.Windows.Forms.RadioButton();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             pnlPaid.SuspendLayout();
             groupBox1.SuspendLayout();
+            pnlRecuring.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)udRecuringCopies).BeginInit();
             SuspendLayout();
             // 
@@ -407,10 +409,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(udRecuringCopies);
-            groupBox1.Controls.Add(label14);
-            groupBox1.Controls.Add(label13);
-            groupBox1.Controls.Add(cboRecuringPeriod);
+            groupBox1.Controls.Add(pnlRecuring);
             groupBox1.Controls.Add(rdoRecuringYes);
             groupBox1.Controls.Add(rdoRecuringNo);
             groupBox1.Location = new System.Drawing.Point(9, 317);
@@ -420,9 +419,30 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Create as Recuring";
             // 
+            // pnlRecuring
+            // 
+            pnlRecuring.Controls.Add(label13);
+            pnlRecuring.Controls.Add(udRecuringCopies);
+            pnlRecuring.Controls.Add(cboRecuringPeriod);
+            pnlRecuring.Controls.Add(label14);
+            pnlRecuring.Enabled = false;
+            pnlRecuring.Location = new System.Drawing.Point(7, 42);
+            pnlRecuring.Name = "pnlRecuring";
+            pnlRecuring.Size = new System.Drawing.Size(329, 27);
+            pnlRecuring.TabIndex = 37;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new System.Drawing.Point(3, 5);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(34, 15);
+            label13.TabIndex = 35;
+            label13.Text = "Type:";
+            // 
             // udRecuringCopies
             // 
-            udRecuringCopies.Location = new System.Drawing.Point(233, 47);
+            udRecuringCopies.Location = new System.Drawing.Point(236, 2);
             udRecuringCopies.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
             udRecuringCopies.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             udRecuringCopies.Name = "udRecuringCopies";
@@ -430,33 +450,24 @@
             udRecuringCopies.TabIndex = 3;
             udRecuringCopies.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // label14
-            // 
-            label14.AutoSize = true;
-            label14.Location = new System.Drawing.Point(183, 50);
-            label14.Name = "label14";
-            label14.Size = new System.Drawing.Size(46, 15);
-            label14.TabIndex = 36;
-            label14.Text = "Copies:";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new System.Drawing.Point(9, 50);
-            label13.Name = "label13";
-            label13.Size = new System.Drawing.Size(34, 15);
-            label13.TabIndex = 35;
-            label13.Text = "Type:";
-            // 
             // cboRecuringPeriod
             // 
             cboRecuringPeriod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cboRecuringPeriod.FormattingEnabled = true;
             cboRecuringPeriod.Items.AddRange(new object[] { "Weekly", "Monthly" });
-            cboRecuringPeriod.Location = new System.Drawing.Point(49, 47);
+            cboRecuringPeriod.Location = new System.Drawing.Point(43, 2);
             cboRecuringPeriod.Name = "cboRecuringPeriod";
-            cboRecuringPeriod.Size = new System.Drawing.Size(121, 23);
+            cboRecuringPeriod.Size = new System.Drawing.Size(133, 23);
             cboRecuringPeriod.TabIndex = 2;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new System.Drawing.Point(186, 5);
+            label14.Name = "label14";
+            label14.Size = new System.Drawing.Size(46, 15);
+            label14.TabIndex = 36;
+            label14.Text = "Copies:";
             // 
             // rdoRecuringYes
             // 
@@ -467,6 +478,7 @@
             rdoRecuringYes.TabIndex = 1;
             rdoRecuringYes.Text = "Create copies";
             rdoRecuringYes.UseVisualStyleBackColor = true;
+            rdoRecuringYes.CheckedChanged += rdoRecuringYes_CheckedChanged;
             // 
             // rdoRecuringNo
             // 
@@ -524,6 +536,8 @@
             pnlPaid.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            pnlRecuring.ResumeLayout(false);
+            pnlRecuring.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)udRecuringCopies).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -571,5 +585,6 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.RadioButton rdoReversed;
+        private System.Windows.Forms.Panel pnlRecuring;
     }
 }

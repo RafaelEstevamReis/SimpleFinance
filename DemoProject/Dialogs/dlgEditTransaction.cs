@@ -54,6 +54,8 @@ namespace DemoProject.Dialogs
             cboWallet.DisplayMember = "Name";
             cboWallet.ValueMember = "Id";
             cboWallet.SelectedValue = transaction.WalletId;
+
+            cboRecuringPeriod.SelectedIndex = 1;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -170,6 +172,11 @@ namespace DemoProject.Dialogs
         private void rdoPaid_CheckedChanged(object sender, EventArgs e)
         {
             updatePaidChanged();
+            if (rdoPaid.Checked) // Changed TO PAID
+            {
+                txtPaid.Value = txtDue.Value;
+                dtPaid.Value = DateTime.Now;
+            }
         }
 
         private void updateCategoryType()
@@ -186,6 +193,10 @@ namespace DemoProject.Dialogs
         {
             Height = 445;
             lblAdvanced.Visible = false;
+        }
+        private void rdoRecuringYes_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlRecuring.Enabled = rdoRecuringYes.Checked;
         }
 
         public static DialogResult ShowDialog(Transac transaction, Manager manager)
@@ -208,5 +219,6 @@ namespace DemoProject.Dialogs
 
             dlgTransactionHistory.ShowDialog(manager, transaction.Id);
         }
+
     }
 }

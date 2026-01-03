@@ -199,10 +199,10 @@ namespace DemoProject
             var t = new Transac()
             {
                 Type = Transac.TransactionType.Simple,
-                Created = DateTime.UtcNow,
-                Changed = DateTime.UtcNow,
-                DueDate = DateTime.UtcNow,
-                PaymentDate = DateTime.UtcNow,
+                Created = DateTime.Now,
+                Changed = DateTime.Now,
+                DueDate = DateTime.Now,
+                PaymentDate = DateTime.Now,
             };
 
             editTransaction(t);
