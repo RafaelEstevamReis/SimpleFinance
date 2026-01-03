@@ -77,6 +77,7 @@ public class Manager
         if (!fiOrg.Exists) return; // First run
 
         var fiDest = new FileInfo(destFile);
+        if (!fiDest.Directory.Exists) fiDest.Directory.Create();
         var zipName = fiDest.FullName + ".gz";
 
         using FileStream originalFileStream = File.Open(fiOrg.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
