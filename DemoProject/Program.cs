@@ -14,7 +14,7 @@ namespace DemoProject
         [STAThread]
         static void Main()
         {
-            Manager.Initialize(createBackup: true, backupName: $"data_{DateTime.Now:yyyyMMddHH}.db");
+            Manager.Initialize(createBackup: true, backupName: $"bkp/data_{DateTime.Now:yyyyMMddHH}.db");
             ApplicationConfiguration.Initialize();
             Application.Run(new frmMain());
         }
