@@ -219,7 +219,7 @@
             chkHideReversed.AutoSize = true;
             chkHideReversed.Checked = true;
             chkHideReversed.CheckState = System.Windows.Forms.CheckState.Checked;
-            chkHideReversed.Location = new System.Drawing.Point(185, 15);
+            chkHideReversed.Location = new System.Drawing.Point(185, 17);
             chkHideReversed.Name = "chkHideReversed";
             chkHideReversed.Size = new System.Drawing.Size(101, 19);
             chkHideReversed.TabIndex = 3;
@@ -229,7 +229,7 @@
             // chkHideUnpaids
             // 
             chkHideUnpaids.AutoSize = true;
-            chkHideUnpaids.Location = new System.Drawing.Point(86, 17);
+            chkHideUnpaids.Location = new System.Drawing.Point(88, 17);
             chkHideUnpaids.Name = "chkHideUnpaids";
             chkHideUnpaids.Size = new System.Drawing.Size(92, 19);
             chkHideUnpaids.TabIndex = 2;
