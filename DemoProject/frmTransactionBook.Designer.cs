@@ -60,7 +60,7 @@
             // 
             dtDate.CustomFormat = "MMMM/yyyy";
             dtDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            dtDate.Location = new System.Drawing.Point(293, 12);
+            dtDate.Location = new System.Drawing.Point(293, 10);
             dtDate.Name = "dtDate";
             dtDate.Size = new System.Drawing.Size(141, 23);
             dtDate.TabIndex = 0;
@@ -68,7 +68,7 @@
             // 
             // btnNext
             // 
-            btnNext.Location = new System.Drawing.Point(440, 12);
+            btnNext.Location = new System.Drawing.Point(440, 10);
             btnNext.Name = "btnNext";
             btnNext.Size = new System.Drawing.Size(30, 23);
             btnNext.TabIndex = 1;
@@ -78,7 +78,7 @@
             // 
             // btnPrev
             // 
-            btnPrev.Location = new System.Drawing.Point(257, 12);
+            btnPrev.Location = new System.Drawing.Point(257, 10);
             btnPrev.Name = "btnPrev";
             btnPrev.Size = new System.Drawing.Size(30, 23);
             btnPrev.TabIndex = 2;
@@ -140,7 +140,7 @@
             // 
             cboWallet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cboWallet.FormattingEnabled = true;
-            cboWallet.Location = new System.Drawing.Point(50, 12);
+            cboWallet.Location = new System.Drawing.Point(50, 10);
             cboWallet.Name = "cboWallet";
             cboWallet.Size = new System.Drawing.Size(137, 23);
             cboWallet.TabIndex = 6;
@@ -149,7 +149,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(6, 15);
+            label1.Location = new System.Drawing.Point(6, 14);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(43, 15);
             label1.TabIndex = 5;
