@@ -36,6 +36,11 @@
             btnNext = new System.Windows.Forms.Button();
             btnPrev = new System.Windows.Forms.Button();
             grdTransactions = new System.Windows.Forms.DataGridView();
+            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             btnNewTr = new System.Windows.Forms.Button();
             cntxBtn = new System.Windows.Forms.ContextMenuStrip(components);
             newTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -195,7 +200,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(726, 527);
+            ClientSize = new System.Drawing.Size(724, 531);
             Controls.Add(cboWallet);
             Controls.Add(label1);
             Controls.Add(btnNewTr);
@@ -205,6 +210,7 @@
             Controls.Add(dtDate);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
+            MinimumSize = new System.Drawing.Size(700, 500);
             Name = "frmTransactionBook";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Transaction Book";
