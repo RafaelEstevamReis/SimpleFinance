@@ -100,7 +100,7 @@
             grdTransactions.ReadOnly = true;
             grdTransactions.RowHeadersVisible = false;
             grdTransactions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            grdTransactions.Size = new System.Drawing.Size(726, 486);
+            grdTransactions.Size = new System.Drawing.Size(724, 490);
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
             // 
