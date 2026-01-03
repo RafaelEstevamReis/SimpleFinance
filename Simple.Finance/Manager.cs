@@ -117,6 +117,14 @@ public class Manager
         using var cnn = db.GetConnection();
         return cnn.Query<Models.WalletBalance>("SELECT WalletId, COALESCE(SUM(PaidValue),0) as Balance FROM Transac WHERE Status = 1 GROUP BY WalletId", null);
     }
+    public IEnumerable<Models.WalletBalance> GetWalletsBalance(DateTime atDate)
+    {
+        using var cnn = db.GetConnection();
+        return cnn.Query<Models.WalletBalance>("SELECT WalletId, COALESCE(SUM(PaidValue),0) as Balance FROM Transac WHERE Status = 1 AND PaymentDate <= @date GROUP BY WalletId", new
+        {
+            date = atDate,
+        });
+    }
 
     #endregion
 
