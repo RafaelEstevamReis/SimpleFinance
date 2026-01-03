@@ -2,8 +2,10 @@ using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace DemoProject
 {
@@ -25,6 +27,7 @@ namespace DemoProject
             updateMyWallets();
             updateMyCategories();
             updateMyTransactions();
+            updateChart();
         }
         void checkDefaultItems()
         {
@@ -87,6 +90,7 @@ namespace DemoProject
             {
                 updateMyWallets();
                 updateMyTransactions();
+                updateChart();
             }
         }
         void updateMyWallets()
@@ -135,7 +139,7 @@ namespace DemoProject
 
                 int ix = grdTxRecent.Rows.Add(tx.Status, tx.EfectiveDate, category, tx.Description, tx.EfectiveValue, wallet);
                 grdTxRecent.Rows[ix].Tag = tx;
-                
+
                 if (tx.Status == Transac.PaymentStatus.Reversed)
                 {
                     grdTxRecent.Rows[ix].DefaultCellStyle.Font = new System.Drawing.Font(Font, System.Drawing.FontStyle.Strikeout);
@@ -155,6 +159,72 @@ namespace DemoProject
                 grdTxDue.Rows[ix].Tag = tx;
             }
         }
+        void updateChart()
+        {
+            int daysBefore = 10;
+            int daysAfter = 90;
+
+            var dateBefore = DateTime.UtcNow.AddDays(-daysBefore).EndOfDay();
+            var balance = manager.GetWalletsBalance(dateBefore);
+
+            // All transactions from that day to daysAfter
+            var txs = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, dateBefore, DateTime.UtcNow.AddDays(daysAfter));
+            chtAssets.Series.Clear();
+
+            var wallets = manager.GetWallets();
+            decimal max = 0;
+            foreach (var wallet in wallets)
+            {
+                decimal[] valuesDay = new decimal[daysBefore + daysAfter];
+                
+                valuesDay[0] = balance.Where(o => o.WalletId == wallet.Id).Sum(o => o.Balance);
+
+                foreach (var tx in txs)
+                {
+                    if (tx.WalletId != wallet.Id) continue;
+
+                    var effDateIx = (int)(tx.EfectiveDate.Date - dateBefore.Date).TotalDays;
+                    valuesDay[effDateIx] += tx.EfectiveValue;
+                }
+
+                DateTime[] arrDates = new DateTime[valuesDay.Length];
+                decimal[] arrBalances = new decimal[valuesDay.Length];
+
+                for (int i = 0; i < valuesDay.Length; i++)
+                {
+                    arrDates[i] = dateBefore.Date.AddDays(i);
+                    if (i > 0) arrBalances[i] = arrBalances[i - 1];
+                    arrBalances[i] += valuesDay[i];
+
+                    if (max < arrBalances[i]) max = arrBalances[i];
+                }
+
+                var serie = new Series(wallet.Name);
+                //serie.IsVisibleInLegend = false;
+                serie.ChartType = SeriesChartType.Line;
+                serie.BorderWidth = 2;
+                for (int i = 0; i < valuesDay.Length; i++)
+                {
+                    serie.Points.AddXY(arrDates[i], arrBalances[i]);
+                }
+                chtAssets.Series.Add(serie);
+            }
+
+            var sToday = new Series("Today");
+            sToday.IsVisibleInLegend = false;
+            sToday.ChartType = SeriesChartType.RangeColumn;
+            sToday.BorderWidth = 1;
+            sToday["PixelPointWidth"] = "2";
+            sToday.Color = Color.Black;
+            sToday.Points.AddXY(DateTime.Now.Date, max);
+            chtAssets.Series.Add(sToday);
+
+            chtAssets.ChartAreas[0].AxisY.LabelStyle.Format = "N2";
+            chtAssets.ChartAreas[0].AxisX.LabelStyle.Format = "dd-MMM";
+            chtAssets.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+            chtAssets.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
+            chtAssets.ChartAreas[0].AxisX.IsMarginVisible = false;
+        }
 
         private void grdWallets_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);
         private void grdCategories_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);
@@ -171,7 +241,7 @@ namespace DemoProject
             grdTxDue.Rows[e.RowIndex].Selected = true;
             cntxDueTx.Tag = grdTxDue.Rows[e.RowIndex].Tag;
 
-            cntxDueTx.Show(Cursor.Position);
+            cntxDueTx.Show(System.Windows.Forms.Cursor.Position);
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e) => editTarget(cntxEditDelete.Tag);
@@ -222,7 +292,7 @@ namespace DemoProject
 
         private void btnAddNew_Click(object sender, EventArgs e)
         {
-            cntxNew.Show(Cursor.Position);
+            cntxNew.Show(System.Windows.Forms.Cursor.Position);
         }
         private void newWalletToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -264,7 +334,7 @@ namespace DemoProject
             sender.ClearSelection();
             sender.Rows[e.RowIndex].Selected = true;
             cntxEditDelete.Tag = sender.Rows[e.RowIndex].Tag;
-            cntxEditDelete.Show(Cursor.Position);
+            cntxEditDelete.Show(System.Windows.Forms.Cursor.Position);
         }
         void doGridDoubleClickEvent(DataGridView? sender, DataGridViewCellEventArgs e)
         {

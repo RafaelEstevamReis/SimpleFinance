@@ -22,6 +22,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Simple.Finance\Simple.Finance.csproj" />
 	</ItemGroup>
 

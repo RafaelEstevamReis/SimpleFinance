@@ -32,11 +32,16 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             groupBox1 = new GroupBox();
             grdWallets = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
@@ -75,12 +80,14 @@ namespace DemoProject
             cntxNew = new ContextMenuStrip(components);
             newWalletToolStripMenuItem = new ToolStripMenuItem();
             newCategoryToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem1 = new ToolStripSeparator();
             singleTransactionToolStripMenuItem = new ToolStripMenuItem();
             walletTransferToolStripMenuItem = new ToolStripMenuItem();
             bulkTransactionsToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem1 = new ToolStripSeparator();
             toolStripMenuItem2 = new ToolStripSeparator();
             importOFXToolStripMenuItem = new ToolStripMenuItem();
+            groupBox5 = new GroupBox();
+            chtAssets = new System.Windows.Forms.DataVisualization.Charting.Chart();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -92,14 +99,17 @@ namespace DemoProject
             cntxEditDelete.SuspendLayout();
             cntxDueTx.SuspendLayout();
             cntxNew.SuspendLayout();
+            groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)chtAssets).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox1.Controls.Add(grdWallets);
-            groupBox1.Location = new Point(5, 4);
+            groupBox1.Location = new Point(656, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(367, 231);
+            groupBox1.Size = new Size(318, 119);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "My Wallets";
@@ -112,22 +122,25 @@ namespace DemoProject
             grdWallets.AllowUserToResizeRows = false;
             grdWallets.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdWallets.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3 });
-            grdWallets.Location = new Point(7, 22);
+            grdWallets.Dock = DockStyle.Fill;
+            grdWallets.Location = new Point(3, 19);
             grdWallets.Name = "grdWallets";
             grdWallets.ReadOnly = true;
             grdWallets.RowHeadersVisible = false;
             grdWallets.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdWallets.Size = new Size(354, 203);
+            grdWallets.Size = new Size(312, 97);
             grdWallets.TabIndex = 0;
             grdWallets.CellDoubleClick += grdWallets_CellDoubleClick;
             grdWallets.CellMouseClick += grdWallets_CellMouseClick;
             // 
             // Column1
             // 
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Column1.DefaultCellStyle = dataGridViewCellStyle1;
             Column1.HeaderText = "Id";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
-            Column1.Width = 50;
+            Column1.Width = 30;
             // 
             // Column2
             // 
@@ -138,9 +151,9 @@ namespace DemoProject
             // 
             // Column3
             // 
-            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle11.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle2;
             Column3.HeaderText = "Balance";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
@@ -148,11 +161,11 @@ namespace DemoProject
             // 
             // groupBox2
             // 
-            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox2.Controls.Add(grdCategories);
-            groupBox2.Location = new Point(378, 4);
+            groupBox2.Location = new Point(656, 134);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(561, 231);
+            groupBox2.Size = new Size(318, 162);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "My Categories";
@@ -163,32 +176,34 @@ namespace DemoProject
             grdCategories.AllowUserToDeleteRows = false;
             grdCategories.AllowUserToResizeColumns = false;
             grdCategories.AllowUserToResizeRows = false;
-            grdCategories.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             grdCategories.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdCategories.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, Column4, dataGridViewTextBoxColumn2 });
-            grdCategories.Location = new Point(6, 22);
+            grdCategories.Dock = DockStyle.Fill;
+            grdCategories.Location = new Point(3, 19);
             grdCategories.Name = "grdCategories";
             grdCategories.ReadOnly = true;
             grdCategories.RowHeadersVisible = false;
             grdCategories.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdCategories.Size = new Size(549, 203);
+            grdCategories.Size = new Size(312, 140);
             grdCategories.TabIndex = 1;
             grdCategories.CellDoubleClick += grdCategories_CellDoubleClick;
             grdCategories.CellMouseClick += grdCategories_CellMouseClick;
             // 
             // dataGridViewTextBoxColumn1
             // 
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle3;
             dataGridViewTextBoxColumn1.HeaderText = "Id";
             dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             dataGridViewTextBoxColumn1.ReadOnly = true;
-            dataGridViewTextBoxColumn1.Width = 50;
+            dataGridViewTextBoxColumn1.Width = 30;
             // 
             // Column4
             // 
             Column4.HeaderText = "Type";
             Column4.Name = "Column4";
             Column4.ReadOnly = true;
-            Column4.Width = 150;
+            Column4.Width = 70;
             // 
             // dataGridViewTextBoxColumn2
             // 
@@ -199,11 +214,11 @@ namespace DemoProject
             // 
             // groupBox3
             // 
-            groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox3.Controls.Add(grdTxRecent);
-            groupBox3.Location = new Point(5, 237);
+            groupBox3.Location = new Point(5, 328);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(645, 257);
+            groupBox3.Size = new Size(645, 240);
             groupBox3.TabIndex = 1;
             groupBox3.TabStop = false;
             groupBox3.Text = "Recent Transactions";
@@ -214,15 +229,15 @@ namespace DemoProject
             grdTxRecent.AllowUserToDeleteRows = false;
             grdTxRecent.AllowUserToResizeColumns = false;
             grdTxRecent.AllowUserToResizeRows = false;
-            grdTxRecent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             grdTxRecent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdTxRecent.Columns.AddRange(new DataGridViewColumn[] { Column5, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, Column8, Column9, Column7 });
-            grdTxRecent.Location = new Point(6, 22);
+            grdTxRecent.Dock = DockStyle.Fill;
+            grdTxRecent.Location = new Point(3, 19);
             grdTxRecent.Name = "grdTxRecent";
             grdTxRecent.ReadOnly = true;
             grdTxRecent.RowHeadersVisible = false;
             grdTxRecent.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxRecent.Size = new Size(633, 229);
+            grdTxRecent.Size = new Size(639, 218);
             grdTxRecent.TabIndex = 2;
             grdTxRecent.CellDoubleClick += grdTxRecent_CellDoubleClick;
             // 
@@ -231,12 +246,12 @@ namespace DemoProject
             Column5.HeaderText = "Status";
             Column5.Name = "Column5";
             Column5.ReadOnly = true;
-            Column5.Width = 70;
+            Column5.Width = 60;
             // 
             // dataGridViewTextBoxColumn4
             // 
-            dataGridViewCellStyle12.Format = "d";
-            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle4.Format = "d";
+            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridViewTextBoxColumn4.HeaderText = "Eff. Date";
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             dataGridViewTextBoxColumn4.ReadOnly = true;
@@ -258,9 +273,9 @@ namespace DemoProject
             // 
             // Column9
             // 
-            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle13.Format = "N2";
-            Column9.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Format = "N2";
+            Column9.DefaultCellStyle = dataGridViewCellStyle5;
             Column9.HeaderText = "Value";
             Column9.Name = "Column9";
             Column9.ReadOnly = true;
@@ -274,11 +289,11 @@ namespace DemoProject
             // 
             // groupBox4
             // 
-            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox4.Controls.Add(grdTxDue);
-            groupBox4.Location = new Point(656, 237);
+            groupBox4.Location = new Point(656, 302);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(283, 257);
+            groupBox4.Size = new Size(318, 266);
             groupBox4.TabIndex = 2;
             groupBox4.TabStop = false;
             groupBox4.Text = "Due Transactions";
@@ -289,23 +304,23 @@ namespace DemoProject
             grdTxDue.AllowUserToDeleteRows = false;
             grdTxDue.AllowUserToResizeColumns = false;
             grdTxDue.AllowUserToResizeRows = false;
-            grdTxDue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             grdTxDue.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdTxDue.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn6, Column6, dataGridViewTextBoxColumn9 });
-            grdTxDue.Location = new Point(6, 22);
+            grdTxDue.Dock = DockStyle.Fill;
+            grdTxDue.Location = new Point(3, 19);
             grdTxDue.Name = "grdTxDue";
             grdTxDue.ReadOnly = true;
             grdTxDue.RowHeadersVisible = false;
             grdTxDue.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxDue.Size = new Size(271, 229);
+            grdTxDue.Size = new Size(312, 244);
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
             grdTxDue.CellMouseClick += grdTxDue_CellMouseClick;
             // 
             // dataGridViewTextBoxColumn6
             // 
-            dataGridViewCellStyle14.Format = "dd/MM";
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle6.Format = "dd/MM";
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle6;
             dataGridViewTextBoxColumn6.HeaderText = "Due";
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             dataGridViewTextBoxColumn6.ReadOnly = true;
@@ -313,9 +328,9 @@ namespace DemoProject
             // 
             // Column6
             // 
-            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle15.Format = "N2";
-            Column6.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle7.Format = "N2";
+            Column6.DefaultCellStyle = dataGridViewCellStyle7;
             Column6.HeaderText = "Value";
             Column6.Name = "Column6";
             Column6.ReadOnly = true;
@@ -352,7 +367,7 @@ namespace DemoProject
             // btnTransactionBook
             // 
             btnTransactionBook.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnTransactionBook.Location = new Point(829, 498);
+            btnTransactionBook.Location = new Point(864, 571);
             btnTransactionBook.Name = "btnTransactionBook";
             btnTransactionBook.Size = new Size(110, 31);
             btnTransactionBook.TabIndex = 3;
@@ -363,7 +378,7 @@ namespace DemoProject
             // btnAdvSearch
             // 
             btnAdvSearch.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnAdvSearch.Location = new Point(713, 498);
+            btnAdvSearch.Location = new Point(748, 571);
             btnAdvSearch.Name = "btnAdvSearch";
             btnAdvSearch.Size = new Size(110, 31);
             btnAdvSearch.TabIndex = 4;
@@ -414,7 +429,8 @@ namespace DemoProject
             // 
             // btnAddNew
             // 
-            btnAddNew.Location = new Point(5, 498);
+            btnAddNew.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnAddNew.Location = new Point(5, 571);
             btnAddNew.Name = "btnAddNew";
             btnAddNew.Size = new Size(92, 31);
             btnAddNew.TabIndex = 7;
@@ -426,21 +442,26 @@ namespace DemoProject
             // 
             cntxNew.Items.AddRange(new ToolStripItem[] { newWalletToolStripMenuItem, newCategoryToolStripMenuItem, toolStripMenuItem1, singleTransactionToolStripMenuItem, walletTransferToolStripMenuItem, bulkTransactionsToolStripMenuItem, toolStripMenuItem2, importOFXToolStripMenuItem });
             cntxNew.Name = "btnNew";
-            cntxNew.Size = new Size(197, 170);
+            cntxNew.Size = new Size(197, 148);
             // 
             // newWalletToolStripMenuItem
             // 
             newWalletToolStripMenuItem.Name = "newWalletToolStripMenuItem";
-            newWalletToolStripMenuItem.Size = new Size(180, 22);
+            newWalletToolStripMenuItem.Size = new Size(196, 22);
             newWalletToolStripMenuItem.Text = "New Wallet";
             newWalletToolStripMenuItem.Click += newWalletToolStripMenuItem_Click;
             // 
             // newCategoryToolStripMenuItem
             // 
             newCategoryToolStripMenuItem.Name = "newCategoryToolStripMenuItem";
-            newCategoryToolStripMenuItem.Size = new Size(180, 22);
+            newCategoryToolStripMenuItem.Size = new Size(196, 22);
             newCategoryToolStripMenuItem.Text = "New Category";
             newCategoryToolStripMenuItem.Click += newCategoryToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(193, 6);
             // 
             // singleTransactionToolStripMenuItem
             // 
@@ -463,11 +484,6 @@ namespace DemoProject
             bulkTransactionsToolStripMenuItem.Text = "New Bulk Transactions";
             bulkTransactionsToolStripMenuItem.Click += bulkTransactionsToolStripMenuItem_Click;
             // 
-            // toolStripMenuItem1
-            // 
-            toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(177, 6);
-            // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
@@ -480,11 +496,44 @@ namespace DemoProject
             importOFXToolStripMenuItem.Text = "Import OFX";
             importOFXToolStripMenuItem.Click += importOFXToolStripMenuItem_Click;
             // 
+            // groupBox5
+            // 
+            groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox5.Controls.Add(chtAssets);
+            groupBox5.Location = new Point(5, 12);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(645, 310);
+            groupBox5.TabIndex = 8;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Charts";
+            // 
+            // chtAssets
+            // 
+            chtAssets.BackColor = SystemColors.Control;
+            chartArea1.AxisX2.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
+            chartArea1.Name = "ChartArea1";
+            chtAssets.ChartAreas.Add(chartArea1);
+            chtAssets.Dock = DockStyle.Fill;
+            legend1.BackColor = SystemColors.Control;
+            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend1.Name = "Legend1";
+            chtAssets.Legends.Add(legend1);
+            chtAssets.Location = new Point(3, 19);
+            chtAssets.Name = "chtAssets";
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            chtAssets.Series.Add(series1);
+            chtAssets.Size = new Size(639, 288);
+            chtAssets.TabIndex = 0;
+            chtAssets.Text = "chart1";
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(949, 538);
+            ClientSize = new Size(984, 611);
+            Controls.Add(groupBox5);
             Controls.Add(btnAddNew);
             Controls.Add(btnAdvSearch);
             Controls.Add(btnTransactionBook);
@@ -508,6 +557,8 @@ namespace DemoProject
             cntxEditDelete.ResumeLayout(false);
             cntxDueTx.ResumeLayout(false);
             cntxNew.ResumeLayout(false);
+            groupBox5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)chtAssets).EndInit();
             ResumeLayout(false);
         }
 
@@ -519,12 +570,6 @@ namespace DemoProject
         private GroupBox groupBox4;
         private DataGridView grdWallets;
         private DataGridView grdCategories;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn Column4;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridViewTextBoxColumn Column1;
-        private DataGridViewTextBoxColumn Column2;
-        private DataGridViewTextBoxColumn Column3;
         private ContextMenuStrip cntxEditDelete;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;
@@ -532,12 +577,6 @@ namespace DemoProject
         private DataGridView grdTxDue;
         private Button btnTransactionBook;
         private Button btnAdvSearch;
-        private DataGridViewTextBoxColumn Column5;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private DataGridViewTextBoxColumn Column8;
-        private DataGridViewTextBoxColumn Column9;
-        private DataGridViewTextBoxColumn Column7;
         private ContextMenuStrip cntxDueTx;
         private ToolStripMenuItem markAsPaidToolStripMenuItem;
         private ToolStripMenuItem dueTxPayOnDueDateToolStripMenuItem;
@@ -557,5 +596,19 @@ namespace DemoProject
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripSeparator toolStripMenuItem2;
         private ToolStripMenuItem importOFXToolStripMenuItem;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn Column2;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn Column4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn Column5;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private DataGridViewTextBoxColumn Column8;
+        private DataGridViewTextBoxColumn Column9;
+        private DataGridViewTextBoxColumn Column7;
+        private GroupBox groupBox5;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chtAssets;
     }
 }
