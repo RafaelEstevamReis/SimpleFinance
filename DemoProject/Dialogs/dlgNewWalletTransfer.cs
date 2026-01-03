@@ -86,7 +86,8 @@ namespace DemoProject.Dialogs
                                          (long)cboDestinationCategory.SelectedValue!,
                                          txtName.Text.Trim(),
                                          txtValue.Value,
-                                         dtDate.Value);
+                                         dtDate.Value, 
+                                         rdoPaid.Checked);
 
             DialogResult = DialogResult.OK;
         }

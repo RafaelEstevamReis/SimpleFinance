@@ -20,6 +20,8 @@ namespace DemoProject.Dialogs
             dtDate.Value = oneTransaction.DueDate;
             txtValue.Value = Math.Abs(oneTransaction.DueValue);
             txtName.Text = oneTransaction.Description;
+            if (oneTransaction.Status == Transac.PaymentStatus.Paid) rdoPaid.Checked = true;
+            else rdoUnpaid.Checked = true;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -39,7 +41,8 @@ namespace DemoProject.Dialogs
             manager.UpdateWalletTransfer(oneTransaction.Id,
                                          txtValue.Value,
                                          dtDate.Value,
-                                         txtName.Text.Trim());
+                                         txtName.Text.Trim(), 
+                                         rdoPaid.Checked);
 
             DialogResult = DialogResult.OK;
 

@@ -46,6 +46,11 @@
             label4 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            panel2 = new System.Windows.Forms.Panel();
+            rdoPaid = new System.Windows.Forms.RadioButton();
+            rdoUnpaid = new System.Windows.Forms.RadioButton();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // btnCancel
@@ -71,7 +76,7 @@
             // txtValue
             // 
             txtValue.DecimalPlaces = 2;
-            txtValue.Location = new System.Drawing.Point(252, 201);
+            txtValue.Location = new System.Drawing.Point(252, 212);
             txtValue.MoneySign = "";
             txtValue.Name = "txtValue";
             txtValue.Size = new System.Drawing.Size(101, 23);
@@ -83,7 +88,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(213, 205);
+            label3.Location = new System.Drawing.Point(213, 216);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(38, 15);
             label3.TabIndex = 38;
@@ -128,7 +133,7 @@
             // dtDate
             // 
             dtDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            dtDate.Location = new System.Drawing.Point(48, 201);
+            dtDate.Location = new System.Drawing.Point(48, 212);
             dtDate.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
             dtDate.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDate.Name = "dtDate";
@@ -138,7 +143,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(8, 205);
+            label9.Location = new System.Drawing.Point(8, 216);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(34, 15);
             label9.TabIndex = 35;
@@ -165,7 +170,7 @@
             // 
             cboDestinationCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cboDestinationCategory.FormattingEnabled = true;
-            cboDestinationCategory.Location = new System.Drawing.Point(134, 148);
+            cboDestinationCategory.Location = new System.Drawing.Point(134, 145);
             cboDestinationCategory.Name = "cboDestinationCategory";
             cboDestinationCategory.Size = new System.Drawing.Size(219, 23);
             cboDestinationCategory.TabIndex = 3;
@@ -174,7 +179,7 @@
             // 
             cboDestinationWallet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cboDestinationWallet.FormattingEnabled = true;
-            cboDestinationWallet.Location = new System.Drawing.Point(134, 119);
+            cboDestinationWallet.Location = new System.Drawing.Point(134, 116);
             cboDestinationWallet.Name = "cboDestinationWallet";
             cboDestinationWallet.Size = new System.Drawing.Size(219, 23);
             cboDestinationWallet.TabIndex = 2;
@@ -182,7 +187,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(7, 151);
+            label2.Location = new System.Drawing.Point(7, 148);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(121, 15);
             label2.TabIndex = 42;
@@ -191,7 +196,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(7, 122);
+            label4.Location = new System.Drawing.Point(7, 119);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(106, 15);
             label4.TabIndex = 41;
@@ -209,17 +214,59 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(7, 98);
+            label6.Location = new System.Drawing.Point(7, 95);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(126, 15);
             label6.TabIndex = 44;
             label6.Text = "Destination (inbound):";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(8, 183);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(105, 15);
+            label8.TabIndex = 46;
+            label8.Text = "Transaction Status:";
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(rdoPaid);
+            panel2.Controls.Add(rdoUnpaid);
+            panel2.Location = new System.Drawing.Point(128, 178);
+            panel2.Name = "panel2";
+            panel2.Size = new System.Drawing.Size(150, 27);
+            panel2.TabIndex = 45;
+            // 
+            // rdoPaid
+            // 
+            rdoPaid.AutoSize = true;
+            rdoPaid.Checked = true;
+            rdoPaid.Location = new System.Drawing.Point(84, 3);
+            rdoPaid.Name = "rdoPaid";
+            rdoPaid.Size = new System.Drawing.Size(48, 19);
+            rdoPaid.TabIndex = 1;
+            rdoPaid.TabStop = true;
+            rdoPaid.Text = "Paid";
+            rdoPaid.UseVisualStyleBackColor = true;
+            // 
+            // rdoUnpaid
+            // 
+            rdoUnpaid.AutoSize = true;
+            rdoUnpaid.Location = new System.Drawing.Point(6, 3);
+            rdoUnpaid.Name = "rdoUnpaid";
+            rdoUnpaid.Size = new System.Drawing.Size(63, 19);
+            rdoUnpaid.TabIndex = 0;
+            rdoUnpaid.Text = "Unpaid";
+            rdoUnpaid.UseVisualStyleBackColor = true;
             // 
             // dlgNewWalletTransfer
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(362, 333);
+            Controls.Add(label8);
+            Controls.Add(panel2);
             Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(cboDestinationCategory);
@@ -244,6 +291,8 @@
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "New Wallet Transfer";
             Load += dlgNewWalletTransfer_Load;
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -268,5 +317,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.RadioButton rdoPaid;
+        private System.Windows.Forms.RadioButton rdoUnpaid;
     }
 }
