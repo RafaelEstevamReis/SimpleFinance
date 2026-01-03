@@ -208,7 +208,6 @@
             Controls.Add(btnPrev);
             Controls.Add(btnNext);
             Controls.Add(dtDate);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimumSize = new System.Drawing.Size(700, 500);
             Name = "frmTransactionBook";
