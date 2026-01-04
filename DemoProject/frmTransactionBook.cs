@@ -12,8 +12,8 @@ namespace DemoProject
 {
     public partial class frmTransactionBook : Form
     {
-        private Manager manager;
-        private Dictionary<long, string> categories;
+        private Manager manager = null!;
+        private Dictionary<long, string> categories = [];
 
         public frmTransactionBook()
         {
@@ -140,6 +140,7 @@ namespace DemoProject
                 Id = 0,
                 Created = DateTime.UtcNow,
                 Changed = DateTime.UtcNow,
+                WalletId = (long?)cboWallet.SelectedValue ?? 0,
                 DueDate = dtDate.Value.Date,
                 PaymentDate = dtDate.Value.Date,
                 Description = "New Transaction",

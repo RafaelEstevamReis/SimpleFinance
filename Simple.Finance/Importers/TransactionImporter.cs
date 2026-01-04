@@ -10,7 +10,12 @@ using System.Linq;
 public static class TransactionImporter
 {
     public static IEnumerable<Transac> FromOFX(string filePath, long walletId, long categoryId)
-        => FromOFX(OfxFile.FromFile(filePath), walletId, categoryId);
+    {
+        var ofx = OfxFile.FromFile(filePath);
+        if (ofx == null) return [];
+        return FromOFX(ofx, walletId, categoryId);
+    }
+
     public static IEnumerable<Transac> FromOFX(OfxFile ofx, long walletId, long categoryId)
     {
         var acc = ofx.GetAllAccountTransactions();
@@ -73,7 +78,7 @@ public static class TransactionImporter
     {
         var lines = DatabaseWrapper.Helpers.CsvParser.ParseCsvFile(filePath, delimiter: delimiter);
 
-        foreach(var line in lines)
+        foreach (var line in lines)
         {
             var t = func(line);
             yield return t;
