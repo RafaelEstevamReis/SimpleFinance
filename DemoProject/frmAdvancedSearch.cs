@@ -13,7 +13,7 @@ namespace DemoProject
 {
     public partial class frmAdvancedSearch : Form
     {
-        private Manager manager;
+        private Manager manager = null!;
 
         public frmAdvancedSearch()
         {
@@ -169,7 +169,8 @@ namespace DemoProject
             txtTotalPaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Paid).Sum(o => o.PaidValue);
             txtTotalUnpaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid).Sum(o => o.DueValue);
             txtTotalIncome.Value = txs.Where(o => o.DueValue > 0).Sum(o => o.EfectiveValue);
-            txtTotalExpenses.Value = txs.Where(o => o.DueValue < 0).Sum(o => o.EfectiveValue);
+            txtTotalExpenses.Value = txs.Where(o => o.DueValue < 0).Sum(o => -o.EfectiveValue);
+            txtTotalNet.Value = txtTotalIncome.Value - txtTotalExpenses.Value;
         }
 
         private void grdTransactions_SelectionChanged(object sender, EventArgs e)
@@ -208,6 +209,11 @@ namespace DemoProject
         }
         private void btnAddTransaction_Click(object sender, EventArgs e)
         {
+            cntxNew.Show(Cursor.Position);
+        }
+
+        private void singleTransactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             var t = new Transac()
             {
                 Type = Transac.TransactionType.Simple,
@@ -217,8 +223,40 @@ namespace DemoProject
                 PaymentDate = DateTime.Now,
             };
 
+            if (chkFilterReference.Checked)
+            {
+                if (cboReferenceType.SelectedIndex == 0)
+                {
+                    t.WalletId = (long?)cboReferenceItem.SelectedValue ?? 0;
+                }
+                else if (cboReferenceType.SelectedIndex == 1)
+                {
+                    t.CategoryId = (long?)cboReferenceItem.SelectedValue ?? 0;
+                }
+            }
+
             editTransaction(t);
         }
+        private void walletTransferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
+        }
+        private void bulkTransactionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, []);
+        }
+        private void importOFXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using var dlg = new OpenFileDialog();
+            dlg.Filter = "OFX Files |*.ofx";
+            var result = dlg.ShowDialog();
+            if (result != DialogResult.OK) return;
+
+            var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0);
+            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, trs);
+        }
+
+
 
         private void editTransaction(Transac t)
         {

@@ -78,11 +78,20 @@
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             markAsPaidAsOfTodayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             markAsPaidAsOfOriginalDueDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            txtTotalNet = new DemoProject.Components.MoneyBox();
+            label9 = new System.Windows.Forms.Label();
+            cntxNew = new System.Windows.Forms.ContextMenuStrip(components);
+            singleTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            walletTransferToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            bulkTransactionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            importOFXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
             groupBox3.SuspendLayout();
             cntxGrid.SuspendLayout();
+            cntxNew.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -95,7 +104,7 @@
             groupBox1.Controls.Add(cboDate);
             groupBox1.Location = new System.Drawing.Point(6, 2);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(214, 112);
+            groupBox1.Size = new System.Drawing.Size(214, 109);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "By Date";
@@ -162,7 +171,7 @@
             groupBox2.Controls.Add(cboReferenceItem);
             groupBox2.Location = new System.Drawing.Point(226, 2);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new System.Drawing.Size(355, 112);
+            groupBox2.Size = new System.Drawing.Size(355, 109);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Of:";
@@ -265,12 +274,12 @@
             grdTransactions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grdTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { clnWallet, clnCategory, clnDescription, clnDueDate, clnValue, clnPaidDate, clnBalance });
-            grdTransactions.Location = new System.Drawing.Point(0, 120);
+            grdTransactions.Location = new System.Drawing.Point(0, 116);
             grdTransactions.Name = "grdTransactions";
             grdTransactions.ReadOnly = true;
             grdTransactions.RowHeadersVisible = false;
             grdTransactions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            grdTransactions.Size = new System.Drawing.Size(976, 398);
+            grdTransactions.Size = new System.Drawing.Size(976, 400);
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
             grdTransactions.CellMouseClick += grdTransactions_CellMouseClick;
@@ -338,11 +347,11 @@
             // btnAddTransaction
             // 
             btnAddTransaction.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnAddTransaction.Location = new System.Drawing.Point(857, 524);
+            btnAddTransaction.Location = new System.Drawing.Point(857, 523);
             btnAddTransaction.Name = "btnAddTransaction";
             btnAddTransaction.Size = new System.Drawing.Size(116, 31);
             btnAddTransaction.TabIndex = 9;
-            btnAddTransaction.Text = "New Transaction";
+            btnAddTransaction.Text = "New Transaction ▼";
             btnAddTransaction.UseVisualStyleBackColor = true;
             btnAddTransaction.Click += btnAddTransaction_Click;
             // 
@@ -364,7 +373,7 @@
             txtTotalPaid.MoneySign = "";
             txtTotalPaid.Name = "txtTotalPaid";
             txtTotalPaid.ReadOnly = true;
-            txtTotalPaid.Size = new System.Drawing.Size(100, 23);
+            txtTotalPaid.Size = new System.Drawing.Size(91, 23);
             txtTotalPaid.TabIndex = 4;
             txtTotalPaid.Text = "0,00";
             txtTotalPaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -374,11 +383,11 @@
             // 
             txtTotalUnpaid.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             txtTotalUnpaid.DecimalPlaces = 2;
-            txtTotalUnpaid.Location = new System.Drawing.Point(112, 534);
+            txtTotalUnpaid.Location = new System.Drawing.Point(103, 534);
             txtTotalUnpaid.MoneySign = "";
             txtTotalUnpaid.Name = "txtTotalUnpaid";
             txtTotalUnpaid.ReadOnly = true;
-            txtTotalUnpaid.Size = new System.Drawing.Size(100, 23);
+            txtTotalUnpaid.Size = new System.Drawing.Size(91, 23);
             txtTotalUnpaid.TabIndex = 5;
             txtTotalUnpaid.Text = "0,00";
             txtTotalUnpaid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -388,7 +397,7 @@
             // 
             label6.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(112, 519);
+            label6.Location = new System.Drawing.Point(103, 519);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(76, 15);
             label6.TabIndex = 8;
@@ -398,11 +407,11 @@
             // 
             txtTotalIncome.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             txtTotalIncome.DecimalPlaces = 2;
-            txtTotalIncome.Location = new System.Drawing.Point(218, 534);
+            txtTotalIncome.Location = new System.Drawing.Point(200, 534);
             txtTotalIncome.MoneySign = "";
             txtTotalIncome.Name = "txtTotalIncome";
             txtTotalIncome.ReadOnly = true;
-            txtTotalIncome.Size = new System.Drawing.Size(100, 23);
+            txtTotalIncome.Size = new System.Drawing.Size(91, 23);
             txtTotalIncome.TabIndex = 6;
             txtTotalIncome.Text = "0,00";
             txtTotalIncome.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -412,7 +421,7 @@
             // 
             label7.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(218, 519);
+            label7.Location = new System.Drawing.Point(200, 519);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(71, 15);
             label7.TabIndex = 10;
@@ -422,11 +431,11 @@
             // 
             txtTotalExpenses.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             txtTotalExpenses.DecimalPlaces = 2;
-            txtTotalExpenses.Location = new System.Drawing.Point(324, 534);
+            txtTotalExpenses.Location = new System.Drawing.Point(297, 534);
             txtTotalExpenses.MoneySign = "";
             txtTotalExpenses.Name = "txtTotalExpenses";
             txtTotalExpenses.ReadOnly = true;
-            txtTotalExpenses.Size = new System.Drawing.Size(100, 23);
+            txtTotalExpenses.Size = new System.Drawing.Size(91, 23);
             txtTotalExpenses.TabIndex = 7;
             txtTotalExpenses.Text = "0,00";
             txtTotalExpenses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -436,7 +445,7 @@
             // 
             label8.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(324, 519);
+            label8.Location = new System.Drawing.Point(297, 519);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(86, 15);
             label8.TabIndex = 12;
@@ -446,11 +455,11 @@
             // 
             txtTotalSelected.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             txtTotalSelected.DecimalPlaces = 2;
-            txtTotalSelected.Location = new System.Drawing.Point(430, 534);
+            txtTotalSelected.Location = new System.Drawing.Point(500, 534);
             txtTotalSelected.MoneySign = "";
             txtTotalSelected.Name = "txtTotalSelected";
             txtTotalSelected.ReadOnly = true;
-            txtTotalSelected.Size = new System.Drawing.Size(100, 23);
+            txtTotalSelected.Size = new System.Drawing.Size(91, 23);
             txtTotalSelected.TabIndex = 8;
             txtTotalSelected.Text = "0,00";
             txtTotalSelected.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -460,7 +469,7 @@
             // 
             lblTotalSelected.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             lblTotalSelected.AutoSize = true;
-            lblTotalSelected.Location = new System.Drawing.Point(430, 519);
+            lblTotalSelected.Location = new System.Drawing.Point(500, 519);
             lblTotalSelected.Name = "lblTotalSelected";
             lblTotalSelected.Size = new System.Drawing.Size(82, 15);
             lblTotalSelected.TabIndex = 14;
@@ -474,7 +483,7 @@
             groupBox3.Controls.Add(chkHideUnpaids);
             groupBox3.Location = new System.Drawing.Point(587, 2);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new System.Drawing.Size(296, 112);
+            groupBox3.Size = new System.Drawing.Size(296, 109);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "Display";
@@ -535,11 +544,76 @@
             markAsPaidAsOfOriginalDueDateToolStripMenuItem.Text = "Mark as Paid - As of Original Due Date";
             markAsPaidAsOfOriginalDueDateToolStripMenuItem.Click += markAsPaidAsOfOriginalDueDateToolStripMenuItem_Click;
             // 
+            // txtTotalNet
+            // 
+            txtTotalNet.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            txtTotalNet.DecimalPlaces = 2;
+            txtTotalNet.Location = new System.Drawing.Point(394, 534);
+            txtTotalNet.MoneySign = "";
+            txtTotalNet.Name = "txtTotalNet";
+            txtTotalNet.ReadOnly = true;
+            txtTotalNet.Size = new System.Drawing.Size(91, 23);
+            txtTotalNet.TabIndex = 15;
+            txtTotalNet.Text = "0,00";
+            txtTotalNet.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            txtTotalNet.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            // 
+            // label9
+            // 
+            label9.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(394, 519);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(73, 15);
+            label9.TabIndex = 16;
+            label9.Text = "Net Balance:";
+            // 
+            // cntxNew
+            // 
+            cntxNew.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { singleTransactionToolStripMenuItem, walletTransferToolStripMenuItem, bulkTransactionsToolStripMenuItem, toolStripMenuItem2, importOFXToolStripMenuItem });
+            cntxNew.Name = "btnNew";
+            cntxNew.Size = new System.Drawing.Size(197, 98);
+            // 
+            // singleTransactionToolStripMenuItem
+            // 
+            singleTransactionToolStripMenuItem.Name = "singleTransactionToolStripMenuItem";
+            singleTransactionToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            singleTransactionToolStripMenuItem.Text = "New Single Transaction";
+            singleTransactionToolStripMenuItem.Click += singleTransactionToolStripMenuItem_Click;
+            // 
+            // walletTransferToolStripMenuItem
+            // 
+            walletTransferToolStripMenuItem.Name = "walletTransferToolStripMenuItem";
+            walletTransferToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            walletTransferToolStripMenuItem.Text = "New Wallet Transfer";
+            walletTransferToolStripMenuItem.Click += walletTransferToolStripMenuItem_Click;
+            // 
+            // bulkTransactionsToolStripMenuItem
+            // 
+            bulkTransactionsToolStripMenuItem.Name = "bulkTransactionsToolStripMenuItem";
+            bulkTransactionsToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            bulkTransactionsToolStripMenuItem.Text = "New Bulk Transactions";
+            bulkTransactionsToolStripMenuItem.Click += bulkTransactionsToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new System.Drawing.Size(193, 6);
+            // 
+            // importOFXToolStripMenuItem
+            // 
+            importOFXToolStripMenuItem.Name = "importOFXToolStripMenuItem";
+            importOFXToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            importOFXToolStripMenuItem.Text = "Import OFX";
+            importOFXToolStripMenuItem.Click += importOFXToolStripMenuItem_Click;
+            // 
             // frmAdvancedSearch
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(976, 561);
+            Controls.Add(txtTotalNet);
+            Controls.Add(label9);
             Controls.Add(groupBox3);
             Controls.Add(txtTotalSelected);
             Controls.Add(lblTotalSelected);
@@ -571,6 +645,7 @@
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             cntxGrid.ResumeLayout(false);
+            cntxNew.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -622,5 +697,13 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn clnValue;
         private System.Windows.Forms.DataGridViewTextBoxColumn clnPaidDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn clnBalance;
+        private Components.MoneyBox txtTotalNet;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ContextMenuStrip cntxNew;
+        private System.Windows.Forms.ToolStripMenuItem singleTransactionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem walletTransferToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bulkTransactionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem importOFXToolStripMenuItem;
     }
 }
