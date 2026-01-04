@@ -2,6 +2,7 @@
 using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
+using Simple.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,17 +15,25 @@ namespace DemoProject
     public partial class frmAdvancedSearch : Form
     {
         private Manager manager = null!;
+        private ConfigurationDB config;
 
         public frmAdvancedSearch()
         {
             InitializeComponent();
+            config = Program.Config;
         }
         private void frmAdvancedSearch_Load(object sender, EventArgs e)
         {
-            cboDate.SelectedIndex = 4;
             cboReferenceType.SelectedIndex = 0;
-            dtFrom.Value = DateHelpers.StartOfMonth(DateTime.Now);
-            dtTo.Value = DateHelpers.EndOfMonth(dtFrom.Value);
+
+            cboDate.SelectedIndex = config.GetConfig<int>("cboDate", this.Name, 4);
+            dtFrom.Value = config.GetConfig<DateTime>("dtFrom", this.Name, DateHelpers.StartOfMonth(DateTime.Now));
+            dtTo.Value = config.GetConfig<DateTime>("dtTo", this.Name, DateHelpers.EndOfMonth(DateTime.Now));
+
+            chkHidePaids.Checked = config.GetConfig<bool>("chkHidePaids", this.Name, false);
+            chkHideUnpaids.Checked = config.GetConfig<bool>("chkHideUnpaids", this.Name, false);
+            chkHideReversed.Checked = config.GetConfig<bool>("chkHideReversed", this.Name, true);
+            chkIncludeUnpaidBalance.Checked = config.GetConfig<bool>("chkIncludeUnpaidBalance", this.Name, false);
         }
         private void frmAdvancedSearch_Shown(object sender, EventArgs e)
         {
@@ -47,6 +56,16 @@ namespace DemoProject
         }
         private void search()
         {
+            // save configs
+            config.SetConfig<int>("cboDate", this.Name, cboDate.SelectedIndex);
+            config.SetConfig<DateTime>("dtFrom", this.Name, dtFrom.Value);
+            config.SetConfig<DateTime>("dtTo", this.Name, dtTo.Value);
+
+            config.SetConfig<bool>("chkHidePaids", this.Name, chkHidePaids.Checked);
+            config.SetConfig<bool>("chkHideUnpaids", this.Name, chkHideUnpaids.Checked);
+            config.SetConfig<bool>("chkHideReversed", this.Name, chkHideReversed.Checked);
+            config.SetConfig<bool>("chkIncludeUnpaidBalance", this.Name, chkIncludeUnpaidBalance.Checked);
+
             // Save grid positions
             var fsri = grdTransactions.FirstDisplayedScrollingRowIndex;
             var sri = -1;
