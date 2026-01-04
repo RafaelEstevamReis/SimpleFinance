@@ -205,7 +205,6 @@ namespace DemoProject
             var t = grdTransactions.Rows[e.RowIndex].Tag as Transac;
             editTransaction(t!);
         }
-
         private void grdTransactions_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right) return;
@@ -274,7 +273,6 @@ namespace DemoProject
             var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0);
             Dialogs.dlgAddBulkTransactions.ShowDialog(manager, trs);
         }
-
 
 
         private void editTransaction(Transac t)
@@ -417,6 +415,37 @@ namespace DemoProject
             }
 
             manager.CreateUpdateBulkTransaction(selected);
+            search();
+        }
+        private void cloneTransactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+            if (selected.Length != 1)
+            {
+                MessageBox.Show("Select only one transaction to clone");
+                return;
+            }
+
+            var tx = selected[0];
+
+            if(tx.Type != Transac.TransactionType.Simple)
+            {
+                MessageBox.Show("Only SIMPLE transactions can be cloned");
+                return;
+            }
+
+            tx.Id = 0; // new
+            tx.Created = DateTime.UtcNow;
+            tx.Changed = DateTime.UtcNow;
+            tx.Description += " (clone)";
+
+            editTransaction(tx);
+
             search();
         }
 

@@ -78,6 +78,8 @@
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             markAsPaidAsOfTodayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             markAsPaidAsOfOriginalDueDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            cloneTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             txtTotalNet = new DemoProject.Components.MoneyBox();
             label9 = new System.Windows.Forms.Label();
             cntxNew = new System.Windows.Forms.ContextMenuStrip(components);
@@ -500,9 +502,9 @@
             // 
             // cntxGrid
             // 
-            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem, toolStripMenuItem1, markAsPaidAsOfTodayToolStripMenuItem, markAsPaidAsOfOriginalDueDateToolStripMenuItem });
+            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem, toolStripMenuItem1, markAsPaidAsOfTodayToolStripMenuItem, markAsPaidAsOfOriginalDueDateToolStripMenuItem, toolStripMenuItem3, cloneTransactionToolStripMenuItem });
             cntxGrid.Name = "cntxGrid";
-            cntxGrid.Size = new System.Drawing.Size(276, 120);
+            cntxGrid.Size = new System.Drawing.Size(276, 170);
             // 
             // changeDueValueToolStripMenuItem
             // 
@@ -543,6 +545,18 @@
             markAsPaidAsOfOriginalDueDateToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
             markAsPaidAsOfOriginalDueDateToolStripMenuItem.Text = "Mark as Paid - As of Original Due Date";
             markAsPaidAsOfOriginalDueDateToolStripMenuItem.Click += markAsPaidAsOfOriginalDueDateToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new System.Drawing.Size(272, 6);
+            // 
+            // cloneTransactionToolStripMenuItem
+            // 
+            cloneTransactionToolStripMenuItem.Name = "cloneTransactionToolStripMenuItem";
+            cloneTransactionToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
+            cloneTransactionToolStripMenuItem.Text = "Clone Transaction";
+            cloneTransactionToolStripMenuItem.Click += cloneTransactionToolStripMenuItem_Click;
             // 
             // txtTotalNet
             // 
@@ -705,5 +719,7 @@
         private System.Windows.Forms.ToolStripMenuItem bulkTransactionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem importOFXToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem cloneTransactionToolStripMenuItem;
     }
 }
