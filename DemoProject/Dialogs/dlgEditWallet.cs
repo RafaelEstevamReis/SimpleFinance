@@ -7,7 +7,7 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgEditWallet : DialogBase
     {
-        Wallet wallet;
+        Wallet wallet = null!;
         public dlgEditWallet()
         {
             InitializeComponent();

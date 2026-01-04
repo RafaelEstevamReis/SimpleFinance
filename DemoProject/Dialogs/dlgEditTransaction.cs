@@ -11,10 +11,10 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgEditTransaction : DialogBase
     {
-        private Manager manager;
-        private Transac transaction;
-        private Category[] categories;
-        private Wallet[] wallets;
+        private Manager manager = null!;
+        private Transac transaction = null!;
+        private Category[] categories = [];
+        private Wallet[] wallets = [];
 
         public dlgEditTransaction()
         {

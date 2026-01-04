@@ -7,7 +7,7 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgEditCategory : DialogBase
     {
-        Category category;
+        Category category = null!;
         public dlgEditCategory()
         {
             InitializeComponent();

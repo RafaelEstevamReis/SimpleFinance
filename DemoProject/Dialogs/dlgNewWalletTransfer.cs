@@ -10,7 +10,7 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgNewWalletTransfer : DialogBase
     {
-        private Manager manager;
+        private Manager manager = null!;
         private Category[] categories = [];
         private Wallet[] wallets = [];
 

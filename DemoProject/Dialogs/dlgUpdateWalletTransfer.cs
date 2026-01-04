@@ -7,8 +7,8 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgUpdateWalletTransfer : Form
     {
-        private Manager manager;
-        private Transac oneTransaction;
+        private Manager manager = null!;
+        private Transac oneTransaction = null!;
 
         public dlgUpdateWalletTransfer()
         {

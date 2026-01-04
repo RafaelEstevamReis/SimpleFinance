@@ -186,7 +186,7 @@ namespace DemoProject.Dialogs
         public record Types
         {
             public bool IsExpense { get; set; }
-            public string Name { get; set; }
+            public string Name { get; set; } = string.Empty;
         }
     }
 }
