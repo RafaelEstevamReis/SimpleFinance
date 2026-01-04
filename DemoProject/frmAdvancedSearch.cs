@@ -63,15 +63,27 @@ namespace DemoProject
                 4 => Manager.SearchTransactionsDate.EffectiveDate,
                 _ => Manager.SearchTransactionsDate.EffectiveDate,
             };
+
             IEnumerable<Transac> txs;
+            clnWallet.Visible = true;
+            clnCategory.Visible = true;
             if (chkFilterReference.Checked)
             {
-                Manager.SearchTransactionsByKind kind = cboReferenceType.SelectedIndex switch
+                Manager.SearchTransactionsByKind kind;
+                if (cboReferenceType.SelectedIndex == 0)
                 {
-                    0 => Manager.SearchTransactionsByKind.Wallet,
-                    1 => Manager.SearchTransactionsByKind.Category,
-                    _ => Manager.SearchTransactionsByKind.Category,
-                };
+                    kind = Manager.SearchTransactionsByKind.Wallet;
+                    clnWallet.Visible = false;
+                }
+                else if (cboReferenceType.SelectedIndex == 1)
+                {
+                    kind = Manager.SearchTransactionsByKind.Category;
+                    clnCategory.Visible = false;
+                }
+                else
+                {
+                    kind = Manager.SearchTransactionsByKind.Category;
+                }
 
                 txs = manager.GetTransactionsBy(kind, (long?)cboReferenceItem.SelectedValue ?? 0, dateType, dtFrom.Value, dtTo.Value);
             }
@@ -171,7 +183,7 @@ namespace DemoProject
             if (e.RowIndex < 0) return;
 
             var t = grdTransactions.Rows[e.RowIndex].Tag as Transac;
-            editTransaction(t);
+            editTransaction(t!);
         }
 
         private void grdTransactions_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -190,8 +202,8 @@ namespace DemoProject
                 .Select(c => c.RowIndex)
                 .Distinct();
 
-            var trx = selectedCellsIndex.Select(ix => grdTransactions.Rows[ix].Tag as Transac)
-                                        .Where(o => o is not null);
+            var trx = selectedCellsIndex.Select(ix => grdTransactions.Rows[ix].Tag)
+                                        .OfType<Transac>();
             return trx.ToArray();
         }
         private void btnAddTransaction_Click(object sender, EventArgs e)
