@@ -244,6 +244,33 @@ namespace DemoProject
             config.SetConfig<int>("daysAfter", this.Name, days);
             updateChart();
         }
+        private void chtAssets_MouseMove(object sender, MouseEventArgs e)
+        {
+            var result = chtAssets.HitTest(e.Location.X, e.Location.Y);
+            if (result.Series == null) return;
+            if (result.PointIndex < 0) return;
+            if (result.Series.Name == "Today") return;
+
+            var point = result.Object as DataPoint;
+            string name = "";
+            if (point != null) name = point.AxisLabel;
+            if (name == "" || result.Series.ChartType == SeriesChartType.StackedColumn) name = result.Series.Name;
+
+            string xVal = "";
+            if (result.Series.XValueType == ChartValueType.DateTime)
+            {
+                var dtxVal = result.Series.Points[result.PointIndex].XValue;
+                var dt = DateTime.FromOADate(dtxVal);
+                xVal = dt.ToShortDateString();
+            }
+
+            grpChartAssets.Text = $"Assets - {xVal} {point?.YValues[0]:#0.00} on {name} ";
+
+        }
+        private void chtAssets_MouseLeave(object sender, EventArgs e)
+        {
+            grpChartAssets.Text = "Assets";
+        }
 
         private void grdWallets_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);
         private void grdCategories_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);

@@ -86,7 +86,7 @@ namespace DemoProject
             bulkTransactionsToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripSeparator();
             importOFXToolStripMenuItem = new ToolStripMenuItem();
-            groupBox5 = new GroupBox();
+            grpChartAssets = new GroupBox();
             chtAssets = new System.Windows.Forms.DataVisualization.Charting.Chart();
             cntxChartPeriod = new ContextMenuStrip(components);
             dToolStripMenuItem = new ToolStripMenuItem();
@@ -106,7 +106,7 @@ namespace DemoProject
             cntxEditDelete.SuspendLayout();
             cntxDueTx.SuspendLayout();
             cntxNew.SuspendLayout();
-            groupBox5.SuspendLayout();
+            grpChartAssets.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)chtAssets).BeginInit();
             cntxChartPeriod.SuspendLayout();
             SuspendLayout();
@@ -504,16 +504,16 @@ namespace DemoProject
             importOFXToolStripMenuItem.Text = "Import OFX";
             importOFXToolStripMenuItem.Click += importOFXToolStripMenuItem_Click;
             // 
-            // groupBox5
+            // grpChartAssets
             // 
-            groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox5.Controls.Add(chtAssets);
-            groupBox5.Location = new Point(5, 6);
-            groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(645, 319);
-            groupBox5.TabIndex = 8;
-            groupBox5.TabStop = false;
-            groupBox5.Text = "Assets";
+            grpChartAssets.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            grpChartAssets.Controls.Add(chtAssets);
+            grpChartAssets.Location = new Point(5, 6);
+            grpChartAssets.Name = "grpChartAssets";
+            grpChartAssets.Size = new Size(645, 319);
+            grpChartAssets.TabIndex = 8;
+            grpChartAssets.TabStop = false;
+            grpChartAssets.Text = "Assets";
             // 
             // chtAssets
             // 
@@ -536,6 +536,8 @@ namespace DemoProject
             chtAssets.TabIndex = 0;
             chtAssets.Text = "chart1";
             chtAssets.MouseClick += chtAssets_MouseClick;
+            chtAssets.MouseLeave += chtAssets_MouseLeave;
+            chtAssets.MouseMove += chtAssets_MouseMove;
             // 
             // cntxChartPeriod
             // 
@@ -590,7 +592,7 @@ namespace DemoProject
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(984, 611);
-            Controls.Add(groupBox5);
+            Controls.Add(grpChartAssets);
             Controls.Add(btnAddNew);
             Controls.Add(btnAdvSearch);
             Controls.Add(btnTransactionBook);
@@ -598,7 +600,6 @@ namespace DemoProject
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
-            MaximizeBox = false;
             MinimumSize = new Size(970, 520);
             Name = "frmMain";
             StartPosition = FormStartPosition.CenterScreen;
@@ -615,7 +616,7 @@ namespace DemoProject
             cntxEditDelete.ResumeLayout(false);
             cntxDueTx.ResumeLayout(false);
             cntxNew.ResumeLayout(false);
-            groupBox5.ResumeLayout(false);
+            grpChartAssets.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)chtAssets).EndInit();
             cntxChartPeriod.ResumeLayout(false);
             ResumeLayout(false);
@@ -667,7 +668,7 @@ namespace DemoProject
         private DataGridViewTextBoxColumn Column8;
         private DataGridViewTextBoxColumn Column9;
         private DataGridViewTextBoxColumn Column7;
-        private GroupBox groupBox5;
+        private GroupBox grpChartAssets;
         private System.Windows.Forms.DataVisualization.Charting.Chart chtAssets;
         private ContextMenuStrip cntxChartPeriod;
         private ToolStripMenuItem dToolStripMenuItem;
