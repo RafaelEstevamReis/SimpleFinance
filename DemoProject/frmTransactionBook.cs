@@ -14,11 +14,12 @@ namespace DemoProject
     public partial class frmTransactionBook : Form
     {
         private Manager manager;
-        private Dictionary<long, string> categories = [];
+        private Dictionary<long, string> categories;
 
         public frmTransactionBook()
         {
             manager = Injector.Get<Manager>();
+            categories = manager.GetCategoriesDict();
             InitializeComponent();
         }
         private void frmTransactionBook_Load(object sender, EventArgs e)
@@ -154,18 +155,9 @@ namespace DemoProject
             Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
         }
 
-        public static DialogResult ShowDialog(Manager manager)
-        {
-            using var frm = new frmTransactionBook();
-            frm.manager = manager;
-            frm.categories = manager.GetCategoriesDict();
-            return frm.ShowDialog();
-        }
-        public static void Show(Manager manager)
+        public static void ShowForm()
         {
             var frm = new frmTransactionBook();
-            frm.manager = manager;
-            frm.categories = manager.GetCategoriesDict();
             frm.Show();
             frm.FormClosed += (s, e) => frm.Dispose();
         }

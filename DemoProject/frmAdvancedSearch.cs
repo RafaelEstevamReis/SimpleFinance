@@ -15,13 +15,10 @@ namespace DemoProject
     public partial class frmAdvancedSearch : Form
     {
         private Manager manager;
-        private ConfigurationDB config;
 
         public frmAdvancedSearch()
         {
-            config = Injector.Get<ConfigurationDB>();
             manager = Injector.Get<Manager>();
-
             InitializeComponent();
         }
         private void frmAdvancedSearch_Load(object sender, EventArgs e)
@@ -453,16 +450,9 @@ namespace DemoProject
             search();
         }
 
-        public static DialogResult ShowDialog(Manager manager)
-        {
-            using var frm = new frmAdvancedSearch();
-            frm.manager = manager;
-            return frm.ShowDialog();
-        }
-        public static void Show(Manager manager)
+        public static void ShowForm()
         {
             var frm = new frmAdvancedSearch();
-            frm.manager = manager;
             frm.Show();
             frm.FormClosed += (s, e) => frm.Dispose();
         }

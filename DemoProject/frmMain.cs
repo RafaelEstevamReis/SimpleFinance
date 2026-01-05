@@ -487,14 +487,12 @@ namespace DemoProject
 
         private void btnTransactionBook_Click(object sender, EventArgs e)
         {
-            //frmTransactionBook.ShowDialog(manager);
-            frmTransactionBook.Show(manager);
+            frmTransactionBook.ShowForm();
         }
 
         private void btnAdvSearch_Click(object sender, EventArgs e)
         {
-            //frmAdvancedSearch.ShowDialog(manager);
-            frmAdvancedSearch.Show(manager);
+            frmAdvancedSearch.ShowForm();
         }
 
     }
