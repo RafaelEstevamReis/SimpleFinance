@@ -1,4 +1,5 @@
-﻿using Simple.Finance;
+﻿using Simple.BotUtils.DI;
+using Simple.Finance;
 using Simple.Finance.Tables;
 using System;
 using System.Windows.Forms;
@@ -7,11 +8,12 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgUpdateWalletTransfer : Form
     {
-        private Manager manager = null!;
+        private Manager manager;
         private Transac oneTransaction = null!;
 
         public dlgUpdateWalletTransfer()
         {
+            manager = Injector.Get<Manager>();
             InitializeComponent();
         }
 
@@ -47,10 +49,9 @@ namespace DemoProject.Dialogs
             DialogResult = DialogResult.OK;
 
         }
-        public static DialogResult ShowDialog(Manager manager, Transac oneTx)
+        public static DialogResult ShowDialog(Transac oneTx)
         {
             using var frm = new dlgUpdateWalletTransfer();
-            frm.manager = manager;
             frm.oneTransaction = oneTx;
             return frm.ShowDialog();
         }

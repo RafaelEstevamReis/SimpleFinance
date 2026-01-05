@@ -331,7 +331,7 @@ namespace DemoProject
         }
         private void bulkTransactionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, []);
+            Dialogs.dlgAddBulkTransactions.ShowDialog([]);
         }
         private void importOFXToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -341,7 +341,7 @@ namespace DemoProject
             if (result != DialogResult.OK) return;
 
             var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0);
-            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, trs);
+            Dialogs.dlgAddBulkTransactions.ShowDialog(trs);
         }
 
         void doGridClickEvent(DataGridView? sender, DataGridViewCellMouseEventArgs e)
@@ -424,7 +424,7 @@ namespace DemoProject
                 PaymentDate = DateTime.UtcNow,
                 Description = "New Transaction",
             };
-            var result = Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+            var result = Dialogs.dlgEditTransaction.ShowDialog(t);
             if (result != DialogResult.OK) return;
         }
 
@@ -450,11 +450,11 @@ namespace DemoProject
             }
             else if (t.Type == Transac.TransactionType.WalletTransfer)
             {
-                Dialogs.dlgUpdateWalletTransfer.ShowDialog(manager, t);
+                Dialogs.dlgUpdateWalletTransfer.ShowDialog(t);
             }
             else if (t.Type == Transac.TransactionType.Simple)
             {
-                Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+                Dialogs.dlgEditTransaction.ShowDialog(t);
             }
             else
             {

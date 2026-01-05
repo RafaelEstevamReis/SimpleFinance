@@ -261,7 +261,7 @@ namespace DemoProject
         }
         private void bulkTransactionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, []); 
+            Dialogs.dlgAddBulkTransactions.ShowDialog([]); 
             search();
         }
         private void importOFXToolStripMenuItem_Click(object sender, EventArgs e)
@@ -272,7 +272,7 @@ namespace DemoProject
             if (result != DialogResult.OK) return;
 
             var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0);
-            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, trs);
+            Dialogs.dlgAddBulkTransactions.ShowDialog(trs);
             search();
         }
 
@@ -284,12 +284,12 @@ namespace DemoProject
             }
             else if (t.Type == Transac.TransactionType.WalletTransfer)
             {
-                Dialogs.dlgUpdateWalletTransfer.ShowDialog(manager, t);
+                Dialogs.dlgUpdateWalletTransfer.ShowDialog(t);
                 search();
             }
             else if (t.Type == Transac.TransactionType.Simple)
             {
-                Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+                Dialogs.dlgEditTransaction.ShowDialog(t);
                 search();
             }
             else

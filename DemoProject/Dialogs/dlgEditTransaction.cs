@@ -1,4 +1,5 @@
 ﻿using DemoProject.Components;
+using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Finance.Tables;
 using System;
@@ -11,13 +12,16 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgEditTransaction : DialogBase
     {
-        private Manager manager = null!;
+        private Manager manager;
+        private Category[] categories;
+        private Wallet[] wallets;
         private Transac transaction = null!;
-        private Category[] categories = [];
-        private Wallet[] wallets = [];
 
         public dlgEditTransaction()
         {
+            manager = Injector.Get<Manager>();
+            categories = manager.GetCategories().ToArray();
+            wallets = manager.GetWallets().ToArray();
             InitializeComponent();
         }
 
@@ -199,16 +203,6 @@ namespace DemoProject.Dialogs
             pnlRecuring.Enabled = rdoRecuringYes.Checked;
         }
 
-        public static DialogResult ShowDialog(Transac transaction, Manager manager)
-        {
-            using var frm = new dlgEditTransaction();
-            frm.manager = manager;
-            frm.transaction = transaction;
-            frm.categories = manager.GetCategories().Where(o => !o.IsDeleted).ToArray();
-            frm.wallets = manager.GetWallets().Where(o => !o.IsDeleted).ToArray();
-            return frm.ShowDialog();
-        }
-
         private void lblChanged_Click(object sender, EventArgs e)
         {
             if (transaction.Id == 0)
@@ -217,7 +211,14 @@ namespace DemoProject.Dialogs
                 return;
             }
 
-            dlgTransactionHistory.ShowDialog(manager, transaction.Id);
+            dlgTransactionHistory.ShowDialog(transaction.Id);
+        }
+
+        public static DialogResult ShowDialog(Transac transaction)
+        {
+            using var frm = new dlgEditTransaction();
+            frm.transaction = transaction;
+            return frm.ShowDialog();
         }
 
     }

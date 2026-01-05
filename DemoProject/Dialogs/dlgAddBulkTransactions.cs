@@ -1,4 +1,5 @@
-﻿using Simple.Finance;
+﻿using Simple.BotUtils.DI;
+using Simple.Finance;
 using Simple.Finance.Tables;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,14 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgAddBulkTransactions : Form
     {
-        private Manager manager = null!;
-        private Category[] categories = [];
+        private Manager manager;
+        private Category[] categories;
         private Transac[] initTransactions = [];
 
         public dlgAddBulkTransactions()
         {
+            manager = Injector.Get<Manager>();
+            categories = manager.GetCategories().ToArray();
             InitializeComponent();
         }
         private void dlgAddBulkTransactions_Load(object sender, EventArgs e)
@@ -175,10 +178,9 @@ namespace DemoProject.Dialogs
         }
 
 
-        public static DialogResult ShowDialog(Manager manager, IEnumerable<Transac> trs)
+        public static DialogResult ShowDialog(IEnumerable<Transac> trs)
         {
             using var frm = new dlgAddBulkTransactions();
-            frm.manager = manager;
             frm.initTransactions = trs.ToArray();
             return frm.ShowDialog();
         }

@@ -117,12 +117,12 @@ namespace DemoProject
             }
             else if (t.Type == Transac.TransactionType.WalletTransfer)
             {
-                Dialogs.dlgUpdateWalletTransfer.ShowDialog(manager, t);
+                Dialogs.dlgUpdateWalletTransfer.ShowDialog(t);
                 refresh();
             }
             else if (t.Type == Transac.TransactionType.Simple)
             {
-                Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+                Dialogs.dlgEditTransaction.ShowDialog(t);
                 refresh();
             }
             else
@@ -148,7 +148,7 @@ namespace DemoProject
                 PaymentDate = dtDate.Value.Date,
                 Description = "New Transaction",
             };
-            Dialogs.dlgEditTransaction.ShowDialog(t, manager);
+            Dialogs.dlgEditTransaction.ShowDialog(t);
         }
         private void newWalletTransferToolStripMenuItem_Click(object sender, EventArgs e)
         {

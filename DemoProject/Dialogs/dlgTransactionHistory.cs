@@ -1,4 +1,5 @@
 ﻿using DemoProject.Components;
+using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Finance.Tables;
 using System;
@@ -33,9 +34,10 @@ namespace DemoProject.Dialogs
             }
         }
 
-        public static DialogResult ShowDialog(Manager manager, long tableId)
+        public static DialogResult ShowDialog(long tableId)
         {
             using var dlg = new dlgTransactionHistory();
+            var manager = Injector.Get<Manager>();
             dlg.logs = manager.GetLogs<Transac>(tableId).ToArray();
             return dlg.ShowDialog();
         }
