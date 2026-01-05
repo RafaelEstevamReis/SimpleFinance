@@ -1,4 +1,5 @@
-﻿using Simple.Finance;
+﻿using Simple.BotUtils.DI;
+using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using System;
@@ -12,11 +13,12 @@ namespace DemoProject
 {
     public partial class frmTransactionBook : Form
     {
-        private Manager manager = null!;
+        private Manager manager;
         private Dictionary<long, string> categories = [];
 
         public frmTransactionBook()
         {
+            manager = Injector.Get<Manager>();
             InitializeComponent();
         }
         private void frmTransactionBook_Load(object sender, EventArgs e)

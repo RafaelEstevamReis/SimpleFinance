@@ -1,4 +1,5 @@
-﻿using Simple.Finance;
+﻿using Simple.BotUtils.DI;
+using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using Simple.Sqlite;
@@ -13,13 +14,15 @@ namespace DemoProject
 {
     public partial class frmAdvancedSearch : Form
     {
-        private Manager manager = null!;
+        private Manager manager;
         private ConfigurationDB config;
 
         public frmAdvancedSearch()
         {
+            config = Injector.Get<ConfigurationDB>();
+            manager = Injector.Get<Manager>();
+
             InitializeComponent();
-            config = Program.Config;
         }
         private void frmAdvancedSearch_Load(object sender, EventArgs e)
         {

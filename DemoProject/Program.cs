@@ -1,3 +1,4 @@
+using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Sqlite;
 using System;
@@ -7,17 +8,21 @@ namespace DemoProject
 {
     internal static class Program
     {
-        // TODO: Refactor with DI
-        public static Manager Manager { get; } = new Manager("data.db");
-        public static ConfigurationDB Config = new ConfigurationDB("preferences.db");
-
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            Manager.Initialize(createBackup: true, backupName: $"bkp/data_{DateTime.Now:yyyyMMddHH}.db");
+            // Set DI
+            var manager = new Manager("data.db");
+            manager.Initialize(createBackup: true, backupName: $"bkp/data_{DateTime.Now:yyyyMMddHH}.db");
+            Injector.AddSingleton(manager);
+
+            var config = new ConfigurationDB("preferences.db");
+            Injector.AddSingleton(config);
+
+            // App Boot
             ApplicationConfiguration.Initialize();
             Application.Run(new frmMain());
         }

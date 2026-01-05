@@ -1,6 +1,8 @@
+using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
+using Simple.Sqlite;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -11,12 +13,14 @@ namespace DemoProject
 {
     public partial class frmMain : Form
     {
-        Manager manager;
+        private Manager manager;
+        private ConfigurationDB config;
 
         public frmMain()
         {
             InitializeComponent();
-            manager = Program.Manager;
+            manager = Injector.Get<Manager>();
+            config = Injector.Get<ConfigurationDB>();
             manager.EventNotifier += Manager_EventNotifier;
         }
 
@@ -162,7 +166,7 @@ namespace DemoProject
         void updateChart()
         {
             int daysBefore = 10;
-            int daysAfter = Program.Config.GetConfig<int>("daysAfter", this.Name, 60);
+            int daysAfter = config.GetConfig<int>("daysAfter", this.Name, 60);
 
             var dateBefore = DateTime.UtcNow.AddDays(-daysBefore).EndOfDay();
             var balance = manager.GetWalletsBalance(dateBefore);
@@ -237,7 +241,7 @@ namespace DemoProject
             if (item == null) return;
             int days = int.Parse(item.Text?.Replace("d", "") ?? "60");
 
-            Program.Config.SetConfig<int>("daysAfter", this.Name, days);
+            config.SetConfig<int>("daysAfter", this.Name, days);
             updateChart();
         }
 
