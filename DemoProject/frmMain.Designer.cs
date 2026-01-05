@@ -605,6 +605,7 @@ namespace DemoProject
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Simple.Finance Demo";
             Load += frmMain_Load;
+            Resize += frmMain_Resize;
             groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)grdWallets).EndInit();
             groupBox2.ResumeLayout(false);

@@ -13,6 +13,7 @@ namespace DemoProject
 {
     public partial class frmMain : Form
     {
+        private FormWindowState lastState = FormWindowState.Normal;
         private Manager manager;
         private ConfigurationDB config;
 
@@ -32,6 +33,9 @@ namespace DemoProject
             updateMyCategories();
             updateMyTransactions();
             updateChart();
+
+            bool isFullScreen = config.GetConfig<bool>("isFullScreen", this.Name, false);
+            if (isFullScreen) this.WindowState = FormWindowState.Maximized;
         }
         void checkDefaultItems()
         {
@@ -228,6 +232,16 @@ namespace DemoProject
             chtAssets.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
             chtAssets.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
             chtAssets.ChartAreas[0].AxisX.IsMarginVisible = false;
+        }
+        private void frmMain_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized) return;
+
+            if (lastState == WindowState) return;
+            lastState = WindowState;
+
+            bool isFullScreen = WindowState == FormWindowState.Maximized;
+            config.SetConfig<bool>("isFullScreen", this.Name, isFullScreen);
         }
 
         private void chtAssets_MouseClick(object sender, MouseEventArgs e)
