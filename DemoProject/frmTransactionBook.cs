@@ -75,7 +75,7 @@ namespace DemoProject
                 }
                 else if (tx.Type == Transac.TransactionType.WalletTransfer)
                 {
-                    if (tx.DueValue < 0) add = "▶ ";
+                    if (tx.DueValue > 0) add = "▶ ";
                     else add = "◀ ";
                 }
 

@@ -1,5 +1,4 @@
-﻿using DemoProject.Dialogs;
-using Simple.Finance;
+﻿using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using Simple.Sqlite;
@@ -132,7 +131,7 @@ namespace DemoProject
                 }
                 else if (tx.Type == Transac.TransactionType.WalletTransfer)
                 {
-                    if (tx.DueValue < 0) add = "▶ ";
+                    if (tx.DueValue > 0) add = "▶ ";
                     else add = "◀ ";
                 }
 
@@ -258,10 +257,12 @@ namespace DemoProject
         private void walletTransferToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
+            search();
         }
         private void bulkTransactionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, []);
+            Dialogs.dlgAddBulkTransactions.ShowDialog(manager, []); 
+            search();
         }
         private void importOFXToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -272,8 +273,8 @@ namespace DemoProject
 
             var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0);
             Dialogs.dlgAddBulkTransactions.ShowDialog(manager, trs);
+            search();
         }
-
 
         private void editTransaction(Transac t)
         {
@@ -306,7 +307,7 @@ namespace DemoProject
                 return;
             }
 
-            var result = dlgValueBox.ShowDialog("New Due Value", 2, 0, out decimal newValue);
+            var result = Dialogs.dlgValueBox.ShowDialog("New Due Value", 2, 0, out decimal newValue);
             if (result != DialogResult.OK) return;
 
             foreach (var tx in selected)
@@ -326,7 +327,7 @@ namespace DemoProject
                 return;
             }
 
-            var result = dlgValueBox.ShowDialog("New Due Day", "New Due Day", 0, 0, o => o >= 1 && o <= 31, out decimal newValue);
+            var result = Dialogs.dlgValueBox.ShowDialog("New Due Day", "New Due Day", 0, 0, o => o >= 1 && o <= 31, out decimal newValue);
             if (result != DialogResult.OK) return;
 
             foreach (var tx in selected)
@@ -359,7 +360,7 @@ namespace DemoProject
                                     .Where(o => sign > 0 ? !o.IsExpense : o.IsExpense)
                                     .ToArray()
                                     ;
-            var result = dlgComboBox.ShowDialog("New Category", categories, out long newValue);
+            var result = Dialogs.dlgComboBox.ShowDialog("New Category", categories, out long newValue);
             if (result != DialogResult.OK) return;
 
             foreach (var tx in selected)
