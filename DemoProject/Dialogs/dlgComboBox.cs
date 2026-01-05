@@ -1,9 +1,10 @@
-﻿using System;
+﻿using DemoProject.Components;
+using System;
 using System.Windows.Forms;
 
 namespace DemoProject.Dialogs
 {
-    public partial class dlgComboBox : Form
+    public partial class dlgComboBox : DialogBase
     {
         public dlgComboBox()
         {

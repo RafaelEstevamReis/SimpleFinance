@@ -1,4 +1,5 @@
-﻿using Simple.BotUtils.DI;
+﻿using DemoProject.Components;
+using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Finance.Tables;
 using System;
@@ -6,7 +7,7 @@ using System.Windows.Forms;
 
 namespace DemoProject.Dialogs
 {
-    public partial class dlgUpdateWalletTransfer : Form
+    public partial class dlgUpdateWalletTransfer : DialogBase
     {
         private Manager manager;
         private Transac oneTransaction = null!;
