@@ -162,7 +162,7 @@ namespace DemoProject
         void updateChart()
         {
             int daysBefore = 10;
-            int daysAfter = 120;
+            int daysAfter = Program.Config.GetConfig<int>("daysAfter", this.Name, 60);
 
             var dateBefore = DateTime.UtcNow.AddDays(-daysBefore).EndOfDay();
             var balance = manager.GetWalletsBalance(dateBefore);
@@ -176,7 +176,7 @@ namespace DemoProject
             foreach (var wallet in wallets)
             {
                 decimal[] valuesDay = new decimal[daysBefore + daysAfter];
-                
+
                 valuesDay[0] = balance.Where(o => o.WalletId == wallet.Id).Sum(o => o.Balance);
 
                 foreach (var tx in txs)
@@ -224,6 +224,21 @@ namespace DemoProject
             chtAssets.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
             chtAssets.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
             chtAssets.ChartAreas[0].AxisX.IsMarginVisible = false;
+        }
+
+        private void chtAssets_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right) return;
+            cntxChartPeriod.Show(System.Windows.Forms.Cursor.Position);
+        }
+        private void dToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = sender as ToolStripMenuItem;
+            if (item == null) return;
+            int days = int.Parse(item.Text?.Replace("d", "") ?? "60");
+
+            Program.Config.SetConfig<int>("daysAfter", this.Name, days);
+            updateChart();
         }
 
         private void grdWallets_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);

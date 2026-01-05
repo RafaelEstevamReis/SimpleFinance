@@ -88,6 +88,13 @@ namespace DemoProject
             importOFXToolStripMenuItem = new ToolStripMenuItem();
             groupBox5 = new GroupBox();
             chtAssets = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            cntxChartPeriod = new ContextMenuStrip(components);
+            dToolStripMenuItem = new ToolStripMenuItem();
+            dToolStripMenuItem1 = new ToolStripMenuItem();
+            dToolStripMenuItem2 = new ToolStripMenuItem();
+            dToolStripMenuItem3 = new ToolStripMenuItem();
+            dToolStripMenuItem4 = new ToolStripMenuItem();
+            dToolStripMenuItem5 = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -101,6 +108,7 @@ namespace DemoProject
             cntxNew.SuspendLayout();
             groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)chtAssets).BeginInit();
+            cntxChartPeriod.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -527,6 +535,55 @@ namespace DemoProject
             chtAssets.Size = new Size(639, 297);
             chtAssets.TabIndex = 0;
             chtAssets.Text = "chart1";
+            chtAssets.MouseClick += chtAssets_MouseClick;
+            // 
+            // cntxChartPeriod
+            // 
+            cntxChartPeriod.Items.AddRange(new ToolStripItem[] { dToolStripMenuItem, dToolStripMenuItem1, dToolStripMenuItem2, dToolStripMenuItem3, dToolStripMenuItem4, dToolStripMenuItem5 });
+            cntxChartPeriod.Name = "cntxChartPeriod";
+            cntxChartPeriod.Size = new Size(100, 136);
+            // 
+            // dToolStripMenuItem
+            // 
+            dToolStripMenuItem.Name = "dToolStripMenuItem";
+            dToolStripMenuItem.Size = new Size(99, 22);
+            dToolStripMenuItem.Text = "30d";
+            dToolStripMenuItem.Click += dToolStripMenuItem_Click;
+            // 
+            // dToolStripMenuItem1
+            // 
+            dToolStripMenuItem1.Name = "dToolStripMenuItem1";
+            dToolStripMenuItem1.Size = new Size(99, 22);
+            dToolStripMenuItem1.Text = "60d";
+            dToolStripMenuItem1.Click += dToolStripMenuItem_Click;
+            // 
+            // dToolStripMenuItem2
+            // 
+            dToolStripMenuItem2.Name = "dToolStripMenuItem2";
+            dToolStripMenuItem2.Size = new Size(99, 22);
+            dToolStripMenuItem2.Text = "90d";
+            dToolStripMenuItem2.Click += dToolStripMenuItem_Click;
+            // 
+            // dToolStripMenuItem3
+            // 
+            dToolStripMenuItem3.Name = "dToolStripMenuItem3";
+            dToolStripMenuItem3.Size = new Size(99, 22);
+            dToolStripMenuItem3.Text = "120d";
+            dToolStripMenuItem3.Click += dToolStripMenuItem_Click;
+            // 
+            // dToolStripMenuItem4
+            // 
+            dToolStripMenuItem4.Name = "dToolStripMenuItem4";
+            dToolStripMenuItem4.Size = new Size(99, 22);
+            dToolStripMenuItem4.Text = "180d";
+            dToolStripMenuItem4.Click += dToolStripMenuItem_Click;
+            // 
+            // dToolStripMenuItem5
+            // 
+            dToolStripMenuItem5.Name = "dToolStripMenuItem5";
+            dToolStripMenuItem5.Size = new Size(99, 22);
+            dToolStripMenuItem5.Text = "365d";
+            dToolStripMenuItem5.Click += dToolStripMenuItem_Click;
             // 
             // frmMain
             // 
@@ -560,6 +617,7 @@ namespace DemoProject
             cntxNew.ResumeLayout(false);
             groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)chtAssets).EndInit();
+            cntxChartPeriod.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -611,5 +669,12 @@ namespace DemoProject
         private DataGridViewTextBoxColumn Column7;
         private GroupBox groupBox5;
         private System.Windows.Forms.DataVisualization.Charting.Chart chtAssets;
+        private ContextMenuStrip cntxChartPeriod;
+        private ToolStripMenuItem dToolStripMenuItem;
+        private ToolStripMenuItem dToolStripMenuItem1;
+        private ToolStripMenuItem dToolStripMenuItem2;
+        private ToolStripMenuItem dToolStripMenuItem3;
+        private ToolStripMenuItem dToolStripMenuItem4;
+        private ToolStripMenuItem dToolStripMenuItem5;
     }
 }
