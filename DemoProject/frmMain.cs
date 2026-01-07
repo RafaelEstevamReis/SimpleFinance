@@ -150,7 +150,7 @@ namespace DemoProject
 
                 if (tx.Status == Transac.PaymentStatus.Reversed)
                 {
-                    grdTxRecent.Rows[ix].DefaultCellStyle.Font = new System.Drawing.Font(Font, System.Drawing.FontStyle.Strikeout);
+                    grdTxRecent.Rows[ix].DefaultCellStyle.Font = new Font(Font, FontStyle.Strikeout);
                 }
             }
 
@@ -171,6 +171,7 @@ namespace DemoProject
         {
             int daysBefore = 10;
             int daysAfter = config.GetConfig<int>("daysAfter", this.Name, 60);
+            daysAfter = Math.Clamp(daysAfter, 10, 400);
 
             var dateBefore = DateTime.UtcNow.AddDays(-daysBefore).EndOfDay();
             var balance = manager.GetWalletsBalance(dateBefore);
@@ -192,6 +193,7 @@ namespace DemoProject
                     if (tx.WalletId != wallet.Id) continue;
 
                     var effDateIx = (int)(tx.EfectiveDate.Date - dateBefore.Date).TotalDays;
+                    if (effDateIx >= valuesDay.Length) continue;
                     valuesDay[effDateIx] += tx.EfectiveValue;
                 }
 
