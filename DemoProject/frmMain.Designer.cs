@@ -536,6 +536,7 @@ namespace DemoProject
             chtAssets.TabIndex = 0;
             chtAssets.Text = "chart1";
             chtAssets.MouseClick += chtAssets_MouseClick;
+            chtAssets.MouseDoubleClick += chtAssets_MouseDoubleClick;
             chtAssets.MouseLeave += chtAssets_MouseLeave;
             chtAssets.MouseMove += chtAssets_MouseMove;
             // 

@@ -456,6 +456,17 @@ namespace DemoProject
             frm.Show();
             frm.FormClosed += (s, e) => frm.Dispose();
         }
+        public static void ShowForm(DateTime toDate)
+        {
+            var frm = new frmAdvancedSearch();
+            frm.Show();
+            frm.FormClosed += (s, e) => frm.Dispose();
+
+            frm.cboDate.SelectedIndex = 4; // Effective
+            frm.dtFrom.Value = toDate.StartOfDay();
+            frm.dtTo.Value = toDate.EndOfDay();
+            frm.btnSearch.PerformClick();
+        }
 
     }
 }

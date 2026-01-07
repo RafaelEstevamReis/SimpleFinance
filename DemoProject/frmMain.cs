@@ -287,6 +287,20 @@ namespace DemoProject
         {
             grpChartAssets.Text = "Assets";
         }
+        private void chtAssets_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var result = chtAssets.HitTest(e.Location.X, e.Location.Y);
+            if (result.Series == null) return;
+            if (result.PointIndex < 0) return;
+
+            if (result.Series.XValueType == ChartValueType.DateTime)
+            {
+                var dtxVal = result.Series.Points[result.PointIndex].XValue;
+                var dt = DateTime.FromOADate(dtxVal);
+
+                frmAdvancedSearch.ShowForm(dt);
+            }
+        }
 
         private void grdWallets_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);
         private void grdCategories_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);
