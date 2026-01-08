@@ -149,10 +149,12 @@ namespace DemoProject
                 Description = "New Transaction",
             };
             Dialogs.dlgEditTransaction.ShowDialog(t);
+            refresh();
         }
         private void newWalletTransferToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Dialogs.dlgNewWalletTransfer.ShowDialog(manager);
+            refresh();
         }
 
         public static void ShowForm()
