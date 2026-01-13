@@ -190,6 +190,7 @@ namespace DemoProject
 
                 foreach (var tx in txs)
                 {
+                    if (tx.Status == Transac.PaymentStatus.Reversed) continue;
                     if (tx.WalletId != wallet.Id) continue;
 
                     var effDateIx = (int)(tx.EfectiveDate.Date - dateBefore.Date).TotalDays;
