@@ -1,9 +1,6 @@
 ﻿namespace Simple.Finance.ExchangeTables;
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 
 public class TemporalSeries_XAUUSD : IExchangeRateTable
 {
