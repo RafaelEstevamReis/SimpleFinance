@@ -1,6 +1,6 @@
 ﻿namespace Simple.Finance;
 
-using Simple.Finance.ExchangeConverters;
+using Simple.Finance.ExchangeTables;
 using System;
 using System.Collections.Generic;
 
@@ -45,6 +45,14 @@ public class ExchangeRateConverter
                 new TemporalSeries_BRLUSD(),
                 new TemporalSeries_EURUSD(),
                 new TemporalSeries_BTCUSD(),
+
+                new TemporalSeries_XAUCAD(),
+                new TemporalSeries_XAUCHF(),
+                new TemporalSeries_XAUCNY(),
+                new TemporalSeries_XAUEUR(),
+                new TemporalSeries_XAUGBP(),
+                new TemporalSeries_XAUJPY(),
+                new TemporalSeries_XAUUSD(),
             ],
         };
         return exRate;
