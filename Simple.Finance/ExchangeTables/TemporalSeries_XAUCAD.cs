@@ -6,7 +6,7 @@ public class TemporalSeries_XAUCAD : IExchangeRateTable
 {
     public decimal? GetRateFor(string baseCur, string quoteCur, DateTime date)
     {
-        if (baseCur != "USD") return null;
+        if (baseCur != "CAD") return null;
         if (quoteCur != "XAU") return null;
 
         return getValue(date);
