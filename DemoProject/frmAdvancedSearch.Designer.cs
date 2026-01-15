@@ -88,12 +88,16 @@
             bulkTransactionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             importOFXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            btnReports = new System.Windows.Forms.Button();
+            cntxReports = new System.Windows.Forms.ContextMenuStrip(components);
+            categoriesOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
             groupBox3.SuspendLayout();
             cntxGrid.SuspendLayout();
             cntxNew.SuspendLayout();
+            cntxReports.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -504,7 +508,7 @@
             // 
             cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem, toolStripMenuItem1, markAsPaidAsOfTodayToolStripMenuItem, markAsPaidAsOfOriginalDueDateToolStripMenuItem, toolStripMenuItem3, cloneTransactionToolStripMenuItem });
             cntxGrid.Name = "cntxGrid";
-            cntxGrid.Size = new System.Drawing.Size(276, 170);
+            cntxGrid.Size = new System.Drawing.Size(276, 148);
             // 
             // changeDueValueToolStripMenuItem
             // 
@@ -621,11 +625,35 @@
             importOFXToolStripMenuItem.Text = "Import OFX";
             importOFXToolStripMenuItem.Click += importOFXToolStripMenuItem_Click;
             // 
+            // btnReports
+            // 
+            btnReports.Location = new System.Drawing.Point(734, 523);
+            btnReports.Name = "btnReports";
+            btnReports.Size = new System.Drawing.Size(119, 31);
+            btnReports.TabIndex = 17;
+            btnReports.Text = "Generate Reports ▼";
+            btnReports.UseVisualStyleBackColor = true;
+            btnReports.Click += btnReports_Click;
+            // 
+            // cntxReports
+            // 
+            cntxReports.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { categoriesOverviewToolStripMenuItem });
+            cntxReports.Name = "cntxReports";
+            cntxReports.Size = new System.Drawing.Size(183, 26);
+            // 
+            // categoriesOverviewToolStripMenuItem
+            // 
+            categoriesOverviewToolStripMenuItem.Name = "categoriesOverviewToolStripMenuItem";
+            categoriesOverviewToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            categoriesOverviewToolStripMenuItem.Text = "Categories Overview";
+            categoriesOverviewToolStripMenuItem.Click += categoriesOverviewToolStripMenuItem_Click;
+            // 
             // frmAdvancedSearch
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(976, 561);
+            Controls.Add(btnReports);
             Controls.Add(txtTotalNet);
             Controls.Add(label9);
             Controls.Add(groupBox3);
@@ -660,6 +688,7 @@
             groupBox3.PerformLayout();
             cntxGrid.ResumeLayout(false);
             cntxNew.ResumeLayout(false);
+            cntxReports.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -721,5 +750,8 @@
         private System.Windows.Forms.ToolStripMenuItem importOFXToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem cloneTransactionToolStripMenuItem;
+        private System.Windows.Forms.Button btnReports;
+        private System.Windows.Forms.ContextMenuStrip cntxReports;
+        private System.Windows.Forms.ToolStripMenuItem categoriesOverviewToolStripMenuItem;
     }
 }

@@ -2,6 +2,7 @@ using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Sqlite;
 using System;
+using System.Text;
 using System.Windows.Forms;
 
 namespace DemoProject
@@ -14,6 +15,7 @@ namespace DemoProject
         [STAThread]
         static void Main()
         {
+            GenerateTypesXSDs();
             // Set DI
             var manager = new Manager("data.db");
             manager.Initialize(createBackup: true, backupName: $"bkp/data_{DateTime.Now:yyyyMMddHH}.db");
@@ -26,5 +28,26 @@ namespace DemoProject
             ApplicationConfiguration.Initialize();
             Application.Run(new frmMain());
         }
+
+        private static void GenerateTypesXSDs()
+        {
+            Type[] types = [ typeof(Reports.CategoriesOverviewModel) ];
+            var xri = new System.Xml.Serialization.XmlReflectionImporter();
+            var xss = new System.Xml.Serialization.XmlSchemas();
+            var xse = new System.Xml.Serialization.XmlSchemaExporter(xss);
+            foreach (var type in types)
+            {
+                var xtm = xri.ImportTypeMapping(type);
+                xse.ExportTypeMapping(xtm);
+            }
+            using var sw = new System.IO.StreamWriter("ReportItemSchemas.xsd", false, Encoding.UTF8);
+            for (int i = 0; i < xss.Count; i++)
+            {
+                var xs = xss[i];
+                xs.Id = "ReportItemSchemas";
+                xs.Write(sw);
+            }
+        }
+
     }
 }

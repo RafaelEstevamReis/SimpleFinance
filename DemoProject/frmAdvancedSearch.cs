@@ -261,7 +261,7 @@ namespace DemoProject
         }
         private void bulkTransactionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Dialogs.dlgAddBulkTransactions.ShowDialog([]); 
+            Dialogs.dlgAddBulkTransactions.ShowDialog([]);
             search();
         }
         private void importOFXToolStripMenuItem_Click(object sender, EventArgs e)
@@ -434,7 +434,7 @@ namespace DemoProject
 
             var tx = selected[0];
 
-            if(tx.Type != Transac.TransactionType.Simple)
+            if (tx.Type != Transac.TransactionType.Simple)
             {
                 MessageBox.Show("Only SIMPLE transactions can be cloned");
                 return;
@@ -448,6 +448,34 @@ namespace DemoProject
             editTransaction(tx);
 
             search();
+        }
+
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+            cntxReports.Show(Cursor.Position);
+        }
+        private void categoriesOverviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            param["Title"] = "Categories Overview";
+            //var items = new[] { new { Description = "Widget 6000", Price = 104.99m, Qty = 1 }, new { Description = "Gizmo MAX", Price = 1.41m, Qty = 25 } };
+            var categories = manager.GetCategoriesDict();
+            var allRecentTx = grdTransactions.Rows.Cast<DataGridViewRow>().Select(o => o.Tag as Transac).ToArray();
+            var items = allRecentTx.Select(o => new Reports.CategoriesOverviewModel
+            {
+                CategoryName = o.GetCategoryName(categories),
+                Description = o.Description,
+                Date = o.EfectiveDate,
+                Value = o.EfectiveValue,
+            }).ToArray();
+
+            if (items.Length == 0)
+            {
+                MessageBox.Show("There are not items to show");
+                return;
+            }
+
+            Reports.ReportViewerForm.ShowReport("Reports/CategoriesOverview.rdlc", items, param);
         }
 
         public static void ShowForm()
