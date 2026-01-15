@@ -18,12 +18,24 @@
 		<PackageTags>Simple API Finance Manager</PackageTags>
 		<PackageReleaseNotes>See examples and documentation on the GitHub page https://github.com/RafaelEstevamReis/SimpleFinance</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		
+
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Simple.BotUtils" Version="1.8.11" />
-	  <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
+	  <None Remove="Reports\CategoriesOverview.rdlc" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Reports\CategoriesOverview.rdlc">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ReportViewerCore.NETCore" Version="15.1.32" />
+		<PackageReference Include="ReportViewerCore.WinForms" Version="15.1.31" />
+		<PackageReference Include="Simple.BotUtils" Version="1.8.11" />
+		<PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
 	</ItemGroup>
 
 	<ItemGroup>
