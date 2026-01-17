@@ -14,7 +14,7 @@ namespace DemoProject
     public partial class frmTransactionBook : Form
     {
         private Manager manager;
-        private Dictionary<long, string> categories;
+        private Dictionary<long, Category> categories;
 
         public frmTransactionBook()
         {

@@ -37,6 +37,8 @@ namespace DemoProject.Dialogs
             txtName = new TextBox();
             btnSave = new Button();
             btnCancel = new Button();
+            txtCurrencyCode = new TextBox();
+            label3 = new Label();
             SuspendLayout();
             // 
             // label1
@@ -76,7 +78,7 @@ namespace DemoProject.Dialogs
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(91, 94);
+            btnSave.Location = new Point(91, 127);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(75, 23);
             btnSave.TabIndex = 2;
@@ -87,18 +89,37 @@ namespace DemoProject.Dialogs
             // btnCancel
             // 
             btnCancel.DialogResult = DialogResult.Cancel;
-            btnCancel.Location = new Point(218, 94);
+            btnCancel.Location = new Point(218, 127);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(75, 23);
             btnCancel.TabIndex = 3;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
+            // txtCurrencyCode
+            // 
+            txtCurrencyCode.Location = new Point(143, 87);
+            txtCurrencyCode.MaxLength = 3;
+            txtCurrencyCode.Name = "txtCurrencyCode";
+            txtCurrencyCode.Size = new Size(64, 23);
+            txtCurrencyCode.TabIndex = 5;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 90);
+            label3.Name = "label3";
+            label3.Size = new Size(125, 15);
+            label3.TabIndex = 4;
+            label3.Text = "Wallet Currency Code:";
+            // 
             // dlgEditWallet
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(385, 128);
+            ClientSize = new Size(385, 160);
+            Controls.Add(txtCurrencyCode);
+            Controls.Add(label3);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(txtName);
@@ -122,5 +143,7 @@ namespace DemoProject.Dialogs
         private TextBox txtName;
         private Button btnSave;
         private Button btnCancel;
+        private TextBox txtCurrencyCode;
+        private Label label3;
     }
 }

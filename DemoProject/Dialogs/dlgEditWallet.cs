@@ -22,6 +22,7 @@ namespace DemoProject.Dialogs
             }
 
             wallet.Name = txtName.Text.Trim();
+            wallet.BaseCurrency = txtCurrencyCode.Text.Trim().ToUpper();
             DialogResult = DialogResult.OK;
         }
 
@@ -31,6 +32,7 @@ namespace DemoProject.Dialogs
             frm.wallet = wallet;
             frm.lblId.Text = wallet.Id.ToString();
             frm.txtName.Text = wallet.Name;
+            frm.txtCurrencyCode.Text = wallet.BaseCurrency;
 
             return frm.ShowDialog();
         }
