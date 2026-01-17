@@ -248,6 +248,7 @@ namespace DemoProject
             grdTxRecent.Size = new Size(639, 218);
             grdTxRecent.TabIndex = 2;
             grdTxRecent.CellDoubleClick += grdTxRecent_CellDoubleClick;
+            grdTxRecent.CellFormatting += grdTxRecent_CellFormatting;
             // 
             // Column5
             // 
@@ -323,6 +324,7 @@ namespace DemoProject
             grdTxDue.Size = new Size(312, 250);
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
+            grdTxDue.CellFormatting += grdTxDue_CellFormatting;
             grdTxDue.CellMouseClick += grdTxDue_CellMouseClick;
             // 
             // dataGridViewTextBoxColumn6

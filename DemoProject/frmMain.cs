@@ -4,6 +4,7 @@ using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using Simple.Sqlite;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,6 +17,7 @@ namespace DemoProject
         private FormWindowState lastState = FormWindowState.Normal;
         private Manager manager;
         private ConfigurationDB config;
+        private Dictionary<long, Wallet> wallets = [];
 
         public frmMain()
         {
@@ -104,11 +106,12 @@ namespace DemoProject
         void updateMyWallets()
         {
             grdWallets.Rows.Clear();
-            var wallets = manager.GetWallets();
+            wallets = manager.GetWalletsDict();
             var balances = manager.GetWalletsBalance().ToDictionary(o => o.WalletId, o => o.Balance);
 
-            foreach (var wallet in wallets)
+            foreach (var walletItem in wallets)
             {
+                var wallet = walletItem.Value;
                 if (wallet.IsDeleted) continue;
 
                 if (!balances.TryGetValue(wallet.Id, out decimal balance)) balance = 0;
@@ -131,7 +134,7 @@ namespace DemoProject
         }
         void updateMyTransactions()
         {
-            var wallets = manager.GetWalletsDict();
+            wallets = manager.GetWalletsDict();
             var categories = manager.GetCategoriesDict();
 
             // Recent effective or changed
@@ -308,6 +311,23 @@ namespace DemoProject
         private void grdWallets_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
         private void grdCategories_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
         private void grdTxRecent_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
+        private void grdTxRecent_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 4)
+            {
+                if (e.Value is not decimal dVal) return;
+
+                var tx = grdTxRecent.Rows[e.RowIndex].Tag as Transac;
+                if (tx == null) return;
+
+                var code = tx.GetTransacationCurrencyCode(wallets);
+                if (string.IsNullOrEmpty(code)) return;
+
+                e.FormattingApplied = true;
+                e.Value = CurrencyHelpers.FormatFor(dVal, code);
+            }
+        }
+
         private void grdTxDue_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
         private void grdTxDue_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -319,6 +339,23 @@ namespace DemoProject
             cntxDueTx.Tag = grdTxDue.Rows[e.RowIndex].Tag;
 
             cntxDueTx.Show(System.Windows.Forms.Cursor.Position);
+        }
+        private void grdTxDue_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                if (e.Value is not decimal dVal) return;
+
+                var tx = grdTxRecent.Rows[e.RowIndex].Tag as Transac;
+                if (tx == null) return;
+
+                var code = tx.GetTransacationCurrencyCode(wallets);
+                if (string.IsNullOrEmpty(code)) return;
+
+                e.FormattingApplied = true;
+                e.Value = CurrencyHelpers.FormatFor(dVal, code);
+            }
+
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e) => editTarget(cntxEditDelete.Tag);
