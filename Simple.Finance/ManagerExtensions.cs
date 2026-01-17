@@ -15,11 +15,11 @@ public static class ManagerExtensions
         => mgr.GetTransactionsBy(Manager.SearchTransactionsByKind.Counterparty, counterparty.Id, dateType, start, end);
 
     /* Dictionaries */
-    public static Dictionary<long, string> GetCategoriesDict(this Manager mgr)
-        => mgr.GetCategories().ToDictionary(o => o.Id, o => o.Name);
-    public static Dictionary<long, string> GetWalletsDict(this Manager mgr)
-        => mgr.GetWallets().ToDictionary(o => o.Id, o => o.Name);
-    public static Dictionary<long, string> GetPersonsDict(this Manager mgr)
-        => mgr.GetAllPersons().ToDictionary(o => o.Id, o => o.Name);
+    public static Dictionary<long, Tables.Category> GetCategoriesDict(this Manager mgr)
+        => mgr.GetCategories().ToDictionary(o => o.Id, o => o);
+    public static Dictionary<long, Tables.Wallet> GetWalletsDict(this Manager mgr)
+        => mgr.GetWallets().ToDictionary(o => o.Id, o => o);
+    public static Dictionary<long, Tables.Person> GetPersonsDict(this Manager mgr)
+        => mgr.GetAllPersons().ToDictionary(o => o.Id, o => o);
 
 }

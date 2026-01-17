@@ -63,12 +63,38 @@ public record Transac
         return "[-]";
     }
     /// <summary>
-    /// Get Transaction walelt name using provided cache
+    /// Get Transaction category name using provided cache
+    /// </summary>
+    public string GetCategoryName(Dictionary<long, Category> categories)
+    {
+        if (categories.ContainsKey(CategoryId)) return categories[CategoryId].Name;
+        return "[-]";
+    }
+    /// <summary>
+    /// Get Transaction wallet name using provided cache
     /// </summary>
     public string GetWalletName(Dictionary<long, string> wallets)
     {
         if (wallets.ContainsKey(WalletId)) return wallets[WalletId];
         return "[-]";
+    }
+    /// <summary>
+    /// Get Transaction wallet name using provided cache
+    /// </summary>
+    public string GetWalletName(Dictionary<long, Wallet> wallets)
+    {
+        if (wallets.ContainsKey(WalletId)) return wallets[WalletId].Name;
+        return "[-]";
+    }
+    /// <summary>
+    /// Get transaction PaymentCurrency code, if empty, wallet's BaseCurrency is returned instead
+    /// </summary>
+    public string GetTransacationCurrencyCode(Dictionary<long, Wallet> wallets)
+    {
+        if (!string.IsNullOrEmpty(PaymentCurrency)) return PaymentCurrency;
+        if (wallets.ContainsKey(WalletId)) return wallets[WalletId].BaseCurrency;
+
+        return string.Empty;
     }
 
     public override string ToString() 
