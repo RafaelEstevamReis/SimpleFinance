@@ -33,6 +33,7 @@ namespace DemoProject
             this.GetConfig(chkHideUnpaids, false);
             this.GetConfig(chkHideReversed, false);
             this.GetConfig(chkIncludeUnpaidBalance, false);
+            this.GetConfig(chkIncludeTransfersInTotals, false);
         }
         private void frmAdvancedSearch_Shown(object sender, EventArgs e)
         {
@@ -64,6 +65,7 @@ namespace DemoProject
             this.SaveConfig(chkHideUnpaids);
             this.SaveConfig(chkHideReversed);
             this.SaveConfig(chkIncludeUnpaidBalance);
+            this.SaveConfig(chkIncludeTransfersInTotals);
 
             // Save grid positions
             var fsri = grdTransactions.FirstDisplayedScrollingRowIndex;
@@ -184,6 +186,7 @@ namespace DemoProject
             }
             // Totals
             txs = txs.Where(o => o.Status != Transac.PaymentStatus.Reversed); // Remove reversed from stats
+            if (!chkIncludeTransfersInTotals.Checked) txs = txs.Where(o => o.Type == Transac.TransactionType.Simple);
             txtTotalPaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Paid).Sum(o => o.PaidValue);
             txtTotalUnpaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid).Sum(o => o.DueValue);
             txtTotalIncome.Value = txs.Where(o => o.DueValue > 0).Sum(o => o.EfectiveValue);

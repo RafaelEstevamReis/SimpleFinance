@@ -91,6 +91,7 @@
             btnReports = new System.Windows.Forms.Button();
             cntxReports = new System.Windows.Forms.ContextMenuStrip(components);
             categoriesOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            chkIncludeTransfersInTotals = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
@@ -483,6 +484,7 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(chkIncludeTransfersInTotals);
             groupBox3.Controls.Add(chkHideReversed);
             groupBox3.Controls.Add(chkIncludeUnpaidBalance);
             groupBox3.Controls.Add(chkHidePaids);
@@ -648,6 +650,16 @@
             categoriesOverviewToolStripMenuItem.Text = "Categories Overview";
             categoriesOverviewToolStripMenuItem.Click += categoriesOverviewToolStripMenuItem_Click;
             // 
+            // chkIncludeTransfersInTotals
+            // 
+            chkIncludeTransfersInTotals.AutoSize = true;
+            chkIncludeTransfersInTotals.Location = new System.Drawing.Point(6, 57);
+            chkIncludeTransfersInTotals.Name = "chkIncludeTransfersInTotals";
+            chkIncludeTransfersInTotals.Size = new System.Drawing.Size(160, 19);
+            chkIncludeTransfersInTotals.TabIndex = 4;
+            chkIncludeTransfersInTotals.Text = "Include Transfers in Totals";
+            chkIncludeTransfersInTotals.UseVisualStyleBackColor = true;
+            // 
             // frmAdvancedSearch
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -753,5 +765,6 @@
         private System.Windows.Forms.Button btnReports;
         private System.Windows.Forms.ContextMenuStrip cntxReports;
         private System.Windows.Forms.ToolStripMenuItem categoriesOverviewToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkIncludeTransfersInTotals;
     }
 }
