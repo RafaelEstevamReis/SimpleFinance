@@ -137,7 +137,7 @@ namespace DemoProject
             // Recent effective or changed
             grdTxRecent.Rows.Clear();
 
-            var recentDuePaid = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow.AddMinutes(7));
+            var recentDuePaid = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow.AddDays(7));
             var recentChanged = manager.GetTransactions(Manager.SearchTransactionsDate.Changed, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddMinutes(1));
             var txs = recentDuePaid.Union(recentChanged).DistinctBy(o => o.Id).OrderBy(o => o.EfectiveDate);
             foreach (var tx in txs)
