@@ -311,6 +311,17 @@ public class Manager
         tx.RC_DueValue = Math.Abs(tx.RC_DueValue) * sign;
         tx.RC_PaidValue = Math.Abs(tx.RC_PaidValue) * sign;
 
+        // Check Currency
+        tx.PaymentCurrency = tx.PaymentCurrency.ToUpper();
+        if (!string.IsNullOrEmpty(wallet.BaseCurrency)
+            && !string.IsNullOrEmpty(tx.PaymentCurrency))
+        {
+            if (wallet.BaseCurrency != tx.PaymentCurrency)
+            {
+                throw new InvalidOperationException($"PaymentCurrency must be the same as Wallet BaseCurrency");
+            }
+        }
+
         if (tx.CounterpartyId != 0)
         {
             var cparty = cnn.Get<Tables.Person>(tx.CounterpartyId);
