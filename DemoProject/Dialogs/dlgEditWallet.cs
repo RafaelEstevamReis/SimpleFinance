@@ -1,5 +1,5 @@
 ﻿using DemoProject.Components;
-using Simple.Finance;
+using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using System;
 using System.Windows.Forms;
@@ -29,7 +29,7 @@ namespace DemoProject.Dialogs
 
         public static DialogResult ShowDialog(Wallet wallet)
         {
-            if (wallet.Id == 0) wallet.BaseCurrency = CurrencyDatabase.GetSystemCurrencyCode();
+            if (wallet.Id == 0) wallet.BaseCurrency = CurrencyHelpers.GetSystemCurrencyCode();
 
             using var frm = new dlgEditWallet();
             frm.wallet = wallet;
