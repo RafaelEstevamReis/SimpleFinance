@@ -80,13 +80,30 @@ namespace DemoProject.Dialogs
                 return;
             }
 
-            manager.CreateWalletTransfer((long)cboSourceWallet.SelectedValue,
+            long sourceWalletId = (long)cboSourceWallet.SelectedValue;
+            long destinationWalletId = (long)cboDestinationWallet.SelectedValue;
+
+            // Check Currency mismatch
+            var sourceWallet = wallets.First(x => x.Id == sourceWalletId);
+            var destinationWallet = wallets.First(x => x.Id == destinationWalletId);
+
+            if(!string.IsNullOrEmpty(sourceWallet.BaseCurrency)
+               && !string.IsNullOrEmpty(destinationWallet.BaseCurrency))
+            {
+                if(sourceWallet.BaseCurrency != destinationWallet.BaseCurrency)
+                {
+                    MessageBox.Show("Source and Destination wallets must have the same BaseCurrency");
+                    return;
+                }
+            }
+
+            manager.CreateWalletTransfer(sourceWalletId,
                                          (long)cboSourceCategory.SelectedValue!,
-                                         (long)cboDestinationWallet.SelectedValue,
+                                         destinationWalletId,
                                          (long)cboDestinationCategory.SelectedValue!,
                                          txtName.Text.Trim(),
                                          txtValue.Value,
-                                         dtDate.Value, 
+                                         dtDate.Value,
                                          rdoPaid.Checked);
 
             DialogResult = DialogResult.OK;
