@@ -1,4 +1,4 @@
-﻿namespace Simple.Finance;
+﻿namespace Simple.Finance.ExchangeRate;
 
 using Simple.Finance.ExchangeTables;
 using System;

@@ -1,5 +1,6 @@
-﻿namespace Simple.Finance.ExchangeTables;
+﻿namespace Simple.Finance.ExchangeRate.ExchangeTables;
 
+using Simple.Finance.ExchangeRate;
 using System;
 
 public class TemporalSeries_XAUCAD : IExchangeRateTable
