@@ -1,13 +1,13 @@
 ﻿namespace Simple.Finance.ExchangeRate;
 
-using Simple.Finance.ExchangeTables;
+using Simple.Finance.ExchangeRate.ExchangeTables;
 using System;
 using System.Collections.Generic;
 
 public class ExchangeRateConverter
 {
-    protected Dictionary<string, decimal> dicRate = [];
     public List<IExchangeRateTable> ExchangeRateTables { get; set; } = [];
+    public IExchangeRateCaching CachingEngine { get; set; } = new ExchangeRateMemoryCache();
 
     /// <summary>
     /// Cache recent queries to avoid re-process same pairs on a date
@@ -18,14 +18,14 @@ public class ExchangeRateConverter
     {
         if (ExchangeRateTables.Count == 0) throw new InvalidOperationException($"There are no {nameof(ExchangeRateTables)} to process");
 
-        string cacheKey = $"{baseCur}/{quoteCur}#{dateUTC:yyyyMMdd}";
+        decimal? rate;
         if (CacheEnabled)
         {
-            if (dicRate.ContainsKey(cacheKey)) return dicRate[cacheKey];
+            rate = CachingEngine.GetCachedRateFor(baseCur, quoteCur, dateUTC);
+            if (rate != null) return rate;
         }
 
-        var rate = getRateFor(baseCur, quoteCur, dateUTC);
-
+        rate = getRateFor(baseCur, quoteCur, dateUTC);
         if (rate == null)
         {
             // Try to get inverted
@@ -38,7 +38,7 @@ public class ExchangeRateConverter
 
         if (CacheEnabled && rate != null)
         {
-            dicRate[cacheKey] = rate.Value;
+            CachingEngine.SetCachedRateFor(baseCur, quoteCur, dateUTC, rate.Value);
         }
 
         return rate;
@@ -76,8 +76,4 @@ public class ExchangeRateConverter
         };
         return exRate;
     }
-}
-public interface IExchangeRateTable
-{
-    decimal? GetRateFor(string baseCur, string quoteCur, DateTime date);
 }
