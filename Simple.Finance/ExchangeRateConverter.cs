@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 public class ExchangeRateConverter
 {
-    Dictionary<string, decimal> dicRate = [];
+    protected Dictionary<string, decimal> dicRate = [];
     public List<IExchangeRateTable> ExchangeRateTables { get; set; } = [];
-    
+
     /// <summary>
     /// Cache recent queries to avoid re-process same pairs on a date
     /// </summary>
@@ -24,16 +24,35 @@ public class ExchangeRateConverter
             if (dicRate.ContainsKey(cacheKey)) return dicRate[cacheKey];
         }
 
+        var rate = getRateFor(baseCur, quoteCur, dateUTC);
+
+        if (rate == null)
+        {
+            // Try to get inverted
+            var invertedRate = getRateFor(quoteCur, baseCur, dateUTC);
+            if (invertedRate != null && invertedRate != 0)
+            {
+                rate = 1 / invertedRate;
+            }
+        }
+
+        if (CacheEnabled && rate != null)
+        {
+            dicRate[cacheKey] = rate.Value;
+        }
+
+        return rate;
+    }
+    protected decimal? getRateFor(string baseCur, string quoteCur, DateTime dateUTC)
+    {
         foreach (var converter in ExchangeRateTables)
         {
             var rate = converter.GetRateFor(baseCur, quoteCur, dateUTC);
             if (rate != null)
             {
-                dicRate[cacheKey] = rate.Value;
                 return rate;
             }
         }
-
         return null;
     }
 
