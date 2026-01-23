@@ -108,6 +108,7 @@ namespace DemoProject.Dialogs
             if (rdoPaid.Checked) transaction.Status = Transac.PaymentStatus.Paid;
             else if (rdoReversed.Checked) transaction.Status = Transac.PaymentStatus.Reversed;
             else transaction.Status = Transac.PaymentStatus.Unpaid;
+            updatePaidChanged();
 
             transaction.DueDate = dtDue.Value;
             transaction.PaymentDate = dtPaid.Value;
