@@ -14,23 +14,25 @@ internal static class Extensions
 
     public static void SaveConfig<C, T>(this Form form, C control, Func<C, T> selector) where C : Control
     {
-        Injector.Get<ConfigurationDB>().SetConfig<T>(control.Name, form.Name, selector(control));
+        Injector.Get<KeyValueStorage>().SetKey<T>(form.Name, control.Name, selector(control));
     }
 
     public static void GetConfig(this Form form, DateTimePicker control, DateTime def)
     {
-        control.Value = Injector.Get<ConfigurationDB>().GetConfig(control.Name, form.Name, def);
+        var kvs = Injector.Get<KeyValueStorage>();
+        control.Value = kvs.GetKey<DateTime>(form.Name, control.Name, def);
     }
     public static void GetConfig(this Form form, CheckBox control, bool def)
     {
-        control.Checked = Injector.Get<ConfigurationDB>().GetConfig(control.Name, form.Name, def);
+        control.Checked = Injector.Get<KeyValueStorage>().GetKey<bool>(form.Name, control.Name, def);
     }
     public static void GetConfig(this Form form, ComboBox control, int def)
     {
-        control.SelectedIndex = Injector.Get<ConfigurationDB>().GetConfig(control.Name, form.Name, def);
+        control.SelectedIndex = Injector.Get<KeyValueStorage>().GetKey<int>(form.Name, control.Name, def);
     }
     public static void GetConfig(this Form form, ComboBox control, object def)
     {
-        control.SelectedValue = Injector.Get<ConfigurationDB>().GetConfig(control.Name, form.Name, def);
+        control.SelectedValue = Injector.Get<KeyValueStorage>().GetKey<object>(form.Name, control.Name) ?? def;
     }
+
 }

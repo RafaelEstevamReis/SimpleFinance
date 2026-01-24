@@ -16,14 +16,14 @@ namespace DemoProject
     {
         private FormWindowState lastState = FormWindowState.Normal;
         private Manager manager;
-        private ConfigurationDB config;
+        private KeyValueStorage config;
         private Dictionary<long, Wallet> wallets = [];
 
         public frmMain()
         {
             InitializeComponent();
             manager = Injector.Get<Manager>();
-            config = Injector.Get<ConfigurationDB>();
+            config = Injector.Get<KeyValueStorage>();
             manager.EventNotifier += Manager_EventNotifier;
         }
 
@@ -36,7 +36,7 @@ namespace DemoProject
             updateMyTransactions();
             updateChart();
 
-            bool isFullScreen = config.GetConfig<bool>("isFullScreen", this.Name, false);
+            bool isFullScreen = config.GetKey<bool>(this.Name, "isFullScreen", false);
             if (isFullScreen) this.WindowState = FormWindowState.Maximized;
         }
         void checkDefaultItems()
@@ -173,7 +173,7 @@ namespace DemoProject
         void updateChart()
         {
             int daysBefore = 10;
-            int daysAfter = config.GetConfig<int>("daysAfter", this.Name, 60);
+            int daysAfter = config.GetKey<int>(this.Name, "daysAfter", 30);
             daysAfter = Math.Clamp(daysAfter, 10, 400);
 
             var dateBefore = DateTime.UtcNow.AddDays(-daysBefore).EndOfDay();
@@ -247,7 +247,7 @@ namespace DemoProject
             lastState = WindowState;
 
             bool isFullScreen = WindowState == FormWindowState.Maximized;
-            config.SetConfig<bool>("isFullScreen", this.Name, isFullScreen);
+            config.SetKey<bool>(this.Name, "isFullScreen", isFullScreen);
         }
 
         private void chtAssets_MouseClick(object sender, MouseEventArgs e)
@@ -261,7 +261,7 @@ namespace DemoProject
             if (item == null) return;
             int days = int.Parse(item.Text?.Replace("d", "") ?? "60");
 
-            config.SetConfig<int>("daysAfter", this.Name, days);
+            config.SetKey<int>(this.Name, "daysAfter", days);
             updateChart();
         }
         private void chtAssets_MouseMove(object sender, MouseEventArgs e)

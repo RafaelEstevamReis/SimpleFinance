@@ -21,7 +21,7 @@ namespace DemoProject
             manager.Initialize(createBackup: true, backupName: $"bkp/data_{DateTime.Now:yyyyMMddHH}.db");
             Injector.AddSingleton(manager);
 
-            var config = new ConfigurationDB("preferences.db");
+            var config = new KeyValueStorage("preferences.db");
             Injector.AddSingleton(config);
 
             // App Boot
@@ -31,7 +31,7 @@ namespace DemoProject
 
         private static void GenerateTypesXSDs()
         {
-            Type[] types = [ typeof(Reports.CategoriesOverviewModel) ];
+            Type[] types = [typeof(Reports.CategoriesOverviewModel)];
             var xri = new System.Xml.Serialization.XmlReflectionImporter();
             var xss = new System.Xml.Serialization.XmlSchemas();
             var xse = new System.Xml.Serialization.XmlSchemaExporter(xss);
