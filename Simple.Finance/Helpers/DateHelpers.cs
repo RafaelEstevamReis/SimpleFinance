@@ -41,8 +41,16 @@ public static class DateHelpers
     }
     public static DateTime EndOfHour(this DateTime dt)
     {
-        var start = StartOfHour(dt);
-        return start.AddHours(1).AddMilliseconds(-1);
+        return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 59, 59, dt.Kind);
+    }
+
+    public static DateTime StartOfMinute(this DateTime dt)
+    {
+        return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0, dt.Kind);
+    }
+    public static DateTime EndOfMinute(this DateTime dt)
+    {
+        return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 59, 59, dt.Kind);
     }
 
     public static DateTime MinOf(DateTime dt1, DateTime dt2)

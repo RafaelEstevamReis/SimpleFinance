@@ -1,6 +1,7 @@
 ﻿using DemoProject.Components;
 using Simple.BotUtils.DI;
 using Simple.Finance;
+using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using System;
 using System.Data;
@@ -111,7 +112,7 @@ namespace DemoProject.Dialogs
             updatePaidChanged();
 
             transaction.DueDate = dtDue.Value;
-            transaction.PaymentDate = dtPaid.Value;
+            transaction.PaymentDate = dtPaid.Value.StartOfMinute();
 
             decimal sign = rdoExpense.Checked ? -1 : 1;
             transaction.DueValue = sign * txtDue.Value;
