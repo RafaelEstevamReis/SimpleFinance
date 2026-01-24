@@ -36,11 +36,6 @@
             btnNext = new System.Windows.Forms.Button();
             btnPrev = new System.Windows.Forms.Button();
             grdTransactions = new System.Windows.Forms.DataGridView();
-            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             btnNewTr = new System.Windows.Forms.Button();
             cntxBtn = new System.Windows.Forms.ContextMenuStrip(components);
             newTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,7 +45,7 @@
             Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            clnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
             cntxBtn.SuspendLayout();
@@ -94,7 +89,7 @@
             grdTransactions.AllowUserToResizeRows = false;
             grdTransactions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grdTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5 });
+            grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { Column1, Column2, Column3, clnValue, Column5 });
             grdTransactions.Location = new System.Drawing.Point(0, 41);
             grdTransactions.Name = "grdTransactions";
             grdTransactions.ReadOnly = true;
@@ -178,14 +173,14 @@
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
             // 
-            // Column4
+            // clnValue
             // 
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
             dataGridViewCellStyle2.Format = "N2";
-            Column4.DefaultCellStyle = dataGridViewCellStyle2;
-            Column4.HeaderText = "Value";
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
+            clnValue.DefaultCellStyle = dataGridViewCellStyle2;
+            clnValue.HeaderText = "Value";
+            clnValue.Name = "clnValue";
+            clnValue.ReadOnly = true;
             // 
             // Column5
             // 
@@ -235,7 +230,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clnValue;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
     }
 }

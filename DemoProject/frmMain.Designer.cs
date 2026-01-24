@@ -58,12 +58,12 @@ namespace DemoProject
             dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
             Column8 = new DataGridViewTextBoxColumn();
-            Column9 = new DataGridViewTextBoxColumn();
+            clnRecentValue = new DataGridViewTextBoxColumn();
             Column7 = new DataGridViewTextBoxColumn();
             groupBox4 = new GroupBox();
             grdTxDue = new DataGridView();
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
-            Column6 = new DataGridViewTextBoxColumn();
+            clnDueTxValue = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
             cntxEditDelete = new ContextMenuStrip(components);
             editToolStripMenuItem = new ToolStripMenuItem();
@@ -115,7 +115,7 @@ namespace DemoProject
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox1.Controls.Add(grdWallets);
-            groupBox1.Location = new Point(656, 6);
+            groupBox1.Location = new Point(756, 6);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(318, 125);
             groupBox1.TabIndex = 0;
@@ -171,7 +171,7 @@ namespace DemoProject
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox2.Controls.Add(grdCategories);
-            groupBox2.Location = new Point(656, 134);
+            groupBox2.Location = new Point(756, 134);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(318, 159);
             groupBox2.TabIndex = 1;
@@ -226,7 +226,7 @@ namespace DemoProject
             groupBox3.Controls.Add(grdTxRecent);
             groupBox3.Location = new Point(5, 328);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(645, 240);
+            groupBox3.Size = new Size(745, 240);
             groupBox3.TabIndex = 1;
             groupBox3.TabStop = false;
             groupBox3.Text = "Recent Transactions";
@@ -238,14 +238,14 @@ namespace DemoProject
             grdTxRecent.AllowUserToResizeColumns = false;
             grdTxRecent.AllowUserToResizeRows = false;
             grdTxRecent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdTxRecent.Columns.AddRange(new DataGridViewColumn[] { Column5, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, Column8, Column9, Column7 });
+            grdTxRecent.Columns.AddRange(new DataGridViewColumn[] { Column5, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, Column8, clnRecentValue, Column7 });
             grdTxRecent.Dock = DockStyle.Fill;
             grdTxRecent.Location = new Point(3, 19);
             grdTxRecent.Name = "grdTxRecent";
             grdTxRecent.ReadOnly = true;
             grdTxRecent.RowHeadersVisible = false;
             grdTxRecent.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdTxRecent.Size = new Size(639, 218);
+            grdTxRecent.Size = new Size(739, 218);
             grdTxRecent.TabIndex = 2;
             grdTxRecent.CellDoubleClick += grdTxRecent_CellDoubleClick;
             grdTxRecent.CellFormatting += grdTxRecent_CellFormatting;
@@ -280,15 +280,15 @@ namespace DemoProject
             Column8.Name = "Column8";
             Column8.ReadOnly = true;
             // 
-            // Column9
+            // clnRecentValue
             // 
             dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
             dataGridViewCellStyle5.Format = "N2";
-            Column9.DefaultCellStyle = dataGridViewCellStyle5;
-            Column9.HeaderText = "Value";
-            Column9.Name = "Column9";
-            Column9.ReadOnly = true;
-            Column9.Width = 75;
+            clnRecentValue.DefaultCellStyle = dataGridViewCellStyle5;
+            clnRecentValue.HeaderText = "Value";
+            clnRecentValue.Name = "clnRecentValue";
+            clnRecentValue.ReadOnly = true;
+            clnRecentValue.Width = 110;
             // 
             // Column7
             // 
@@ -300,7 +300,7 @@ namespace DemoProject
             // 
             groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox4.Controls.Add(grdTxDue);
-            groupBox4.Location = new Point(656, 296);
+            groupBox4.Location = new Point(756, 296);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(318, 272);
             groupBox4.TabIndex = 2;
@@ -314,7 +314,7 @@ namespace DemoProject
             grdTxDue.AllowUserToResizeColumns = false;
             grdTxDue.AllowUserToResizeRows = false;
             grdTxDue.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdTxDue.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn6, Column6, dataGridViewTextBoxColumn9 });
+            grdTxDue.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn6, clnDueTxValue, dataGridViewTextBoxColumn9 });
             grdTxDue.Dock = DockStyle.Fill;
             grdTxDue.Location = new Point(3, 19);
             grdTxDue.Name = "grdTxDue";
@@ -336,15 +336,15 @@ namespace DemoProject
             dataGridViewTextBoxColumn6.ReadOnly = true;
             dataGridViewTextBoxColumn6.Width = 50;
             // 
-            // Column6
+            // clnDueTxValue
             // 
             dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
             dataGridViewCellStyle7.Format = "N2";
-            Column6.DefaultCellStyle = dataGridViewCellStyle7;
-            Column6.HeaderText = "Value";
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            Column6.Width = 80;
+            clnDueTxValue.DefaultCellStyle = dataGridViewCellStyle7;
+            clnDueTxValue.HeaderText = "Value";
+            clnDueTxValue.Name = "clnDueTxValue";
+            clnDueTxValue.ReadOnly = true;
+            clnDueTxValue.Width = 80;
             // 
             // dataGridViewTextBoxColumn9
             // 
@@ -377,7 +377,7 @@ namespace DemoProject
             // btnTransactionBook
             // 
             btnTransactionBook.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnTransactionBook.Location = new Point(864, 571);
+            btnTransactionBook.Location = new Point(964, 571);
             btnTransactionBook.Name = "btnTransactionBook";
             btnTransactionBook.Size = new Size(110, 31);
             btnTransactionBook.TabIndex = 3;
@@ -388,7 +388,7 @@ namespace DemoProject
             // btnAdvSearch
             // 
             btnAdvSearch.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnAdvSearch.Location = new Point(748, 571);
+            btnAdvSearch.Location = new Point(848, 571);
             btnAdvSearch.Name = "btnAdvSearch";
             btnAdvSearch.Size = new Size(110, 31);
             btnAdvSearch.TabIndex = 4;
@@ -512,7 +512,7 @@ namespace DemoProject
             grpChartAssets.Controls.Add(chtAssets);
             grpChartAssets.Location = new Point(5, 6);
             grpChartAssets.Name = "grpChartAssets";
-            grpChartAssets.Size = new Size(645, 319);
+            grpChartAssets.Size = new Size(745, 319);
             grpChartAssets.TabIndex = 8;
             grpChartAssets.TabStop = false;
             grpChartAssets.Text = "Assets";
@@ -534,7 +534,7 @@ namespace DemoProject
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             chtAssets.Series.Add(series1);
-            chtAssets.Size = new Size(639, 297);
+            chtAssets.Size = new Size(739, 297);
             chtAssets.TabIndex = 0;
             chtAssets.Text = "chart1";
             chtAssets.MouseClick += chtAssets_MouseClick;
@@ -594,7 +594,7 @@ namespace DemoProject
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(984, 611);
+            ClientSize = new Size(1084, 611);
             Controls.Add(grpChartAssets);
             Controls.Add(btnAddNew);
             Controls.Add(btnAdvSearch);
@@ -647,9 +647,6 @@ namespace DemoProject
         private ToolStripMenuItem dueTxPayAsTodayToolStripMenuItem;
         private ToolStripMenuItem dueTxOpenForEditToolStripMenuItem;
         private ToolStripMenuItem dueTxReverseTransactionToolStripMenuItem;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
-        private DataGridViewTextBoxColumn Column6;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
         private Button btnAddNew;
         private ContextMenuStrip cntxNew;
         private ToolStripMenuItem newWalletToolStripMenuItem;
@@ -666,12 +663,6 @@ namespace DemoProject
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridViewTextBoxColumn Column5;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private DataGridViewTextBoxColumn Column8;
-        private DataGridViewTextBoxColumn Column9;
-        private DataGridViewTextBoxColumn Column7;
         private GroupBox grpChartAssets;
         private System.Windows.Forms.DataVisualization.Charting.Chart chtAssets;
         private ContextMenuStrip cntxChartPeriod;
@@ -681,5 +672,14 @@ namespace DemoProject
         private ToolStripMenuItem dToolStripMenuItem3;
         private ToolStripMenuItem dToolStripMenuItem4;
         private ToolStripMenuItem dToolStripMenuItem5;
+        private DataGridViewTextBoxColumn Column5;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private DataGridViewTextBoxColumn Column8;
+        private DataGridViewTextBoxColumn clnRecentValue;
+        private DataGridViewTextBoxColumn Column7;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+        private DataGridViewTextBoxColumn clnDueTxValue;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
     }
 }

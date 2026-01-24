@@ -34,6 +34,8 @@ namespace DemoProject
             cboWallet.DataSource = manager.GetWallets().Union([allWallets]).OrderBy(o => o.Id).ToList();
             cboWallet.ValueMember = "Id";
             cboWallet.DisplayMember = "Name";
+
+            clnValue.FormatColumn(manager);
         }
         private void btnPrev_Click(object sender, EventArgs e)
         {

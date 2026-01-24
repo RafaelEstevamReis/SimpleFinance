@@ -29,6 +29,9 @@ namespace DemoProject
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            clnRecentValue.FormatColumn(manager);
+            clnDueTxValue.FormatColumn(manager);
+
             checkDefaultItems();
 
             updateMyWallets();
@@ -342,20 +345,6 @@ namespace DemoProject
         }
         private void grdTxDue_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.ColumnIndex == 1)
-            {
-                if (e.Value is not decimal dVal) return;
-
-                var tx = grdTxRecent.Rows[e.RowIndex].Tag as Transac;
-                if (tx == null) return;
-
-                var code = tx.GetTransacationCurrencyCode(wallets);
-                if (string.IsNullOrEmpty(code)) return;
-
-                e.FormattingApplied = true;
-                e.Value = CurrencyHelpers.FormatFor(dVal, code);
-            }
-
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e) => editTarget(cntxEditDelete.Tag);

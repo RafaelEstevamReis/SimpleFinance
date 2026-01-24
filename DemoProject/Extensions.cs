@@ -1,6 +1,9 @@
 ﻿namespace DemoProject;
 
 using Simple.BotUtils.DI;
+using Simple.Finance;
+using Simple.Finance.Helpers;
+using Simple.Finance.Tables;
 using Simple.Sqlite;
 using System;
 using System.Windows.Forms;
@@ -35,4 +38,24 @@ internal static class Extensions
         control.SelectedValue = Injector.Get<KeyValueStorage>().GetKey<object>(form.Name, control.Name) ?? def;
     }
 
+    public static void FormatColumn(this DataGridViewTextBoxColumn column, Manager manager)
+    {
+        var wallets = manager.GetWalletsDict();
+        var grid = column.DataGridView;
+        if (grid is null) throw new ArgumentNullException(nameof(column), "Column must have a DataGridView");
+
+        grid.CellFormatting += (object? sender, DataGridViewCellFormattingEventArgs e) =>
+        {
+            if (e.Value is not decimal dVal) return;
+
+            var tx = grid.Rows[e.RowIndex].Tag as Transac;
+            if (tx == null) return;
+
+            var code = tx.GetTransacationCurrencyCode(wallets);
+            if (string.IsNullOrEmpty(code)) return;
+
+            e.FormattingApplied = true;
+            e.Value = CurrencyHelpers.FormatFor(dVal, code);
+        };
+    }
 }

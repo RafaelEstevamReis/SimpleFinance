@@ -50,7 +50,7 @@ public static class CurrencyHelpers
                 new CurrencyData
                 {
                     Culture = null,
-                    NumberFormatInfo = CreateCustomFormatInfo(".", ",", 0, "SAT", 3)
+                    NumberFormatInfo = CreateCustomFormatInfo(".", ",", 0, "₿", 3)
                 }
             }
         };
@@ -92,7 +92,7 @@ public static class CurrencyHelpers
         format.CurrencyDecimalDigits = decimalPlaces;
         format.CurrencySymbol = symbol;
         format.CurrencyPositivePattern = currencyPattern;
-        format.CurrencyNegativePattern = currencyPattern;
+        format.CurrencyNegativePattern = 9;
         return format;
     }
 

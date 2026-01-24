@@ -34,6 +34,8 @@ namespace DemoProject
             this.GetConfig(chkHideReversed, false);
             this.GetConfig(chkIncludeUnpaidBalance, false);
             this.GetConfig(chkIncludeTransfersInTotals, false);
+
+            clnValue.FormatColumn(manager);
         }
         private void frmAdvancedSearch_Shown(object sender, EventArgs e)
         {
