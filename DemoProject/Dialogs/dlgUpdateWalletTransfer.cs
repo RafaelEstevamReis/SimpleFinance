@@ -20,11 +20,17 @@ namespace DemoProject.Dialogs
 
         private void dlgUpdateWalletTransfer_Load(object sender, EventArgs e)
         {
+            var wallets = manager.GetWalletsDict();
             dtDate.Value = oneTransaction.DueDate;
             txtValue.Value = Math.Abs(oneTransaction.DueValue);
             txtName.Text = oneTransaction.Description;
             if (oneTransaction.Status == Transac.PaymentStatus.Paid) rdoPaid.Checked = true;
             else rdoUnpaid.Checked = true;
+
+            var pair = manager.GetTransferPair(oneTransaction);
+
+            lblSourceWallet.Text = pair.soruce.GetWalletName(wallets);
+            lblDestinationWallet.Text = pair.destination.GetWalletName(wallets);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -44,7 +50,7 @@ namespace DemoProject.Dialogs
             manager.UpdateWalletTransfer(oneTransaction.Id,
                                          txtValue.Value,
                                          dtDate.Value,
-                                         txtName.Text.Trim(), 
+                                         txtName.Text.Trim(),
                                          rdoPaid.Checked);
 
             DialogResult = DialogResult.OK;
