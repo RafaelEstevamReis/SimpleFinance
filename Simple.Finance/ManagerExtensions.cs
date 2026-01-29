@@ -22,4 +22,23 @@ public static class ManagerExtensions
     public static Dictionary<long, Tables.Person> GetPersonsDict(this Manager mgr)
         => mgr.GetAllPersons().ToDictionary(o => o.Id, o => o);
 
+    public static (Tables.Transac soruce, Tables.Transac destination) GetTransferPair(this Manager mgr, Tables.Transac oneTransaction)
+    {
+        if (oneTransaction.Type != Tables.Transac.TransactionType.WalletTransfer)
+        {
+            throw new ArgumentException("Invalid transaction type", nameof(oneTransaction));
+        }
+
+        var otherTransaction = mgr.GetTransactionById(oneTransaction.TypeOtherId);
+        if (otherTransaction is null)
+        {
+            throw new Exception("Invalid 'TypeOtherId' transaction");
+        }
+
+        var source = oneTransaction.DueValue < 0 ? oneTransaction : otherTransaction;
+        var destination = oneTransaction.DueValue > 0 ? oneTransaction : otherTransaction;
+
+        return (source, destination);
+    }
+
 }
