@@ -51,6 +51,8 @@ public record Transac
 
     public string? ExternalIdentifier { get; set; }
 
+    public string? PaymentDetails { get; set; }
+
     public DateTime EfectiveDate => Status == PaymentStatus.Paid ? PaymentDate : DueDate;
     public decimal EfectiveValue => Status == PaymentStatus.Paid ? PaidValue : DueValue;
 
