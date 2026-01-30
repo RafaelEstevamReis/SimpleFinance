@@ -122,7 +122,10 @@ namespace DemoProject
             var dicWallets = manager.GetWalletsDict();
             var dicCategories = manager.GetCategoriesDict();
 
-            txs = txs.OrderBy(o => o.EfectiveDate.Date).ThenByDescending(o => o.DueValue);
+            txs = txs.OrderBy(o => o.EfectiveDate.Date)
+                     .ThenBy(o => o.Type)
+                     .ThenByDescending(o => o.DueValue)
+                     ;
             decimal balance = 0;
             foreach (var tx in txs)
             {
