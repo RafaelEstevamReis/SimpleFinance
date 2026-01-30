@@ -69,6 +69,8 @@
             label14 = new System.Windows.Forms.Label();
             rdoRecuringYes = new System.Windows.Forms.RadioButton();
             rdoRecuringNo = new System.Windows.Forms.RadioButton();
+            txtPaymentDetails = new System.Windows.Forms.TextBox();
+            label15 = new System.Windows.Forms.Label();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             pnlPaid.SuspendLayout();
@@ -80,7 +82,7 @@
             // btnCancel
             // 
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(195, 283);
+            btnCancel.Location = new System.Drawing.Point(195, 341);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
             btnCancel.TabIndex = 11;
@@ -89,7 +91,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(93, 283);
+            btnSave.Location = new System.Drawing.Point(93, 341);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 10;
@@ -99,7 +101,7 @@
             // 
             // txtName
             // 
-            txtName.Location = new System.Drawing.Point(9, 250);
+            txtName.Location = new System.Drawing.Point(9, 233);
             txtName.MaxLength = 64;
             txtName.Name = "txtName";
             txtName.Size = new System.Drawing.Size(345, 23);
@@ -108,7 +110,7 @@
             // lblId
             // 
             lblId.AutoSize = true;
-            lblId.Location = new System.Drawing.Point(31, 10);
+            lblId.Location = new System.Drawing.Point(31, 7);
             lblId.Name = "lblId";
             lblId.Size = new System.Drawing.Size(12, 15);
             lblId.TabIndex = 8;
@@ -117,7 +119,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(9, 10);
+            label2.Location = new System.Drawing.Point(9, 7);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(20, 15);
             label2.TabIndex = 7;
@@ -126,7 +128,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(9, 231);
+            label1.Location = new System.Drawing.Point(9, 216);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(130, 15);
             label1.TabIndex = 6;
@@ -135,7 +137,7 @@
             // lblCreated
             // 
             lblCreated.AutoSize = true;
-            lblCreated.Location = new System.Drawing.Point(124, 10);
+            lblCreated.Location = new System.Drawing.Point(124, 7);
             lblCreated.Name = "lblCreated";
             lblCreated.Size = new System.Drawing.Size(12, 15);
             lblCreated.TabIndex = 0;
@@ -144,7 +146,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(74, 10);
+            label4.Location = new System.Drawing.Point(74, 7);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(51, 15);
             label4.TabIndex = 12;
@@ -156,7 +158,7 @@
             lblChanged.Cursor = System.Windows.Forms.Cursors.Hand;
             lblChanged.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline);
             lblChanged.ForeColor = System.Drawing.SystemColors.Highlight;
-            lblChanged.Location = new System.Drawing.Point(251, 10);
+            lblChanged.Location = new System.Drawing.Point(251, 7);
             lblChanged.Name = "lblChanged";
             lblChanged.Size = new System.Drawing.Size(12, 15);
             lblChanged.TabIndex = 1;
@@ -166,7 +168,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(193, 10);
+            label6.Location = new System.Drawing.Point(193, 7);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(58, 15);
             label6.TabIndex = 14;
@@ -176,7 +178,7 @@
             // 
             panel1.Controls.Add(rdoIncome);
             panel1.Controls.Add(rdoExpense);
-            panel1.Location = new System.Drawing.Point(121, 64);
+            panel1.Location = new System.Drawing.Point(121, 57);
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(161, 27);
             panel1.TabIndex = 3;
@@ -208,7 +210,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(9, 69);
+            label7.Location = new System.Drawing.Point(9, 62);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(97, 15);
             label7.TabIndex = 17;
@@ -217,7 +219,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(9, 135);
+            label8.Location = new System.Drawing.Point(9, 121);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(105, 15);
             label8.TabIndex = 19;
@@ -228,7 +230,7 @@
             panel2.Controls.Add(rdoReversed);
             panel2.Controls.Add(rdoPaid);
             panel2.Controls.Add(rdoUnpaid);
-            panel2.Location = new System.Drawing.Point(121, 130);
+            panel2.Location = new System.Drawing.Point(121, 116);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(234, 27);
             panel2.TabIndex = 5;
@@ -271,7 +273,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(9, 168);
+            label9.Location = new System.Drawing.Point(9, 154);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(58, 15);
             label9.TabIndex = 20;
@@ -289,7 +291,7 @@
             // dtDue
             // 
             dtDue.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            dtDue.Location = new System.Drawing.Point(73, 164);
+            dtDue.Location = new System.Drawing.Point(73, 150);
             dtDue.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
             dtDue.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDue.Name = "dtDue";
@@ -310,7 +312,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new System.Drawing.Point(9, 36);
+            label11.Location = new System.Drawing.Point(9, 33);
             label11.Name = "label11";
             label11.Size = new System.Drawing.Size(43, 15);
             label11.TabIndex = 24;
@@ -319,7 +321,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new System.Drawing.Point(9, 102);
+            label12.Location = new System.Drawing.Point(9, 91);
             label12.Name = "label12";
             label12.Size = new System.Drawing.Size(58, 15);
             label12.TabIndex = 25;
@@ -329,7 +331,7 @@
             // 
             cboWallet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cboWallet.FormattingEnabled = true;
-            cboWallet.Location = new System.Drawing.Point(76, 33);
+            cboWallet.Location = new System.Drawing.Point(76, 30);
             cboWallet.Name = "cboWallet";
             cboWallet.Size = new System.Drawing.Size(279, 23);
             cboWallet.TabIndex = 2;
@@ -338,7 +340,7 @@
             // 
             cboCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cboCategory.FormattingEnabled = true;
-            cboCategory.Location = new System.Drawing.Point(76, 99);
+            cboCategory.Location = new System.Drawing.Point(76, 88);
             cboCategory.Name = "cboCategory";
             cboCategory.Size = new System.Drawing.Size(279, 23);
             cboCategory.TabIndex = 4;
@@ -346,7 +348,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(211, 168);
+            label3.Location = new System.Drawing.Point(211, 154);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(62, 15);
             label3.TabIndex = 28;
@@ -364,7 +366,7 @@
             // txtDue
             // 
             txtDue.DecimalPlaces = 2;
-            txtDue.Location = new System.Drawing.Point(274, 164);
+            txtDue.Location = new System.Drawing.Point(274, 150);
             txtDue.MoneySign = "";
             txtDue.Name = "txtDue";
             txtDue.Size = new System.Drawing.Size(80, 23);
@@ -391,7 +393,7 @@
             pnlPaid.Controls.Add(txtPaid);
             pnlPaid.Controls.Add(dtPaid);
             pnlPaid.Controls.Add(label5);
-            pnlPaid.Location = new System.Drawing.Point(9, 193);
+            pnlPaid.Location = new System.Drawing.Point(9, 179);
             pnlPaid.Name = "pnlPaid";
             pnlPaid.Size = new System.Drawing.Size(349, 30);
             pnlPaid.TabIndex = 8;
@@ -400,7 +402,7 @@
             // 
             lblAdvanced.AutoSize = true;
             lblAdvanced.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            lblAdvanced.Location = new System.Drawing.Point(1, 300);
+            lblAdvanced.Location = new System.Drawing.Point(1, 355);
             lblAdvanced.Name = "lblAdvanced";
             lblAdvanced.Size = new System.Drawing.Size(75, 17);
             lblAdvanced.TabIndex = 33;
@@ -409,10 +411,11 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             groupBox1.Controls.Add(pnlRecuring);
             groupBox1.Controls.Add(rdoRecuringYes);
             groupBox1.Controls.Add(rdoRecuringNo);
-            groupBox1.Location = new System.Drawing.Point(9, 317);
+            groupBox1.Location = new System.Drawing.Point(9, 373);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(345, 83);
             groupBox1.TabIndex = 12;
@@ -492,11 +495,32 @@
             rdoRecuringNo.Text = "One time only";
             rdoRecuringNo.UseVisualStyleBackColor = true;
             // 
+            // txtPaymentDetails
+            // 
+            txtPaymentDetails.Location = new System.Drawing.Point(9, 277);
+            txtPaymentDetails.MaxLength = 64;
+            txtPaymentDetails.Multiline = true;
+            txtPaymentDetails.Name = "txtPaymentDetails";
+            txtPaymentDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            txtPaymentDetails.Size = new System.Drawing.Size(345, 57);
+            txtPaymentDetails.TabIndex = 35;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new System.Drawing.Point(9, 260);
+            label15.Name = "label15";
+            label15.Size = new System.Drawing.Size(92, 15);
+            label15.TabIndex = 34;
+            label15.Text = "Payment Details";
+            // 
             // dlgEditTransaction
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(362, 405);
+            ClientSize = new System.Drawing.Size(362, 460);
+            Controls.Add(txtPaymentDetails);
+            Controls.Add(label15);
             Controls.Add(lblAdvanced);
             Controls.Add(groupBox1);
             Controls.Add(pnlPaid);
@@ -586,5 +610,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.RadioButton rdoReversed;
         private System.Windows.Forms.Panel pnlRecuring;
+        private System.Windows.Forms.TextBox txtPaymentDetails;
+        private System.Windows.Forms.Label label15;
     }
 }

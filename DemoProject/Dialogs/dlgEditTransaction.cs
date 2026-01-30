@@ -28,7 +28,7 @@ namespace DemoProject.Dialogs
 
         private void dlgEditTransaction_Load(object sender, EventArgs e)
         {
-            this.Height = 357;
+            this.Height = 413;
 
             lblAdvanced.Visible = transaction.Id == 0;
             rdoReversed.Visible = transaction.Id > 0;
@@ -61,6 +61,8 @@ namespace DemoProject.Dialogs
             cboWallet.SelectedValue = transaction.WalletId;
 
             cboRecuringPeriod.SelectedIndex = 1;
+
+            txtPaymentDetails.Text = transaction.PaymentDetails ?? string.Empty;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -119,6 +121,8 @@ namespace DemoProject.Dialogs
             transaction.PaidValue = sign * txtPaid.Value;
 
             transaction.Description = txtName.Text.Trim();
+            transaction.PaymentDetails = txtPaymentDetails.Text.Trim();
+            if (string.IsNullOrWhiteSpace(transaction.PaymentDetails)) transaction.PaymentDetails = null;
 
             manager.CreateUpdateTransaction(transaction); // Save
             // Recuring?
@@ -197,7 +201,7 @@ namespace DemoProject.Dialogs
 
         private void lblAdvanced_Click(object sender, EventArgs e)
         {
-            Height = 445;
+            Height = 500;
             lblAdvanced.Visible = false;
         }
         private void rdoRecuringYes_CheckedChanged(object sender, EventArgs e)
