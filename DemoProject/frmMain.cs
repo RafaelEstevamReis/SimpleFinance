@@ -1,4 +1,4 @@
-using Simple.BotUtils.DI;
+﻿using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
@@ -169,7 +169,16 @@ namespace DemoProject
             {
                 if (tx.Status == Transac.PaymentStatus.Reversed) continue;
                 if (tx.Status == Transac.PaymentStatus.Paid) continue;
-                int ix = grdTxDue.Rows.Add(tx.DueDate, tx.DueValue, tx.Description);
+
+                string add = "";
+
+                if (tx.Type == Transac.TransactionType.WalletTransfer)
+                {
+                    if (tx.DueValue > 0) continue;
+                    add = "▶ ";
+                }
+
+                int ix = grdTxDue.Rows.Add(tx.DueDate, tx.DueValue, add + tx.Description);
                 grdTxDue.Rows[ix].Tag = tx;
             }
         }
