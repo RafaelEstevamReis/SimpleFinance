@@ -182,7 +182,7 @@ namespace DemoProject.Dialogs
         private void rdoPaid_CheckedChanged(object sender, EventArgs e)
         {
             updatePaidChanged();
-            if (rdoPaid.Checked) // Changed TO PAID
+            if (rdoPaid.Checked && transaction.Status == Transac.PaymentStatus.Unpaid) // Changed TO PAID
             {
                 txtPaid.Value = txtDue.Value;
                 dtPaid.Value = DateTime.Now;
