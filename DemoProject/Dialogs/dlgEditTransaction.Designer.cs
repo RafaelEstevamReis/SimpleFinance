@@ -335,6 +335,7 @@
             cboWallet.Name = "cboWallet";
             cboWallet.Size = new System.Drawing.Size(279, 23);
             cboWallet.TabIndex = 2;
+            cboWallet.SelectedIndexChanged += cboWallet_SelectedIndexChanged;
             // 
             // cboCategory
             // 

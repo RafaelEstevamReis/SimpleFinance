@@ -4,6 +4,7 @@ using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using Simple.Sqlite;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -126,7 +127,10 @@ namespace DemoProject
                      .ThenBy(o => o.Type)
                      .ThenByDescending(o => o.DueValue)
                      ;
-            decimal balance = 0;
+
+            //decimal balance = 0;
+            var balances = new Dictionary<string, decimal>();
+
             foreach (var tx in txs)
             {
                 DateTime? paymentDate = null;
@@ -142,14 +146,17 @@ namespace DemoProject
                     else add = "◀ ";
                 }
 
+                var currencyCode = tx.GetTransacationCurrencyCode(dicWallets);
+                if (!balances.ContainsKey(currencyCode)) balances[currencyCode] = 0;
+
                 if (tx.Status == Transac.PaymentStatus.Paid)
                 {
                     paymentDate = tx.PaymentDate;
-                    balance += tx.PaidValue;
+                    balances[currencyCode] += tx.PaidValue;
                 }
                 else if (tx.Status == Transac.PaymentStatus.Unpaid && chkIncludeUnpaidBalance.Checked)
                 {
-                    balance += tx.DueValue;
+                    balances[currencyCode] += tx.DueValue;
                 }
 
                 int ix = grdTransactions.Rows.Add(tx.GetWalletName(dicWallets),
@@ -158,7 +165,7 @@ namespace DemoProject
                                                   tx.DueDate,
                                                   tx.EfectiveValue,
                                                   paymentDate,
-                                                  balance);
+                                                  balances[currencyCode]);
                 grdTransactions.Rows[ix].Tag = tx;
 
                 if (tx.Status == Transac.PaymentStatus.Paid) grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.PaleGreen;
@@ -174,7 +181,7 @@ namespace DemoProject
                     grdTransactions.Rows[ix].DefaultCellStyle.Font = new Font(this.Font, FontStyle.Strikeout);
                 }
 
-                if (balance < 0)
+                if (balances[currencyCode] < 0)
                 {
                     grdTransactions[clnBalance.Index, ix].Style.ForeColor = Color.DarkRed;
                 }
@@ -192,17 +199,20 @@ namespace DemoProject
             // Totals
             txs = txs.Where(o => o.Status != Transac.PaymentStatus.Reversed); // Remove reversed from stats
             if (!chkIncludeTransfersInTotals.Checked) txs = txs.Where(o => o.Type == Transac.TransactionType.Simple);
-            txtTotalPaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Paid).Sum(o => o.PaidValue);
-            txtTotalUnpaid.Value = txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid).Sum(o => o.DueValue);
-            txtTotalIncome.Value = txs.Where(o => o.DueValue > 0).Sum(o => o.EfectiveValue);
-            txtTotalExpenses.Value = txs.Where(o => o.DueValue < 0).Sum(o => -o.EfectiveValue);
+
+            txtTotalPaid.SumMoneyBoxFor(manager, txs.Where(o => o.Status == Transac.PaymentStatus.Paid), o => o.PaidValue);
+            txtTotalUnpaid.SumMoneyBoxFor(manager, txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid), o => o.DueValue);
+            txtTotalIncome.SumMoneyBoxFor(manager, txs.Where(o => o.DueValue > 0), o => o.EfectiveValue);
+            txtTotalExpenses.SumMoneyBoxFor(manager, txs.Where(o => o.DueValue < 0), o => -o.EfectiveValue);
+
             txtTotalNet.Value = txtTotalIncome.Value - txtTotalExpenses.Value;
         }
 
         private void grdTransactions_SelectionChanged(object sender, EventArgs e)
         {
             var trx = getSelectedTransactions().Where(o => o.Status != Transac.PaymentStatus.Reversed).ToArray();
-            txtTotalSelected.Value = trx.Sum(o => o!.EfectiveValue);
+
+            txtTotalSelected.SumMoneyBoxFor(manager, trx);
             lblTotalSelected.Text = $"Total Selected: ({trx.Length})";
         }
         private void grdTransactions_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

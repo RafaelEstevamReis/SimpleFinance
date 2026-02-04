@@ -220,6 +220,17 @@ namespace DemoProject.Dialogs
             dlgTransactionHistory.ShowDialog(transaction.Id);
         }
 
+        private void cboWallet_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboWallet.SelectedIndex < 0) return;
+            var wallet = cboWallet.SelectedItem as Wallet;
+
+            if (wallet == null) return;
+
+            txtDue.FormatFor(wallet.BaseCurrency);
+            txtPaid.FormatFor(wallet.BaseCurrency);
+        }
+
         public static DialogResult ShowDialog(Transac transaction)
         {
             using var frm = new dlgEditTransaction();

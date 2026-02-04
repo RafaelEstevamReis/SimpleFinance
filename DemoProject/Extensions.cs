@@ -1,11 +1,14 @@
 ﻿namespace DemoProject;
 
+using DemoProject.Components;
 using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using Simple.Sqlite;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 internal static class Extensions
@@ -57,5 +60,46 @@ internal static class Extensions
             e.FormattingApplied = true;
             e.Value = CurrencyHelpers.FormatFor(dVal, code);
         };
+    }
+    public static void SumMoneyBoxFor(this MoneyBox moneyBox, Manager manager, IEnumerable<Transac> txs)
+        => SumMoneyBoxFor(moneyBox, manager, txs, o => o.EfectiveValue);
+    public static void SumMoneyBoxFor(this MoneyBox moneyBox, Manager manager, IEnumerable<Transac> txs, Func<Transac, decimal> selector)
+    {
+        var transactionsByCurrency = manager.SumTransactionsByBaseCurrency(txs, selector).ToArray();
+
+        moneyBox.MoneySign = "";
+        moneyBox.DecimalPlaces = 2;
+        moneyBox.Value = 0;
+        if (transactionsByCurrency.Length == 1)
+        {
+            var code = CurrencyHelpers.GetCurrencyData(transactionsByCurrency[0].currencyCode);
+
+            if (code != null)
+            {
+                moneyBox.MoneySign = code.NumberFormatInfo.CurrencySymbol;
+                moneyBox.DecimalPlaces = code.NumberFormatInfo.CurrencyDecimalDigits;
+            }
+            moneyBox.Value = transactionsByCurrency[0].value;
+        }
+        else
+        {
+            moneyBox.Text = "-";
+        }
+    }
+    public static void FormatFor(this MoneyBox moneyBox, string currencyCode)
+    {
+        var currValue = moneyBox.Value;
+
+        moneyBox.MoneySign = "";
+        moneyBox.DecimalPlaces = 2;
+
+        var code = CurrencyHelpers.GetCurrencyData(currencyCode);
+        if (code != null)
+        {
+            moneyBox.MoneySign = code.NumberFormatInfo.CurrencySymbol;
+            moneyBox.DecimalPlaces = code.NumberFormatInfo.CurrencyDecimalDigits;
+        }
+
+        moneyBox.Value = currValue;
     }
 }

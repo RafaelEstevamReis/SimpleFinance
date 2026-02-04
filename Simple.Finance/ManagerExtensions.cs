@@ -41,4 +41,15 @@ public static class ManagerExtensions
         return (source, destination);
     }
 
+    public static IEnumerable<(string currencyCode, Tables.Transac[] txs)> GroupTransactionsByBaseCurrency(this Manager mgr, IEnumerable<Tables.Transac> transactions)
+    {
+        var wallets = mgr.GetWallets().ToDictionary(o => o.Id, o => o.BaseCurrency);
+
+        return transactions.GroupBy(o => wallets.GetValueOrDefault(o.WalletId, "")).Select(o => (o.Key, o.ToArray()));
+    }
+    public static IEnumerable<(string currencyCode, decimal value)> SumTransactionsByBaseCurrency(this Manager mgr, IEnumerable<Tables.Transac> transactions, Func<Tables.Transac, decimal> selector)
+    {
+        return GroupTransactionsByBaseCurrency(mgr, transactions).Select(o => (o.currencyCode, o.txs.Sum(selector)));
+    }
+
 }
