@@ -1,5 +1,6 @@
 using Simple.BotUtils.DI;
 using Simple.Finance;
+using Simple.Finance.ExchangeRate;
 using Simple.Sqlite;
 using System;
 using System.Text;
@@ -23,6 +24,9 @@ namespace DemoProject
 
             var config = new KeyValueStorage("preferences.db");
             Injector.AddSingleton(config);
+
+            var exchange = ExchangeRateConverter.CreateWithTemporalSeries();
+            Injector.AddSingleton(exchange);
 
             // App Boot
             ApplicationConfiguration.Initialize();
