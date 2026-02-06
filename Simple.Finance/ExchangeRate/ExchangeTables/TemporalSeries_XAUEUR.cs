@@ -7,25 +7,12 @@ public class TemporalSeries_XAUEUR : IExchangeRateTable
 {
     public decimal? GetRateFor(string baseCur, string quoteCur, DateTime date)
     {
-        if (baseCur != "EUR") return null;
-        if (quoteCur != "XAU") return null;
+        if (quoteCur != "EUR") return null;
+        if (baseCur != "XAU") return null;
 
-        return getValue(date);
+        return ExchangeRateConverter.getTableValue(data, firstYear, date);
     }
 
-    public static decimal? getValue(DateTime dt)
-    {
-        var ixYear = dt.Year - firstYear;
-        if (ixYear >= data.GetLength(0)) return null;
-
-        var ixMonh = dt.Month - 1;
-        if (ixMonh >= data[ixYear].GetLength(0)) return null;
-
-        var ixDay = dt.Day - 1;
-        if (ixDay >= data[ixYear][ixMonh].Length) return null;
-
-        return data[ixYear][ixMonh][ixDay];
-    }
     private static int firstYear = 1979;
     private static decimal[][][] data = [
       // 1979

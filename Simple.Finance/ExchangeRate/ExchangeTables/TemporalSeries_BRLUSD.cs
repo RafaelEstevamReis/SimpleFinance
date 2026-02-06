@@ -10,21 +10,7 @@ public class TemporalSeries_BRLUSD : IExchangeRateTable
         if (baseCur != "USD") return null;
         if (quoteCur != "BRL") return null;
 
-        return getValue(date);
-    }
-
-    public static decimal? getValue(DateTime dt)
-    {
-        var ixYear = dt.Year - firstYear;
-        if (ixYear >= data.GetLength(0)) return null;
-
-        var ixMonh = dt.Month - 1;
-        if (ixMonh >= data[ixYear].GetLength(0)) return null;
-
-        var ixDay = dt.Day - 1;
-        if (ixDay >= data[ixYear][ixMonh].Length) return null;
-
-        return data[ixYear][ixMonh][ixDay];
+        return ExchangeRateConverter.getTableValue(data, firstYear, date);
     }
 
     // https://www.bcb.gov.br/estabilidadefinanceira/historicocotacoes

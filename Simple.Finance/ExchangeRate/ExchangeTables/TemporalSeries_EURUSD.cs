@@ -10,21 +10,7 @@ public class TemporalSeries_EURUSD : IExchangeRateTable
         if (baseCur != "USD") return null;
         if (quoteCur != "EUR") return null;
 
-        return getValue(date);
-    }
-
-    public static decimal? getValue(DateTime dt)
-    {
-        var ixYear = dt.Year - firstYear;
-        if (ixYear >= data.GetLength(0)) return null;
-
-        var ixMonh = dt.Month - 1;
-        if (ixMonh >= data[ixYear].GetLength(0)) return null;
-
-        var ixDay = dt.Day - 1;
-        if (ixDay >= data[ixYear][ixMonh].Length) return null;
-
-        return data[ixYear][ixMonh][ixDay];
+        return ExchangeRateConverter.getTableValue(data, firstYear, date);
     }
 
     // https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/eurofxref-graph-usd.en.html

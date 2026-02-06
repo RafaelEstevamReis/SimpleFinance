@@ -7,24 +7,15 @@ public class TemporalSeries_BTCUSD : IExchangeRateTable
 {
     public decimal? GetRateFor(string baseCur, string quoteCur, DateTime date)
     {
-        if (baseCur != "USD") return null;
-        if (quoteCur != "BTC") return null;
+        if (quoteCur != "USD") return null;
 
-        return getValue(date);
-    }
+        if (baseCur == "BTC") return ExchangeRateConverter.getTableValue(data, firstYear, date);
+        if (baseCur == "SAT")
+        {
+            return ExchangeRateConverter.getTableValue(data, firstYear, date) / 100_000_000M;
+        }
 
-    public static decimal? getValue(DateTime dt)
-    {
-        var ixYear = dt.Year - firstYear;
-        if (ixYear >= data.GetLength(0)) return null;
-
-        var ixMonh = dt.Month - 1;
-        if (ixMonh >= data[ixYear].GetLength(0)) return null;
-
-        var ixDay = dt.Day - 1;
-        if (ixDay >= data[ixYear][ixMonh].Length) return null;
-
-        return data[ixYear][ixMonh][ixDay];
+        return null;
     }
 
     // https://fred.stlouisfed.org/series/CBBTCUSD

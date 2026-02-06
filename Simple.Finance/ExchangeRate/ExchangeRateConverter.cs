@@ -18,6 +18,8 @@ public class ExchangeRateConverter
     {
         if (ExchangeRateTables.Count == 0) throw new InvalidOperationException($"There are no {nameof(ExchangeRateTables)} to process");
 
+        if (baseCur == quoteCur) return 1;
+
         decimal? rate;
         if (CacheEnabled)
         {
@@ -54,6 +56,20 @@ public class ExchangeRateConverter
             }
         }
         return null;
+    }
+
+    internal static decimal? getTableValue(decimal[][][] data, int firstYear, DateTime dt)
+    {
+        var ixYear = dt.Year - firstYear;
+        if (ixYear >= data.GetLength(0)) return null;
+
+        var ixMonh = dt.Month - 1;
+        if (ixMonh >= data[ixYear].GetLength(0)) return null;
+
+        var ixDay = dt.Day - 1;
+        if (ixDay >= data[ixYear][ixMonh].Length) return null;
+
+        return data[ixYear][ixMonh][ixDay];
     }
 
     public static ExchangeRateConverter CreateWithTemporalSeries()
