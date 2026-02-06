@@ -1,9 +1,7 @@
 ﻿namespace Simple.Finance.Helpers;
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 public static class CurrencyHelpers
 {
