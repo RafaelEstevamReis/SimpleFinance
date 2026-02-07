@@ -2,9 +2,7 @@
 using Simple.Finance;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
-using Simple.Sqlite;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -324,6 +322,11 @@ namespace DemoProject
                 MessageBox.Show("No transactions selected");
                 return;
             }
+            if (selected.Any(o => o.Type != Transac.TransactionType.Simple))
+            {
+                MessageBox.Show("Only SIMPLE transactions can be cloned");
+                return;
+            }
 
             var result = Dialogs.dlgValueBox.ShowDialog("New Due Value", 2, 0, out decimal newValue);
             if (result != DialogResult.OK) return;
@@ -342,6 +345,11 @@ namespace DemoProject
             if (selected.Length == 0)
             {
                 MessageBox.Show("No transactions selected");
+                return;
+            }
+            if (selected.Any(o => o.Type != Transac.TransactionType.Simple))
+            {
+                MessageBox.Show("Only SIMPLE transactions can be cloned");
                 return;
             }
 
@@ -371,6 +379,11 @@ namespace DemoProject
             if (selected.Any(k => Math.Sign(k.DueValue) != sign))
             {
                 MessageBox.Show("All transactions must be either 'Expense' or 'Income'");
+                return;
+            }
+            if (selected.Any(o => o.Type != Transac.TransactionType.Simple))
+            {
+                MessageBox.Show("Only SIMPLE transactions can be cloned");
                 return;
             }
 
@@ -417,6 +430,12 @@ namespace DemoProject
                 MessageBox.Show("Reversed transactions cannot be paid");
                 return;
             }
+            if (selected.Any(o => o.Type != Transac.TransactionType.Simple))
+            {
+                MessageBox.Show("Only SIMPLE transactions can be cloned");
+                return;
+            }
+
 
             foreach (var tx in selected)
             {
