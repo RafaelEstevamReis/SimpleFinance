@@ -1,5 +1,6 @@
 ﻿using Simple.BotUtils.DI;
 using Simple.Finance;
+using Simple.Finance.ExchangeRate;
 using Simple.Finance.Helpers;
 using Simple.Finance.Tables;
 using Simple.Sqlite;
@@ -17,6 +18,7 @@ namespace DemoProject
         private FormWindowState lastState = FormWindowState.Normal;
         private Manager manager;
         private KeyValueStorage config;
+        private ExchangeRateConverter exchangeConverter;
         private Dictionary<long, Wallet> wallets = [];
 
         public frmMain()
@@ -24,11 +26,15 @@ namespace DemoProject
             InitializeComponent();
             manager = Injector.Get<Manager>();
             config = Injector.Get<KeyValueStorage>();
+            exchangeConverter = Injector.Get<ExchangeRateConverter>();
+
             manager.EventNotifier += Manager_EventNotifier;
         }
 
-        private void frmMain_Load(object sender, EventArgs e)
+        private async void frmMain_Load(object sender, EventArgs e)
         {
+            await exchangeConverter.InitializeTables();
+
             clnRecentValue.FormatColumn(manager);
             clnDueTxValue.FormatColumn(manager);
 
@@ -199,8 +205,10 @@ namespace DemoProject
             decimal max = 0;
             foreach (var wallet in wallets)
             {
-                decimal[] valuesDay = new decimal[daysBefore + daysAfter];
+                bool showOnChart = getShowOnChartConfig(wallet.Id);
+                if (!showOnChart) continue;
 
+                decimal[] valuesDay = new decimal[daysBefore + daysAfter];
                 valuesDay[0] = balance.Where(o => o.WalletId == wallet.Id).Sum(o => o.Balance);
 
                 foreach (var tx in txs)
@@ -210,6 +218,8 @@ namespace DemoProject
 
                     var effDateIx = (int)(tx.EfectiveDate.Date - dateBefore.Date).TotalDays;
                     if (effDateIx >= valuesDay.Length) continue;
+
+                    var referenceValueConverted = tx.EfectiveValue;
                     valuesDay[effDateIx] += tx.EfectiveValue;
                 }
 
@@ -251,6 +261,7 @@ namespace DemoProject
             chtAssets.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
             chtAssets.ChartAreas[0].AxisX.IsMarginVisible = false;
         }
+
         private void frmMain_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized) return;
@@ -318,8 +329,30 @@ namespace DemoProject
             }
         }
 
-        private void grdWallets_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);
-        private void grdCategories_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) => doGridClickEvent(sender as DataGridView, e);
+        private void grdWallets_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (sender is not DataGridView grid) return;
+            if (e.Button != MouseButtons.Right) return;
+            if (e.RowIndex < 0) return;
+
+            grid.ClearSelection();
+            grid.Rows[e.RowIndex].Selected = true;
+            cntxEditDeleteWallet.Tag = grid.Rows[e.RowIndex].Tag;
+            cntxEditDeleteWallet.Show(System.Windows.Forms.Cursor.Position);
+        }
+
+        private void grdCategories_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (sender is not DataGridView grid) return;
+            if (e.Button != MouseButtons.Right) return;
+            if (e.RowIndex < 0) return;
+
+            grid.ClearSelection();
+            grid.Rows[e.RowIndex].Selected = true;
+            cntxEditDeleteCategory.Tag = grid.Rows[e.RowIndex].Tag;
+            cntxEditDeleteCategory.Show(System.Windows.Forms.Cursor.Position);
+        }
+
         private void grdWallets_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
         private void grdCategories_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
         private void grdTxRecent_CellDoubleClick(object sender, DataGridViewCellEventArgs e) => doGridDoubleClickEvent(sender as DataGridView, e);
@@ -352,12 +385,24 @@ namespace DemoProject
 
             cntxDueTx.Show(System.Windows.Forms.Cursor.Position);
         }
-        private void grdTxDue_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+
+        private void cntxEditDeleteWallet_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (cntxEditDeleteWallet.Tag is not Wallet w) return;
+            showOnChartToolStripMenuItem.Checked = getShowOnChartConfig(w.Id);
+        }
+        private void editWalletToolStripMenuItem_Click(object sender, EventArgs e) => editTarget(cntxEditDeleteWallet.Tag);
+        private void deleteWalletToolStripMenuItem_Click(object sender, EventArgs e) => deleteTarget(cntxEditDeleteWallet.Tag);
+        private void showOnChartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cntxEditDeleteWallet.Tag is not Wallet w) return;
+            invertShowOnChartConfig(w.Id);
+
+            updateChart();
         }
 
-        private void editToolStripMenuItem_Click(object sender, EventArgs e) => editTarget(cntxEditDelete.Tag);
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e) => deleteTarget(cntxEditDelete.Tag);
+        private void editCategoryToolStripMenuItem_Click(object sender, EventArgs e) => editTarget(cntxEditDeleteCategory.Tag);
+        private void deleteCatgoryToolStripMenuItem_Click(object sender, EventArgs e) => deleteTarget(cntxEditDeleteCategory.Tag);
 
         private void dueTxOpenForEditToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -437,17 +482,6 @@ namespace DemoProject
             Dialogs.dlgAddBulkTransactions.ShowDialog(trs);
         }
 
-        void doGridClickEvent(DataGridView? sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (sender == null) return;
-            if (e.Button != MouseButtons.Right) return;
-            if (e.RowIndex < 0) return;
-
-            sender.ClearSelection();
-            sender.Rows[e.RowIndex].Selected = true;
-            cntxEditDelete.Tag = sender.Rows[e.RowIndex].Tag;
-            cntxEditDelete.Show(System.Windows.Forms.Cursor.Position);
-        }
         void doGridDoubleClickEvent(DataGridView? sender, DataGridViewCellEventArgs e)
         {
             if (sender == null) return;
@@ -578,11 +612,20 @@ namespace DemoProject
             manager.CreateUpdateWallet(w);
         }
 
+        private bool getShowOnChartConfig(long walletId)
+        {
+            return config.GetKey(this.Name, $"wallet_show_on_chart.{walletId}", true);
+        }
+        private void invertShowOnChartConfig(long walletId)
+        {
+            var state = getShowOnChartConfig(walletId);
+            config.SetKey(this.Name, $"wallet_show_on_chart.{walletId}", !state);
+        }
+
         private void btnTransactionBook_Click(object sender, EventArgs e)
         {
             frmTransactionBook.ShowForm();
         }
-
         private void btnAdvSearch_Click(object sender, EventArgs e)
         {
             frmAdvancedSearch.ShowForm();

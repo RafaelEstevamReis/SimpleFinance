@@ -65,9 +65,9 @@ namespace DemoProject
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
             clnDueTxValue = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
-            cntxEditDelete = new ContextMenuStrip(components);
-            editToolStripMenuItem = new ToolStripMenuItem();
-            deleteToolStripMenuItem = new ToolStripMenuItem();
+            cntxEditDeleteCategory = new ContextMenuStrip(components);
+            editCategoryToolStripMenuItem = new ToolStripMenuItem();
+            deleteCategoryToolStripMenuItem = new ToolStripMenuItem();
             btnTransactionBook = new Button();
             btnAdvSearch = new Button();
             cntxDueTx = new ContextMenuStrip(components);
@@ -95,6 +95,11 @@ namespace DemoProject
             dToolStripMenuItem3 = new ToolStripMenuItem();
             dToolStripMenuItem4 = new ToolStripMenuItem();
             dToolStripMenuItem5 = new ToolStripMenuItem();
+            cntxEditDeleteWallet = new ContextMenuStrip(components);
+            editWalletToolStripMenuItem = new ToolStripMenuItem();
+            deleteWalletToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripSeparator();
+            showOnChartToolStripMenuItem = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -103,12 +108,13 @@ namespace DemoProject
             ((System.ComponentModel.ISupportInitialize)grdTxRecent).BeginInit();
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTxDue).BeginInit();
-            cntxEditDelete.SuspendLayout();
+            cntxEditDeleteCategory.SuspendLayout();
             cntxDueTx.SuspendLayout();
             cntxNew.SuspendLayout();
             grpChartAssets.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)chtAssets).BeginInit();
             cntxChartPeriod.SuspendLayout();
+            cntxEditDeleteWallet.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -324,7 +330,6 @@ namespace DemoProject
             grdTxDue.Size = new Size(312, 250);
             grdTxDue.TabIndex = 3;
             grdTxDue.CellDoubleClick += grdTxDue_CellDoubleClick;
-            grdTxDue.CellFormatting += grdTxDue_CellFormatting;
             grdTxDue.CellMouseClick += grdTxDue_CellMouseClick;
             // 
             // dataGridViewTextBoxColumn6
@@ -354,25 +359,25 @@ namespace DemoProject
             dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
             dataGridViewTextBoxColumn9.ReadOnly = true;
             // 
-            // cntxEditDelete
+            // cntxEditDeleteCategory
             // 
-            cntxEditDelete.Items.AddRange(new ToolStripItem[] { editToolStripMenuItem, deleteToolStripMenuItem });
-            cntxEditDelete.Name = "cntxEditDelete";
-            cntxEditDelete.Size = new Size(145, 48);
+            cntxEditDeleteCategory.Items.AddRange(new ToolStripItem[] { editCategoryToolStripMenuItem, deleteCategoryToolStripMenuItem });
+            cntxEditDeleteCategory.Name = "cntxEditDelete";
+            cntxEditDeleteCategory.Size = new Size(145, 48);
             // 
-            // editToolStripMenuItem
+            // editCategoryToolStripMenuItem
             // 
-            editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(144, 22);
-            editToolStripMenuItem.Text = "Open for Edit";
-            editToolStripMenuItem.Click += editToolStripMenuItem_Click;
+            editCategoryToolStripMenuItem.Name = "editCategoryToolStripMenuItem";
+            editCategoryToolStripMenuItem.Size = new Size(144, 22);
+            editCategoryToolStripMenuItem.Text = "Open for Edit";
+            editCategoryToolStripMenuItem.Click += editCategoryToolStripMenuItem_Click;
             // 
-            // deleteToolStripMenuItem
+            // deleteCategoryToolStripMenuItem
             // 
-            deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            deleteToolStripMenuItem.Size = new Size(144, 22);
-            deleteToolStripMenuItem.Text = "Delete";
-            deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
+            deleteCategoryToolStripMenuItem.Name = "deleteCategoryToolStripMenuItem";
+            deleteCategoryToolStripMenuItem.Size = new Size(144, 22);
+            deleteCategoryToolStripMenuItem.Text = "Delete";
+            deleteCategoryToolStripMenuItem.Click += deleteCatgoryToolStripMenuItem_Click;
             // 
             // btnTransactionBook
             // 
@@ -590,6 +595,39 @@ namespace DemoProject
             dToolStripMenuItem5.Text = "365d";
             dToolStripMenuItem5.Click += dToolStripMenuItem_Click;
             // 
+            // cntxEditDeleteWallet
+            // 
+            cntxEditDeleteWallet.Items.AddRange(new ToolStripItem[] { editWalletToolStripMenuItem, deleteWalletToolStripMenuItem, toolStripMenuItem3, showOnChartToolStripMenuItem });
+            cntxEditDeleteWallet.Name = "cntxEditDelete";
+            cntxEditDeleteWallet.Size = new Size(181, 98);
+            cntxEditDeleteWallet.Opening += cntxEditDeleteWallet_Opening;
+            // 
+            // editWalletToolStripMenuItem
+            // 
+            editWalletToolStripMenuItem.Name = "editWalletToolStripMenuItem";
+            editWalletToolStripMenuItem.Size = new Size(180, 22);
+            editWalletToolStripMenuItem.Text = "Open for Edit";
+            editWalletToolStripMenuItem.Click += editWalletToolStripMenuItem_Click;
+            // 
+            // deleteWalletToolStripMenuItem
+            // 
+            deleteWalletToolStripMenuItem.Name = "deleteWalletToolStripMenuItem";
+            deleteWalletToolStripMenuItem.Size = new Size(180, 22);
+            deleteWalletToolStripMenuItem.Text = "Delete";
+            deleteWalletToolStripMenuItem.Click += deleteWalletToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(177, 6);
+            // 
+            // showOnChartToolStripMenuItem
+            // 
+            showOnChartToolStripMenuItem.Name = "showOnChartToolStripMenuItem";
+            showOnChartToolStripMenuItem.Size = new Size(180, 22);
+            showOnChartToolStripMenuItem.Text = "Show on Chart";
+            showOnChartToolStripMenuItem.Click += showOnChartToolStripMenuItem_Click;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -617,12 +655,13 @@ namespace DemoProject
             ((System.ComponentModel.ISupportInitialize)grdTxRecent).EndInit();
             groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)grdTxDue).EndInit();
-            cntxEditDelete.ResumeLayout(false);
+            cntxEditDeleteCategory.ResumeLayout(false);
             cntxDueTx.ResumeLayout(false);
             cntxNew.ResumeLayout(false);
             grpChartAssets.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)chtAssets).EndInit();
             cntxChartPeriod.ResumeLayout(false);
+            cntxEditDeleteWallet.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -634,9 +673,9 @@ namespace DemoProject
         private GroupBox groupBox4;
         private DataGridView grdWallets;
         private DataGridView grdCategories;
-        private ContextMenuStrip cntxEditDelete;
-        private ToolStripMenuItem editToolStripMenuItem;
-        private ToolStripMenuItem deleteToolStripMenuItem;
+        private ContextMenuStrip cntxEditDeleteCategory;
+        private ToolStripMenuItem editCategoryToolStripMenuItem;
+        private ToolStripMenuItem deleteCategoryToolStripMenuItem;
         private DataGridView grdTxRecent;
         private DataGridView grdTxDue;
         private Button btnTransactionBook;
@@ -681,5 +720,10 @@ namespace DemoProject
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private DataGridViewTextBoxColumn clnDueTxValue;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+        private ContextMenuStrip cntxEditDeleteWallet;
+        private ToolStripMenuItem editWalletToolStripMenuItem;
+        private ToolStripMenuItem deleteWalletToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem3;
+        private ToolStripMenuItem showOnChartToolStripMenuItem;
     }
 }
