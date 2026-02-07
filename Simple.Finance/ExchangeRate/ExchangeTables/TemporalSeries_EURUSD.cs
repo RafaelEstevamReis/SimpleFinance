@@ -2,6 +2,7 @@
 
 using Simple.Finance.ExchangeRate;
 using System;
+using System.Threading.Tasks;
 
 public class TemporalSeries_EURUSD : IExchangeRateTable
 {
@@ -12,6 +13,8 @@ public class TemporalSeries_EURUSD : IExchangeRateTable
 
         return ExchangeRateConverter.getTableValue(data, firstYear, date);
     }
+
+    public Task Initialize() => Task.CompletedTask;
 
     // https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/eurofxref-graph-usd.en.html
     private static int firstYear = 1999;

@@ -2,6 +2,7 @@
 
 using Simple.Finance.ExchangeRate;
 using System;
+using System.Threading.Tasks;
 
 public class TemporalSeries_XAUCHF : IExchangeRateTable
 {
@@ -12,6 +13,8 @@ public class TemporalSeries_XAUCHF : IExchangeRateTable
 
         return ExchangeRateConverter.getTableValue(data, firstYear, date);
     }
+
+    public Task Initialize() => Task.CompletedTask;
 
     private static int firstYear = 1979;
     private static decimal[][][] data = [

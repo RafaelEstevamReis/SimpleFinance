@@ -3,6 +3,8 @@
 using Simple.Finance.ExchangeRate.ExchangeTables;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class ExchangeRateConverter
 {
@@ -13,6 +15,16 @@ public class ExchangeRateConverter
     /// Cache recent queries to avoid re-process same pairs on a date
     /// </summary>
     public bool CacheEnabled { get; set; } = true;
+
+    public async Task InitializeTables()
+    {
+        if (ExchangeRateTables.Count == 0) throw new InvalidOperationException($"There are no {nameof(ExchangeRateTables)} to process");
+
+        var allTaks = ExchangeRateTables
+            .Select(o => o.Initialize())
+            .ToArray();
+        await Task.WhenAll(allTaks);
+    }
 
     public decimal? GetRateFor(string baseCur, string quoteCur, DateTime dateUTC)
     {

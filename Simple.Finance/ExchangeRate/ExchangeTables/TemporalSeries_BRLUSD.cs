@@ -2,6 +2,7 @@
 
 using Simple.Finance.ExchangeRate;
 using System;
+using System.Threading.Tasks;
 
 public class TemporalSeries_BRLUSD : IExchangeRateTable
 {
@@ -12,6 +13,8 @@ public class TemporalSeries_BRLUSD : IExchangeRateTable
 
         return ExchangeRateConverter.getTableValue(data, firstYear, date);
     }
+
+    public Task Initialize() => Task.CompletedTask;
 
     // https://www.bcb.gov.br/estabilidadefinanceira/historicocotacoes
     private static int firstYear = 1995;

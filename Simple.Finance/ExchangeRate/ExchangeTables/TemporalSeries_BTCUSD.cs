@@ -2,6 +2,7 @@
 
 using Simple.Finance.ExchangeRate;
 using System;
+using System.Threading.Tasks;
 
 public class TemporalSeries_BTCUSD : IExchangeRateTable
 {
@@ -17,6 +18,8 @@ public class TemporalSeries_BTCUSD : IExchangeRateTable
 
         return null;
     }
+
+    public Task Initialize() => Task.CompletedTask;
 
     // https://fred.stlouisfed.org/series/CBBTCUSD
     private static int firstYear = 2015;
