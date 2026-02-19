@@ -26,6 +26,7 @@ namespace DemoProject
             Injector.AddSingleton(config);
 
             var exchange = ExchangeRateConverter.CreateWithTemporalSeries();
+            //exchange.ExchangeRateTables.Add(new Integrations.KrakenHistoricalData());
             Injector.AddSingleton(exchange);
 
             // App Boot
@@ -35,7 +36,10 @@ namespace DemoProject
 
         private static void GenerateTypesXSDs()
         {
-            Type[] types = [typeof(Reports.CategoriesOverviewModel)];
+            Type[] types = [
+                typeof(Reports.CategoriesOverviewModel),
+                typeof(Reports.YearlySummaryModel),
+            ];
             var xri = new System.Xml.Serialization.XmlReflectionImporter();
             var xss = new System.Xml.Serialization.XmlSchemas();
             var xse = new System.Xml.Serialization.XmlSchemaExporter(xss);

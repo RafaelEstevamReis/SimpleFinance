@@ -43,4 +43,10 @@
 		<ProjectReference Include="..\Simple.Finance\Simple.Finance.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Reports\YearlySummary.rdlc">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

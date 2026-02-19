@@ -1,4 +1,5 @@
-﻿using Simple.BotUtils.DI;
+﻿using DemoProject.Reports;
+using Simple.BotUtils.DI;
 using Simple.Finance;
 using Simple.Finance.ExchangeRate;
 using Simple.Finance.Helpers;
@@ -631,5 +632,78 @@ namespace DemoProject
             frmAdvancedSearch.ShowForm();
         }
 
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+            cntxReports.Show(System.Windows.Forms.Cursor.Position);
+        }
+
+        private void yearlySummaryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Dictionary<string, string> param = [];
+            param["Title"] = "Yearly Summary";
+            param["Format"] = "N2";
+
+            var startOfYear = DateTime.Now.StartOfYear();
+            for (int i = 0; i < 12; i++)
+            {
+                var currMonth = startOfYear.AddMonths(i);
+                param[$"Month{i + 1:00}"] = $"{currMonth:MMM}/{currMonth:yyyy}";
+            }
+
+            var categories = manager.GetCategoriesDict();
+
+            var txs = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, DateTime.Now.StartOfYear(), DateTime.Now.EndOfYear());
+
+            Dictionary<string, decimal[]> dicCategories = [];
+            foreach (var tx in txs)
+            {
+                if (tx.Status == Transac.PaymentStatus.Reversed) continue;
+                if (tx.Type != Transac.TransactionType.Simple) continue;
+
+                if(tx.Status == Transac.PaymentStatus.Unpaid)
+                {
+                    if (tx.DueDate.Date < DateTime.Today.Date) continue; // Já não pagou, não vai pagar
+                }
+
+                var catName = tx.GetCategoryName(categories);
+
+                if (!dicCategories.ContainsKey(catName))
+                {
+                    dicCategories[catName] = new decimal[12];
+                }
+
+                dicCategories[catName][tx.EfectiveDate.Month - 1] += tx.EfectiveValue;
+            }
+
+            List<YearlySummaryModel> lst = [];
+            foreach (var pair in dicCategories)
+            {
+                lst.Add(new YearlySummaryModel
+                {
+                    CategoryName = pair.Key,
+                    Month01 = dicCategories[pair.Key][0],
+                    Month02 = dicCategories[pair.Key][1],
+                    Month03 = dicCategories[pair.Key][2],
+                    Month04 = dicCategories[pair.Key][3],
+                    Month05 = dicCategories[pair.Key][4],
+                    Month06 = dicCategories[pair.Key][5],
+                    Month07 = dicCategories[pair.Key][6],
+                    Month08 = dicCategories[pair.Key][7],
+                    Month09 = dicCategories[pair.Key][8],
+                    Month10 = dicCategories[pair.Key][9],
+                    Month11 = dicCategories[pair.Key][10],
+                    Month12 = dicCategories[pair.Key][11],
+                    RowTotal = dicCategories[pair.Key].Sum(),
+                });
+            }
+
+            if (lst.Count == 0)
+            {
+                MessageBox.Show("There are not items to show");
+                return;
+            }
+
+            ReportViewerForm.ShowReport("Reports/YearlySummary.rdlc", lst.ToArray(), param);
+        }
     }
 }

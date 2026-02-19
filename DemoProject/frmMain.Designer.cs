@@ -32,16 +32,16 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             groupBox1 = new GroupBox();
             grdWallets = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
@@ -100,6 +100,9 @@ namespace DemoProject
             deleteWalletToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripSeparator();
             showOnChartToolStripMenuItem = new ToolStripMenuItem();
+            btnReports = new Button();
+            cntxReports = new ContextMenuStrip(components);
+            yearlySummaryToolStripMenuItem = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -115,6 +118,7 @@ namespace DemoProject
             ((System.ComponentModel.ISupportInitialize)chtAssets).BeginInit();
             cntxChartPeriod.SuspendLayout();
             cntxEditDeleteWallet.SuspendLayout();
+            cntxReports.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -149,8 +153,8 @@ namespace DemoProject
             // 
             // Column1
             // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Column1.DefaultCellStyle = dataGridViewCellStyle8;
             Column1.HeaderText = "Id";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
@@ -165,9 +169,9 @@ namespace DemoProject
             // 
             // Column3
             // 
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle9.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle9;
             Column3.HeaderText = "Balance";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
@@ -205,8 +209,8 @@ namespace DemoProject
             // 
             // dataGridViewTextBoxColumn1
             // 
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle10;
             dataGridViewTextBoxColumn1.HeaderText = "Id";
             dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             dataGridViewTextBoxColumn1.ReadOnly = true;
@@ -265,8 +269,8 @@ namespace DemoProject
             // 
             // dataGridViewTextBoxColumn4
             // 
-            dataGridViewCellStyle4.Format = "d";
-            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle11.Format = "d";
+            dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle11;
             dataGridViewTextBoxColumn4.HeaderText = "Eff. Date";
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             dataGridViewTextBoxColumn4.ReadOnly = true;
@@ -288,9 +292,9 @@ namespace DemoProject
             // 
             // clnRecentValue
             // 
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "N2";
-            clnRecentValue.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle12.Format = "N2";
+            clnRecentValue.DefaultCellStyle = dataGridViewCellStyle12;
             clnRecentValue.HeaderText = "Value";
             clnRecentValue.Name = "clnRecentValue";
             clnRecentValue.ReadOnly = true;
@@ -334,8 +338,8 @@ namespace DemoProject
             // 
             // dataGridViewTextBoxColumn6
             // 
-            dataGridViewCellStyle6.Format = "dd/MM";
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle13.Format = "dd/MM";
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle13;
             dataGridViewTextBoxColumn6.HeaderText = "Due";
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             dataGridViewTextBoxColumn6.ReadOnly = true;
@@ -343,9 +347,9 @@ namespace DemoProject
             // 
             // clnDueTxValue
             // 
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle7.Format = "N2";
-            clnDueTxValue.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle14.Format = "N2";
+            clnDueTxValue.DefaultCellStyle = dataGridViewCellStyle14;
             clnDueTxValue.HeaderText = "Value";
             clnDueTxValue.Name = "clnDueTxValue";
             clnDueTxValue.ReadOnly = true;
@@ -525,20 +529,20 @@ namespace DemoProject
             // chtAssets
             // 
             chtAssets.BackColor = SystemColors.Control;
-            chartArea1.AxisX2.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
-            chartArea1.Name = "ChartArea1";
-            chtAssets.ChartAreas.Add(chartArea1);
+            chartArea2.AxisX2.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
+            chartArea2.Name = "ChartArea1";
+            chtAssets.ChartAreas.Add(chartArea2);
             chtAssets.Dock = DockStyle.Fill;
-            legend1.BackColor = SystemColors.Control;
-            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend1.Name = "Legend1";
-            chtAssets.Legends.Add(legend1);
+            legend2.BackColor = SystemColors.Control;
+            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend2.Name = "Legend1";
+            chtAssets.Legends.Add(legend2);
             chtAssets.Location = new Point(3, 19);
             chtAssets.Name = "chtAssets";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            chtAssets.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            chtAssets.Series.Add(series2);
             chtAssets.Size = new Size(739, 297);
             chtAssets.TabIndex = 0;
             chtAssets.Text = "chart1";
@@ -599,40 +603,65 @@ namespace DemoProject
             // 
             cntxEditDeleteWallet.Items.AddRange(new ToolStripItem[] { editWalletToolStripMenuItem, deleteWalletToolStripMenuItem, toolStripMenuItem3, showOnChartToolStripMenuItem });
             cntxEditDeleteWallet.Name = "cntxEditDelete";
-            cntxEditDeleteWallet.Size = new Size(181, 98);
+            cntxEditDeleteWallet.Size = new Size(153, 76);
             cntxEditDeleteWallet.Opening += cntxEditDeleteWallet_Opening;
             // 
             // editWalletToolStripMenuItem
             // 
             editWalletToolStripMenuItem.Name = "editWalletToolStripMenuItem";
-            editWalletToolStripMenuItem.Size = new Size(180, 22);
+            editWalletToolStripMenuItem.Size = new Size(152, 22);
             editWalletToolStripMenuItem.Text = "Open for Edit";
             editWalletToolStripMenuItem.Click += editWalletToolStripMenuItem_Click;
             // 
             // deleteWalletToolStripMenuItem
             // 
             deleteWalletToolStripMenuItem.Name = "deleteWalletToolStripMenuItem";
-            deleteWalletToolStripMenuItem.Size = new Size(180, 22);
+            deleteWalletToolStripMenuItem.Size = new Size(152, 22);
             deleteWalletToolStripMenuItem.Text = "Delete";
             deleteWalletToolStripMenuItem.Click += deleteWalletToolStripMenuItem_Click;
             // 
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(177, 6);
+            toolStripMenuItem3.Size = new Size(149, 6);
             // 
             // showOnChartToolStripMenuItem
             // 
             showOnChartToolStripMenuItem.Name = "showOnChartToolStripMenuItem";
-            showOnChartToolStripMenuItem.Size = new Size(180, 22);
+            showOnChartToolStripMenuItem.Size = new Size(152, 22);
             showOnChartToolStripMenuItem.Text = "Show on Chart";
             showOnChartToolStripMenuItem.Click += showOnChartToolStripMenuItem_Click;
+            // 
+            // btnReports
+            // 
+            btnReports.Anchor = AnchorStyles.Bottom;
+            btnReports.Location = new Point(483, 571);
+            btnReports.Name = "btnReports";
+            btnReports.Size = new Size(119, 31);
+            btnReports.TabIndex = 18;
+            btnReports.Text = "Generate Reports ▼";
+            btnReports.UseVisualStyleBackColor = true;
+            btnReports.Click += btnReports_Click;
+            // 
+            // cntxReports
+            // 
+            cntxReports.Items.AddRange(new ToolStripItem[] { yearlySummaryToolStripMenuItem });
+            cntxReports.Name = "cntxReports";
+            cntxReports.Size = new Size(160, 26);
+            // 
+            // yearlySummaryToolStripMenuItem
+            // 
+            yearlySummaryToolStripMenuItem.Name = "yearlySummaryToolStripMenuItem";
+            yearlySummaryToolStripMenuItem.Size = new Size(159, 22);
+            yearlySummaryToolStripMenuItem.Text = "Yearly Summary";
+            yearlySummaryToolStripMenuItem.Click += yearlySummaryToolStripMenuItem_Click;
             // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1084, 611);
+            Controls.Add(btnReports);
             Controls.Add(grpChartAssets);
             Controls.Add(btnAddNew);
             Controls.Add(btnAdvSearch);
@@ -662,6 +691,7 @@ namespace DemoProject
             ((System.ComponentModel.ISupportInitialize)chtAssets).EndInit();
             cntxChartPeriod.ResumeLayout(false);
             cntxEditDeleteWallet.ResumeLayout(false);
+            cntxReports.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -725,5 +755,8 @@ namespace DemoProject
         private ToolStripMenuItem deleteWalletToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem3;
         private ToolStripMenuItem showOnChartToolStripMenuItem;
+        private Button btnReports;
+        private ContextMenuStrip cntxReports;
+        private ToolStripMenuItem yearlySummaryToolStripMenuItem;
     }
 }

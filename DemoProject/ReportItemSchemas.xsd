@@ -9,4 +9,23 @@
       <xs:element minOccurs="1" maxOccurs="1" name="Date" type="xs:dateTime" />
     </xs:sequence>
   </xs:complexType>
+  <xs:element name="YearlySummaryModel" nillable="true" type="YearlySummaryModel" />
+  <xs:complexType name="YearlySummaryModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="CategoryName" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month01" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month02" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month03" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month04" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month05" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month06" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month07" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month08" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month09" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month10" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month11" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Month12" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" name="RowTotal" type="xs:decimal" />
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>

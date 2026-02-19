@@ -70,6 +70,7 @@
             txtTotalSelected = new DemoProject.Components.MoneyBox();
             lblTotalSelected = new System.Windows.Forms.Label();
             groupBox3 = new System.Windows.Forms.GroupBox();
+            chkIncludeTransfersInTotals = new System.Windows.Forms.CheckBox();
             chkIncludeUnpaidBalance = new System.Windows.Forms.CheckBox();
             cntxGrid = new System.Windows.Forms.ContextMenuStrip(components);
             changeDueValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +92,6 @@
             btnReports = new System.Windows.Forms.Button();
             cntxReports = new System.Windows.Forms.ContextMenuStrip(components);
             categoriesOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            chkIncludeTransfersInTotals = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
@@ -496,6 +496,16 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Display";
             // 
+            // chkIncludeTransfersInTotals
+            // 
+            chkIncludeTransfersInTotals.AutoSize = true;
+            chkIncludeTransfersInTotals.Location = new System.Drawing.Point(6, 57);
+            chkIncludeTransfersInTotals.Name = "chkIncludeTransfersInTotals";
+            chkIncludeTransfersInTotals.Size = new System.Drawing.Size(160, 19);
+            chkIncludeTransfersInTotals.TabIndex = 4;
+            chkIncludeTransfersInTotals.Text = "Include Transfers in Totals";
+            chkIncludeTransfersInTotals.UseVisualStyleBackColor = true;
+            // 
             // chkIncludeUnpaidBalance
             // 
             chkIncludeUnpaidBalance.AutoSize = true;
@@ -629,6 +639,7 @@
             // 
             // btnReports
             // 
+            btnReports.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnReports.Location = new System.Drawing.Point(734, 523);
             btnReports.Name = "btnReports";
             btnReports.Size = new System.Drawing.Size(119, 31);
@@ -649,16 +660,6 @@
             categoriesOverviewToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             categoriesOverviewToolStripMenuItem.Text = "Categories Overview";
             categoriesOverviewToolStripMenuItem.Click += categoriesOverviewToolStripMenuItem_Click;
-            // 
-            // chkIncludeTransfersInTotals
-            // 
-            chkIncludeTransfersInTotals.AutoSize = true;
-            chkIncludeTransfersInTotals.Location = new System.Drawing.Point(6, 57);
-            chkIncludeTransfersInTotals.Name = "chkIncludeTransfersInTotals";
-            chkIncludeTransfersInTotals.Size = new System.Drawing.Size(160, 19);
-            chkIncludeTransfersInTotals.TabIndex = 4;
-            chkIncludeTransfersInTotals.Text = "Include Transfers in Totals";
-            chkIncludeTransfersInTotals.UseVisualStyleBackColor = true;
             // 
             // frmAdvancedSearch
             // 
