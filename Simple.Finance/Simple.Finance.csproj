@@ -29,7 +29,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="RafaelEstevam.TextSerializer" Version="0.5.1" />
-	  <PackageReference Include="Simple.Sqlite" Version="1.4.9.2" />
+	  <PackageReference Include="Simple.Sqlite" Version="1.5.0" />
 	</ItemGroup>
 
 </Project>
