@@ -660,7 +660,7 @@ namespace DemoProject
                 if (tx.Status == Transac.PaymentStatus.Reversed) continue;
                 if (tx.Type != Transac.TransactionType.Simple) continue;
 
-                if(tx.Status == Transac.PaymentStatus.Unpaid)
+                if (tx.Status == Transac.PaymentStatus.Unpaid)
                 {
                     if (tx.DueDate.Date < DateTime.Today.Date) continue; // Já não pagou, não vai pagar
                 }

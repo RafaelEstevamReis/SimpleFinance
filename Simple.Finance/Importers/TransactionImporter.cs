@@ -76,7 +76,7 @@ public static class TransactionImporter
 
     public static IEnumerable<Transac> FromCSV(string filePath, Func<string[], Transac> func, char delimiter = ',')
     {
-        var lines = DatabaseWrapper.Helpers.CsvParser.ParseCsvFile(filePath, delimiter: delimiter);
+        var lines = DatabaseWrapper.Parsers.CsvParser.ParseCsvFile(filePath, delimiter: delimiter);
 
         foreach (var line in lines)
         {
