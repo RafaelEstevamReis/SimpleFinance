@@ -432,10 +432,9 @@ namespace DemoProject
             }
             if (selected.Any(o => o.Type != Transac.TransactionType.Simple))
             {
-                MessageBox.Show("Only SIMPLE transactions can be cloned");
+                MessageBox.Show("Only SIMPLE transactions can be paid");
                 return;
             }
-
 
             foreach (var tx in selected)
             {
