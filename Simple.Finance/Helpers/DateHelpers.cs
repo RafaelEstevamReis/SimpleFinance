@@ -41,7 +41,7 @@ public static class DateHelpers
     }
     public static DateTime EndOfHour(this DateTime dt)
     {
-        return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 59, 59, dt.Kind);
+        return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 59, 59, 999, dt.Kind);
     }
 
     public static DateTime StartOfMinute(this DateTime dt)
