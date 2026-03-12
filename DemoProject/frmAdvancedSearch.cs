@@ -144,7 +144,7 @@ namespace DemoProject
                     else add = "◀ ";
                 }
 
-                var currencyCode = tx.GetTransacationCurrencyCode(dicWallets);
+                var currencyCode = tx.GetTransacationCurrencyCode(dicWallets) ?? "";
                 if (!balances.ContainsKey(currencyCode)) balances[currencyCode] = 0;
 
                 if (tx.Status == Transac.PaymentStatus.Paid)

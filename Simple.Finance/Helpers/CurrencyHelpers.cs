@@ -56,8 +56,10 @@ public static class CurrencyHelpers
         return data;
     }
 
-    public static CurrencyData? GetCurrencyData(string currencyCode)
+    public static CurrencyData? GetCurrencyData(string? currencyCode)
     {
+        if (string.IsNullOrEmpty(currencyCode)) return null;
+
         if (CustomCurrencyData.TryGetValue(currencyCode, out CurrencyData data)) return data;
         if (SystemCurrencyData.TryGetValue(currencyCode, out data)) return data;
         return null;
