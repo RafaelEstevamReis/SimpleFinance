@@ -53,7 +53,7 @@ public record Transac
 
     public string? PaymentDetails { get; set; }
 
-    public DateTime EfectiveDate => Status == PaymentStatus.Paid ? PaymentDate : DueDate;
+    public DateTime EfectiveDate => Status == PaymentStatus.Paid ? PaymentDate : DueDate.Date;
     public decimal EfectiveValue => Status == PaymentStatus.Paid ? PaidValue : DueValue;
 
     /// <summary>
