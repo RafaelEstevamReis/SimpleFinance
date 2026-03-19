@@ -61,14 +61,19 @@ namespace DemoProject
             grdTransactions.Rows.Clear();
             IEnumerable<Transac> txs = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, start, end);
 
+            decimal balance = 0;
+            clnNetAmount.HeaderText = "Net Amount";
             if (cboWallet.SelectedValue is long walletId && walletId > 0)
             {
                 txs = txs.Where(o => o.WalletId == walletId);
+                
+                var walletBalance = manager.GetWalletsBalance(start).ToDictionary(o => o.WalletId, o => o.Balance);
+                balance = walletBalance[walletId];
+                clnNetAmount.HeaderText = "Balance";
             }
 
-            txs = txs.OrderBy(o => o.EfectiveDate).ToArray();
+            txs = txs.OrderBy(o => o.EfectiveDate).ThenByDescending(o => o.EfectiveValue).ToArray();
 
-            decimal balance = 0;
             foreach (var tx in txs)
             {
                 if (tx.Status == Transac.PaymentStatus.Reversed) continue;
