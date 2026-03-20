@@ -66,13 +66,16 @@ namespace DemoProject
             if (cboWallet.SelectedValue is long walletId && walletId > 0)
             {
                 txs = txs.Where(o => o.WalletId == walletId);
-                
+
                 var walletBalance = manager.GetWalletsBalance(start).ToDictionary(o => o.WalletId, o => o.Balance);
-                balance = walletBalance[walletId];
+                walletBalance.TryGetValue(walletId, out balance);
                 clnNetAmount.HeaderText = "Balance";
             }
 
-            txs = txs.OrderBy(o => o.EfectiveDate).ThenByDescending(o => o.EfectiveValue).ToArray();
+            txs = txs.OrderBy(o => o.EfectiveDate.Date)
+                     .ThenByDescending(o => (int)o.Status)
+                     .ThenByDescending(o => o.EfectiveValue)
+                     .ToArray();
 
             foreach (var tx in txs)
             {
