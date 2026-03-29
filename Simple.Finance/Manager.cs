@@ -124,7 +124,7 @@ public class Manager
         return cnn.Query<Models.WalletBalance>(
 @"SELECT WalletId, COALESCE(SUM(CASE WHEN Status = 1 THEN  PaidValue ELSE DueValue END),0) as Balance 
   FROM Transac 
-  WHERE (Status = 1 AND PaymentDate <= @date) 
+  WHERE (Status = 1 AND PaymentDate < @date) 
      OR (Status = 0 AND DueDate <= @date AND DueDate > CURRENT_TIMESTAMP ) 
 GROUP BY WalletId", new
         {

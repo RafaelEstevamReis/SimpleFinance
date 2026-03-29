@@ -281,12 +281,12 @@
             grdTransactions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grdTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { clnWallet, clnCategory, clnDescription, clnDueDate, clnValue, clnPaidDate, clnBalance });
-            grdTransactions.Location = new System.Drawing.Point(0, 116);
+            grdTransactions.Location = new System.Drawing.Point(-1, 116);
             grdTransactions.Name = "grdTransactions";
             grdTransactions.ReadOnly = true;
             grdTransactions.RowHeadersVisible = false;
             grdTransactions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            grdTransactions.Size = new System.Drawing.Size(976, 400);
+            grdTransactions.Size = new System.Drawing.Size(978, 400);
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
             grdTransactions.CellMouseClick += grdTransactions_CellMouseClick;

@@ -29,24 +29,24 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             dtDate = new System.Windows.Forms.DateTimePicker();
             btnNext = new System.Windows.Forms.Button();
             btnPrev = new System.Windows.Forms.Button();
             grdTransactions = new System.Windows.Forms.DataGridView();
+            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            clnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            clnNetAmount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             btnNewTr = new System.Windows.Forms.Button();
             cntxBtn = new System.Windows.Forms.ContextMenuStrip(components);
             newTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             newWalletTransferToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             cboWallet = new System.Windows.Forms.ComboBox();
             label1 = new System.Windows.Forms.Label();
-            Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            clnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            clnNetAmount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
             cntxBtn.SuspendLayout();
             SuspendLayout();
@@ -90,14 +90,55 @@
             grdTransactions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grdTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdTransactions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { Column1, Column2, Column3, clnValue, clnNetAmount });
-            grdTransactions.Location = new System.Drawing.Point(0, 41);
+            grdTransactions.Location = new System.Drawing.Point(-1, 41);
             grdTransactions.Name = "grdTransactions";
             grdTransactions.ReadOnly = true;
             grdTransactions.RowHeadersVisible = false;
             grdTransactions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            grdTransactions.Size = new System.Drawing.Size(724, 490);
+            grdTransactions.Size = new System.Drawing.Size(726, 490);
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
+            // 
+            // Column1
+            // 
+            dataGridViewCellStyle1.Format = "dd/MM HH:mm";
+            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            Column1.HeaderText = "Date";
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            Column1.Width = 80;
+            // 
+            // Column2
+            // 
+            Column2.HeaderText = "Category";
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            Column2.Width = 150;
+            // 
+            // Column3
+            // 
+            Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            Column3.HeaderText = "Description";
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            // 
+            // clnValue
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N2";
+            clnValue.DefaultCellStyle = dataGridViewCellStyle2;
+            clnValue.HeaderText = "Value";
+            clnValue.Name = "clnValue";
+            clnValue.ReadOnly = true;
+            // 
+            // clnNetAmount
+            // 
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N2";
+            clnNetAmount.DefaultCellStyle = dataGridViewCellStyle3;
+            clnNetAmount.HeaderText = "Net Amount";
+            clnNetAmount.Name = "clnNetAmount";
+            clnNetAmount.ReadOnly = true;
             // 
             // btnNewTr
             // 
@@ -115,7 +156,7 @@
             // 
             cntxBtn.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { newTransactionToolStripMenuItem, newWalletTransferToolStripMenuItem });
             cntxBtn.Name = "cntxBtn";
-            cntxBtn.Size = new System.Drawing.Size(181, 70);
+            cntxBtn.Size = new System.Drawing.Size(179, 48);
             // 
             // newTransactionToolStripMenuItem
             // 
@@ -149,47 +190,6 @@
             label1.Size = new System.Drawing.Size(43, 15);
             label1.TabIndex = 5;
             label1.Text = "Wallet:";
-            // 
-            // Column1
-            // 
-            dataGridViewCellStyle4.Format = "dd/MM HH:mm";
-            Column1.DefaultCellStyle = dataGridViewCellStyle4;
-            Column1.HeaderText = "Date";
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
-            Column1.Width = 80;
-            // 
-            // Column2
-            // 
-            Column2.HeaderText = "Category";
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
-            Column2.Width = 150;
-            // 
-            // Column3
-            // 
-            Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            Column3.HeaderText = "Description";
-            Column3.Name = "Column3";
-            Column3.ReadOnly = true;
-            // 
-            // clnValue
-            // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "N2";
-            clnValue.DefaultCellStyle = dataGridViewCellStyle5;
-            clnValue.HeaderText = "Value";
-            clnValue.Name = "clnValue";
-            clnValue.ReadOnly = true;
-            // 
-            // clnNetAmount
-            // 
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.Format = "N2";
-            clnNetAmount.DefaultCellStyle = dataGridViewCellStyle6;
-            clnNetAmount.HeaderText = "Net Amount";
-            clnNetAmount.Name = "clnNetAmount";
-            clnNetAmount.ReadOnly = true;
             // 
             // frmTransactionBook
             // 

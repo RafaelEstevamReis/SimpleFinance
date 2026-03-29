@@ -334,6 +334,11 @@ namespace DemoProject
             foreach (var tx in selected)
             {
                 tx.DueValue = newValue * Math.Sign(tx.DueValue);
+
+                if(tx.Status == Transac.PaymentStatus.Paid)
+                {
+                    tx.PaidValue = tx.DueValue; 
+                }
             }
 
             manager.CreateUpdateBulkTransaction(selected);
