@@ -225,7 +225,12 @@ namespace DemoProject
             if (e.Button != MouseButtons.Right) return;
             if (e.RowIndex < 0) return;
 
-            grdTransactions.Rows[e.RowIndex].Selected = true;
+            // If the row is not selected, unselect all and reselect this ne
+            if (!grdTransactions.Rows[e.RowIndex].Selected)
+            {
+                grdTransactions.ClearSelection();
+                grdTransactions.Rows[e.RowIndex].Selected = true;
+            }
 
             cntxGrid.Show(Cursor.Position);
         }
@@ -335,9 +340,9 @@ namespace DemoProject
             {
                 tx.DueValue = newValue * Math.Sign(tx.DueValue);
 
-                if(tx.Status == Transac.PaymentStatus.Paid)
+                if (tx.Status == Transac.PaymentStatus.Paid)
                 {
-                    tx.PaidValue = tx.DueValue; 
+                    tx.PaidValue = tx.DueValue;
                 }
             }
 

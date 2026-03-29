@@ -6,6 +6,7 @@ using Simple.Finance.Tables;
 using System;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -238,5 +239,20 @@ namespace DemoProject.Dialogs
             return frm.ShowDialog();
         }
 
+        private void dtDue_ValueChanged(object sender, EventArgs e)
+        {
+            lblDueDateDoW.Text = dtDue.Value.ToString("ddd", CultureInfo.CurrentCulture);
+        }
+
+        private void txtDue_Leave(object sender, EventArgs e)
+        {
+            if(transaction.Id == 0)
+            {
+                if(txtPaid.Value == 0)
+                {
+                    txtPaid.Value = txtDue.Value;
+                }
+            }
+        }
     }
 }

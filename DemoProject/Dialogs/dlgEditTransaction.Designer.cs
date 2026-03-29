@@ -71,6 +71,7 @@
             rdoRecuringNo = new System.Windows.Forms.RadioButton();
             txtPaymentDetails = new System.Windows.Forms.TextBox();
             label15 = new System.Windows.Forms.Label();
+            lblDueDateDoW = new System.Windows.Forms.Label();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             pnlPaid.SuspendLayout();
@@ -297,6 +298,7 @@
             dtDue.Name = "dtDue";
             dtDue.Size = new System.Drawing.Size(95, 23);
             dtDue.TabIndex = 6;
+            dtDue.ValueChanged += dtDue_ValueChanged;
             // 
             // dtPaid
             // 
@@ -375,6 +377,7 @@
             txtDue.Text = "0,00";
             txtDue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             txtDue.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            txtDue.Leave += txtDue_Leave;
             // 
             // txtPaid
             // 
@@ -515,11 +518,22 @@
             label15.TabIndex = 34;
             label15.Text = "Payment Details";
             // 
+            // lblDueDateDoW
+            // 
+            lblDueDateDoW.AutoSize = true;
+            lblDueDateDoW.ForeColor = System.Drawing.Color.Gray;
+            lblDueDateDoW.Location = new System.Drawing.Point(169, 153);
+            lblDueDateDoW.Name = "lblDueDateDoW";
+            lblDueDateDoW.Size = new System.Drawing.Size(12, 15);
+            lblDueDateDoW.TabIndex = 36;
+            lblDueDateDoW.Text = "-";
+            // 
             // dlgEditTransaction
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(362, 460);
+            Controls.Add(lblDueDateDoW);
             Controls.Add(txtPaymentDetails);
             Controls.Add(label15);
             Controls.Add(lblAdvanced);
@@ -613,5 +627,6 @@
         private System.Windows.Forms.Panel pnlRecuring;
         private System.Windows.Forms.TextBox txtPaymentDetails;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label lblDueDateDoW;
     }
 }

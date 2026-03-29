@@ -43,6 +43,10 @@ namespace DemoProject.Components
                 Value = Math.Round(Value, DecimalPlaces, MidpointRounding.ToZero);
                 base.OnKeyDown(e);
             }
+            else if (e.KeyCode == Keys.Decimal)
+            {
+                Value *= (decimal)Math.Pow(10, DecimalPlaces);
+            }
             else if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
             {
                 checkSel();
