@@ -421,7 +421,7 @@ GROUP BY WalletId", new
         saveChangeLog(cnn, null, first);
         saveChangeLog(cnn, null, second);
     }
-    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description, bool paid)
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description, Tables.Transac.PaymentStatus status)
     {
         updateWalletTransfer(oneOfTransactions,
             expenseUpdate =>
@@ -429,25 +429,16 @@ GROUP BY WalletId", new
                 expenseUpdate.DueValue = expenseUpdate.PaidValue = newValue * (-1);
                 expenseUpdate.DueDate = expenseUpdate.PaymentDate = newDate;
                 expenseUpdate.Description = description;
-                expenseUpdate.Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid;
+                expenseUpdate.Status = status;
             },
             incomeUpdate =>
             {
                 incomeUpdate.DueValue = incomeUpdate.PaidValue = newValue * (+1);
                 incomeUpdate.DueDate = incomeUpdate.PaymentDate = newDate;
                 incomeUpdate.Description = description;
-                incomeUpdate.Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid;
+                incomeUpdate.Status = status;
             });
     }
-    public void ReverseWalletTransfer(long oneOfTransactions) => updateWalletTransfer(oneOfTransactions,
-            first =>
-            {
-                first.Status = Tables.Transac.PaymentStatus.Reversed;
-            },
-            second =>
-            {
-                second.Status = Tables.Transac.PaymentStatus.Reversed;
-            });
     void updateWalletTransfer(long oneOfTransactions, Action<Tables.Transac> expenseUpdate, Action<Tables.Transac> incomeUpdate)
     {
         using var cnn = db.GetConnection();

@@ -44,6 +44,7 @@
             label11 = new System.Windows.Forms.Label();
             lblDestinationWallet = new System.Windows.Forms.Label();
             lblSourceWallet = new System.Windows.Forms.Label();
+            rdoReversed = new System.Windows.Forms.RadioButton();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -135,11 +136,12 @@
             // 
             // panel2
             // 
+            panel2.Controls.Add(rdoReversed);
             panel2.Controls.Add(rdoPaid);
             panel2.Controls.Add(rdoUnpaid);
             panel2.Location = new System.Drawing.Point(114, 93);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(150, 26);
+            panel2.Size = new System.Drawing.Size(239, 26);
             panel2.TabIndex = 47;
             // 
             // rdoPaid
@@ -150,7 +152,6 @@
             rdoPaid.Name = "rdoPaid";
             rdoPaid.Size = new System.Drawing.Size(48, 19);
             rdoPaid.TabIndex = 1;
-            rdoPaid.TabStop = true;
             rdoPaid.Text = "Paid";
             rdoPaid.UseVisualStyleBackColor = true;
             // 
@@ -199,6 +200,16 @@
             lblSourceWallet.Size = new System.Drawing.Size(12, 15);
             lblSourceWallet.TabIndex = 51;
             lblSourceWallet.Text = "-";
+            // 
+            // rdoReversed
+            // 
+            rdoReversed.AutoSize = true;
+            rdoReversed.Location = new System.Drawing.Point(149, 3);
+            rdoReversed.Name = "rdoReversed";
+            rdoReversed.Size = new System.Drawing.Size(72, 19);
+            rdoReversed.TabIndex = 2;
+            rdoReversed.Text = "Reversed";
+            rdoReversed.UseVisualStyleBackColor = true;
             // 
             // dlgUpdateWalletTransfer
             // 
@@ -249,5 +260,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblDestinationWallet;
         private System.Windows.Forms.Label lblSourceWallet;
+        private System.Windows.Forms.RadioButton rdoReversed;
     }
 }

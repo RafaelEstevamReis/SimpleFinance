@@ -413,6 +413,36 @@ namespace DemoProject
             search();
         }
 
+        private void reverseTransactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+
+            if (selected.Any(o => o.Type != Transac.TransactionType.Simple))
+            {
+                MessageBox.Show("Only SIMPLE transactions can be reversed");
+                return;
+            }
+
+            var result = MessageBox.Show($"Reverse all {selected.Length} selected transactions?", "Reverse?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            foreach (var tx in selected)
+            {
+                tx.Status = Transac.PaymentStatus.Reversed;
+            }
+
+            manager.CreateUpdateBulkTransaction(selected);
+            search();
+        }
+
         private void markAsPaidAsOfTodayToolStripMenuItem_Click(object sender, EventArgs e)
         {
             markAsPaid(asToday: true);

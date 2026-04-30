@@ -76,6 +76,7 @@
             changeDueValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             changeDueDayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             changeCategoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            reverseTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             markAsPaidAsOfTodayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             markAsPaidAsOfOriginalDueDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -518,9 +519,9 @@
             // 
             // cntxGrid
             // 
-            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem, toolStripMenuItem1, markAsPaidAsOfTodayToolStripMenuItem, markAsPaidAsOfOriginalDueDateToolStripMenuItem, toolStripMenuItem3, cloneTransactionToolStripMenuItem });
+            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem, reverseTransactionToolStripMenuItem, toolStripMenuItem1, markAsPaidAsOfTodayToolStripMenuItem, markAsPaidAsOfOriginalDueDateToolStripMenuItem, toolStripMenuItem3, cloneTransactionToolStripMenuItem });
             cntxGrid.Name = "cntxGrid";
-            cntxGrid.Size = new System.Drawing.Size(276, 148);
+            cntxGrid.Size = new System.Drawing.Size(276, 192);
             // 
             // changeDueValueToolStripMenuItem
             // 
@@ -542,6 +543,13 @@
             changeCategoryToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
             changeCategoryToolStripMenuItem.Text = "Change Category";
             changeCategoryToolStripMenuItem.Click += changeCategoryToolStripMenuItem_Click;
+            // 
+            // reverseTransactionToolStripMenuItem
+            // 
+            reverseTransactionToolStripMenuItem.Name = "reverseTransactionToolStripMenuItem";
+            reverseTransactionToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
+            reverseTransactionToolStripMenuItem.Text = "Reverse Transactions";
+            reverseTransactionToolStripMenuItem.Click += reverseTransactionToolStripMenuItem_Click;
             // 
             // toolStripMenuItem1
             // 
@@ -767,5 +775,6 @@
         private System.Windows.Forms.ContextMenuStrip cntxReports;
         private System.Windows.Forms.ToolStripMenuItem categoriesOverviewToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkIncludeTransfersInTotals;
+        private System.Windows.Forms.ToolStripMenuItem reverseTransactionToolStripMenuItem;
     }
 }
