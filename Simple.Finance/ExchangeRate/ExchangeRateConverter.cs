@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public class ExchangeRateConverter
 {
-    public List<IExchangeRateTable> ExchangeRateTables { get; set; } = [];
+    public IExchangeRateTable[] ExchangeRateTables { get; set; } = [];
     public IExchangeRateCaching CachingEngine { get; set; } = new ExchangeRateMemoryCache();
 
     /// <summary>
@@ -16,19 +16,23 @@ public class ExchangeRateConverter
     /// </summary>
     public bool CacheEnabled { get; set; } = true;
 
+    private ExchangeGraph exchangeGraph = new([]);
+
     public async Task InitializeTables()
     {
-        if (ExchangeRateTables.Count == 0) throw new InvalidOperationException($"There are no {nameof(ExchangeRateTables)} to process");
+        if (ExchangeRateTables.Length == 0) throw new InvalidOperationException($"There are no {nameof(ExchangeRateTables)} to process");
 
         var allTaks = ExchangeRateTables
             .Select(o => o.Initialize())
             .ToArray();
         await Task.WhenAll(allTaks);
+
+        exchangeGraph = new ExchangeGraph(ExchangeRateTables);
     }
 
     public decimal? GetRateFor(string baseCur, string quoteCur, DateTime dateUTC)
     {
-        if (ExchangeRateTables.Count == 0) throw new InvalidOperationException($"There are no {nameof(ExchangeRateTables)} to process");
+        if (ExchangeRateTables.Length == 0) throw new InvalidOperationException($"There are no {nameof(ExchangeRateTables)} to process");
 
         if (baseCur == quoteCur) return 1;
 
@@ -39,16 +43,7 @@ public class ExchangeRateConverter
             if (rate != null) return rate;
         }
 
-        rate = getRateFor(baseCur, quoteCur, dateUTC);
-        if (rate == null)
-        {
-            // Try to get inverted
-            var invertedRate = getRateFor(quoteCur, baseCur, dateUTC);
-            if (invertedRate != null && invertedRate != 0)
-            {
-                rate = 1 / invertedRate;
-            }
-        }
+        rate = getRateFor(exchangeGraph, ExchangeRateTables, baseCur, quoteCur, dateUTC);
 
         if (CacheEnabled && rate != null)
         {
@@ -57,17 +52,50 @@ public class ExchangeRateConverter
 
         return rate;
     }
-    protected decimal? getRateFor(string baseCur, string quoteCur, DateTime dateUTC)
+    protected static decimal? getRateFor(ExchangeGraph exchangeGraph, IExchangeRateTable[] exchangeRateTables, string baseCur, string quoteCur, DateTime dateUTC)
     {
-        foreach (var converter in ExchangeRateTables)
+        if (string.Equals(baseCur, quoteCur, StringComparison.InvariantCultureIgnoreCase)) return 1.0m;
+
+        // 1. Obtém o caminho de conversão
+        var path = exchangeGraph.GetRoute(baseCur, quoteCur);
+        if (path.Length == 0) return null;
+
+        decimal? currentRate = 1.0m;
+
+        foreach (var node in path)
         {
-            var rate = converter.GetRateFor(baseCur, quoteCur, dateUTC);
-            if (rate != null)
+            string callBase = node.BaseCur;
+            string callQuote = node.QuoteCur;
+
+            decimal? rate = null;
+
+            // 2. Estratégia de busca por tabela válida para a data
+            // Tenta primeiro a tabela que veio do grafo (mais provável)
+            if (node.Table != null)
             {
-                return rate;
+                rate = node.Table.GetRateFor(callBase, callQuote, dateUTC);
             }
+
+            // Se falhar (null), tenta as demais tabelas na ordem do array
+            if (rate is null)
+            {
+                foreach (var table in exchangeRateTables)
+                {
+                    // Evita tentar a mesma tabela novamente
+                    if (table == node.Table) continue;
+
+                    rate = table.GetRateFor(callBase, callQuote, dateUTC);
+                    if (rate.HasValue) break; // Pegamos a primeira que retornou valor
+                }
+            }
+
+            if (!rate.HasValue) return null; // Não foi possível converter esta etapa
+
+            // 3. Acumula a taxa
+            currentRate = currentRate * (node.Inverted && rate.Value != 0 ? (1 / rate.Value) : rate.Value);
         }
-        return null;
+
+        return currentRate;
     }
 
     internal static decimal? getTableValue(decimal[][][] data, int firstYear, DateTime dt)
