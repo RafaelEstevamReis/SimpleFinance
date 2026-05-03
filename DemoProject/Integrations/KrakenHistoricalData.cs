@@ -49,6 +49,11 @@ internal class KrakenHistoricalData : IExchangeRateTable
 
         return null;
     }
+    public IEnumerable<(string, string)> AvailableCurrencyPairs()
+    {
+        yield return ("BTC", "USD");
+        yield return ("SAT", "USD");
+    }
 
     private decimal? getValueFor(DateTime date)
     {

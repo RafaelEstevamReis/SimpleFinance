@@ -2,6 +2,7 @@
 
 using Simple.Finance.ExchangeRate;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public class TemporalSeries_BRLUSD : IExchangeRateTable
@@ -13,6 +14,11 @@ public class TemporalSeries_BRLUSD : IExchangeRateTable
 
         return ExchangeRateConverter.getTableValue(data, firstYear, date);
     }
+    public IEnumerable<(string, string)> AvailableCurrencyPairs()
+    {
+        yield return ("USD", "BRL");
+    }
+
 
     public Task Initialize() => Task.CompletedTask;
 

@@ -2,6 +2,7 @@
 
 using Simple.Finance.ExchangeRate;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public class TemporalSeries_BTCUSD : IExchangeRateTable
@@ -17,6 +18,11 @@ public class TemporalSeries_BTCUSD : IExchangeRateTable
         }
 
         return null;
+    }
+    public IEnumerable<(string, string)> AvailableCurrencyPairs()
+    {
+        yield return ("BTC", "USD");
+        yield return ("SAT", "USD");
     }
 
     public Task Initialize() => Task.CompletedTask;

@@ -2,6 +2,7 @@
 
 using Simple.Finance.ExchangeRate;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public class TemporalSeries_XAUEUR : IExchangeRateTable
@@ -12,6 +13,10 @@ public class TemporalSeries_XAUEUR : IExchangeRateTable
         if (baseCur != "XAU") return null;
 
         return ExchangeRateConverter.getTableValue(data, firstYear, date);
+    }
+    public IEnumerable<(string, string)> AvailableCurrencyPairs()
+    {
+        yield return ("XAU", "EUR");
     }
 
     public Task Initialize() => Task.CompletedTask;
