@@ -502,7 +502,7 @@
             // txtPaymentDetails
             // 
             txtPaymentDetails.Location = new System.Drawing.Point(9, 277);
-            txtPaymentDetails.MaxLength = 64;
+            txtPaymentDetails.MaxLength = 512;
             txtPaymentDetails.Multiline = true;
             txtPaymentDetails.Name = "txtPaymentDetails";
             txtPaymentDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
