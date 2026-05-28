@@ -16,7 +16,7 @@ var mgr = new Simple.Finance.Manager("data.db");
 2. Create Wallets and Categories
 
 ~~~C#
-// Create a new finance manager
+// Create a new Wallet
 var walletId = mgr.CreateUpdateWallet(new Simple.Finance.Tables.Wallet()
 {
     Id = 0,
@@ -24,6 +24,7 @@ var walletId = mgr.CreateUpdateWallet(new Simple.Finance.Tables.Wallet()
     Description = "",
     IsDeleted = false,
 });
+// Create a new expending category
 var categoryId = mgr.CreateUpdateCategory(new Simple.Finance.Tables.Category()
 {
     Id = 0,
