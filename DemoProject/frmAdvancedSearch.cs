@@ -122,6 +122,7 @@ namespace DemoProject
             var dicCategories = manager.GetCategoriesDict();
 
             txs = txs.OrderBy(o => o.EfectiveDate.Date)
+                     .ThenByDescending(o => o.Status)
                      .ThenBy(o => o.Type)
                      .ThenByDescending(o => o.DueValue)
                      ;
