@@ -31,11 +31,11 @@ namespace DemoProject.Dialogs
             cboDestinationWallet.DisplayMember = "Name";
             cboDestinationWallet.ValueMember = "Id";
 
-            cboSourceCategory.DataSource = categories.Where(o => o.IsExpense).ToArray();
+            cboSourceCategory.DataSource = categories.Where(o => o.IsExpense).Union([new Category() { Id = 0, Name = "[Uncategorized]", IsExpense = true }]).ToArray();
             cboSourceCategory.DisplayMember = "Name";
             cboSourceCategory.ValueMember = "Id";
 
-            cboDestinationCategory.DataSource = categories.Where(o => !o.IsExpense).ToArray();
+            cboDestinationCategory.DataSource = categories.Where(o => !o.IsExpense).Union([new Category() { Id = 0, Name = "[Uncategorized]", IsExpense = false }]).ToArray();
             cboDestinationCategory.DisplayMember = "Name";
             cboDestinationCategory.ValueMember = "Id";
         }

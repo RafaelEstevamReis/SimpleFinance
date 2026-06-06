@@ -127,9 +127,9 @@ public class Manager
   WHERE (Status = 1 AND PaymentDate < @date) 
      OR (Status = 0 AND DueDate <= @date AND DueDate > CURRENT_TIMESTAMP ) 
 GROUP BY WalletId", new
-        {
-            date = atDate,
-        });
+{
+    date = atDate,
+});
     }
 
     #endregion
@@ -306,11 +306,16 @@ GROUP BY WalletId", new
 
         // Check Category
         var category = cnn.Get<Tables.Category>(tx.CategoryId);
-        if (category == null) throw new InvalidOperationException($"Invalid Category Id: {tx.CategoryId}");
+        if (tx.CategoryId != 0 && category == null) throw new InvalidOperationException($"Invalid Category Id: {tx.CategoryId}");
 
         // Check signs
         if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not zero");
-        var sign = category.IsExpense ? -1 : 1;
+        var sign = Math.Sign(tx.DueValue);
+        if (category != null)
+        {
+            sign = category.IsExpense ? -1 : 1;
+        }
+
         tx.DueValue = Math.Abs(tx.DueValue) * sign;
         tx.PaidValue = Math.Abs(tx.PaidValue) * sign;
         tx.RC_DueValue = Math.Abs(tx.RC_DueValue) * sign;
