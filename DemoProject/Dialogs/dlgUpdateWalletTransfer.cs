@@ -21,18 +21,39 @@ namespace DemoProject.Dialogs
         private void dlgUpdateWalletTransfer_Load(object sender, EventArgs e)
         {
             var wallets = manager.GetWalletsDict();
-            dtDate.Value = oneTransaction.DueDate;
-            txtValue.Value = Math.Abs(oneTransaction.DueValue);
+            dtDueDate.Value = oneTransaction.DueDate;
+            dtPaidDate.Value = oneTransaction.PaymentDate;
+            txtDueValue.Value = Math.Abs(oneTransaction.DueValue);
+            txtPaidValue.Value = Math.Abs(oneTransaction.PaidValue);
             txtName.Text = oneTransaction.Description;
+            txtPaymentDetails.Text = oneTransaction.PaymentDetails;
 
             if (oneTransaction.Status == Transac.PaymentStatus.Paid) rdoPaid.Checked = true;
             else if (oneTransaction.Status == Transac.PaymentStatus.Unpaid) rdoUnpaid.Checked = true;
             else rdoReversed.Checked = true;
 
             var pair = manager.GetTransferPair(oneTransaction);
-
             lblSourceWallet.Text = pair.soruce.GetWalletName(wallets);
             lblDestinationWallet.Text = pair.destination.GetWalletName(wallets);
+        }
+
+        private void rdoUnpaid_CheckedChanged(object sender, EventArgs e)
+        {
+            updatePaidChanged();
+        }
+        private void rdoPaid_CheckedChanged(object sender, EventArgs e)
+        {
+            updatePaidChanged();
+        }
+
+        private void rdoReversed_CheckedChanged(object sender, EventArgs e)
+        {
+            updatePaidChanged();
+        }
+
+        private void updatePaidChanged()
+        {
+            pnlPaid.Enabled = rdoPaid.Checked;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -43,7 +64,7 @@ namespace DemoProject.Dialogs
                 return;
             }
 
-            if (txtValue.Value <= 0)
+            if (txtDueValue.Value <= 0)
             {
                 MessageBox.Show("Due Value must be greater than zero");
                 return;
@@ -52,17 +73,20 @@ namespace DemoProject.Dialogs
             var status = rdoPaid.Checked ? Transac.PaymentStatus.Paid
                                                     : rdoUnpaid.Checked ? Transac.PaymentStatus.Unpaid
                                                         : Transac.PaymentStatus.Reversed;
+
+            var paymentDetails = txtPaymentDetails.TextLength > 0 ? txtPaymentDetails.Text : null;
             manager.UpdateWalletTransfer(oneTransaction.Id,
-                                         txtValue.Value,
-                                         dtDate.Value,
-                                         dtDate.Value,
+                                         txtDueValue.Value,
+                                         txtPaidValue.Value,
+                                         dtDueDate.Value,
+                                         dtPaidDate.Value,
                                          txtName.Text.Trim(),
-                                         status,
-                                         null);
+                                         paymentDetails,
+                                         status);
 
             DialogResult = DialogResult.OK;
-
         }
+
         public static DialogResult ShowDialog(Transac oneTx)
         {
             using var frm = new dlgUpdateWalletTransfer();

@@ -440,14 +440,15 @@ GROUP BY WalletId", new
 
     [Obsolete("Use separated dates instead", error: false)]
     public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description, Tables.Transac.PaymentStatus status)
-        => UpdateWalletTransfer(oneOfTransactions, newValue, newDate, newDate, description, status, null);
+        => UpdateWalletTransfer(oneOfTransactions, newValue, newValue, newDate, newDate, description, null, status);
 
-    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDueDate, DateTime newPaymentDate, string description, Tables.Transac.PaymentStatus status, string? paymentDetails)
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newDueValue, decimal newPaidValue, DateTime newDueDate, DateTime newPaymentDate, string description, string? paymentDetails, Tables.Transac.PaymentStatus status)
     {
         updateWalletTransfer(oneOfTransactions,
             expenseUpdate =>
             {
-                expenseUpdate.DueValue = expenseUpdate.PaidValue = newValue * (-1);
+                expenseUpdate.DueValue = newDueValue * (-1);
+                expenseUpdate.PaidValue = newPaidValue * (-1);
                 expenseUpdate.DueDate = newDueDate;
                 expenseUpdate.PaymentDate = newPaymentDate;
                 expenseUpdate.Description = description;
@@ -456,7 +457,8 @@ GROUP BY WalletId", new
             },
             incomeUpdate =>
             {
-                incomeUpdate.DueValue = incomeUpdate.PaidValue = newValue * (+1);
+                incomeUpdate.DueValue = newDueValue * (+1);
+                incomeUpdate.PaidValue = newPaidValue * (+1);
                 incomeUpdate.DueDate = newDueDate;
                 incomeUpdate.PaymentDate = newPaymentDate;
                 incomeUpdate.Description = description;
