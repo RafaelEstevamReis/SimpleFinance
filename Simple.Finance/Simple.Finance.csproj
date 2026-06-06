@@ -30,7 +30,7 @@
 	<ItemGroup>
 		<PackageReference Include="Simple.API" Version="1.9.8.9" />
 		<PackageReference Include="RafaelEstevam.TextSerializer" Version="0.5.1" />
-		<PackageReference Include="Simple.Sqlite" Version="1.5.0" />
+		<PackageReference Include="Simple.Sqlite" Version="1.5.4" />
 	</ItemGroup>
 
 </Project>
