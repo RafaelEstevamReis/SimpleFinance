@@ -365,12 +365,16 @@ GROUP BY WalletId", new
 
     public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime dueDate, DateTime paymentDate, bool paid)
     {
-        var categories = GetCategories().ToArray();
-        var srcCat = categories.FirstOrDefault(o => o.Id == sourceCategory) ?? throw new ArgumentException("Invalid sourceCategory");
-        var dstCat = categories.FirstOrDefault(o => o.Id == destinationCategory) ?? throw new ArgumentException("Invalid destinationCategory");
+        if (sourceCategory != 0 || destinationCategory != 0)
+        {
+            var categories = GetCategories().ToArray();
 
-        if (!srcCat.IsExpense) throw new ArgumentException("sourceCategory must be 'IsExpense'");
-        if (dstCat.IsExpense) throw new ArgumentException("destinationCategory must not be 'IsExpense'");
+            var srcCat = categories.FirstOrDefault(o => o.Id == sourceCategory) ?? throw new ArgumentException("Invalid sourceCategory");
+            var dstCat = categories.FirstOrDefault(o => o.Id == destinationCategory) ?? throw new ArgumentException("Invalid destinationCategory");
+
+            if (!srcCat.IsExpense) throw new ArgumentException("sourceCategory must be 'IsExpense'");
+            if (dstCat.IsExpense) throw new ArgumentException("destinationCategory must not be 'IsExpense'");
+        }
 
         var txPay = new Tables.Transac()
         {
