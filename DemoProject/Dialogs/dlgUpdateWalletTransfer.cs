@@ -55,6 +55,7 @@ namespace DemoProject.Dialogs
             manager.UpdateWalletTransfer(oneTransaction.Id,
                                          txtValue.Value,
                                          dtDate.Value,
+                                         dtDate.Value,
                                          txtName.Text.Trim(),
                                          status);
 

@@ -104,6 +104,7 @@ namespace DemoProject.Dialogs
                                          txtName.Text.Trim(),
                                          txtValue.Value,
                                          dtDate.Value,
+                                         dtDate.Value,
                                          rdoPaid.Checked);
 
             DialogResult = DialogResult.OK;

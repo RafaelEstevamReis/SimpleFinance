@@ -358,7 +358,12 @@ GROUP BY WalletId", new
         }
         return tx.Id;
     }
+
+    [Obsolete("Use separated dates instead", error: false)]
     public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date, bool paid)
+        => CreateWalletTransfer(sourceWallet, sourceCategory, destinationWallet, destinationCategory, description, value, date, date, paid);
+
+    public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime dueDate, DateTime paymentDate, bool paid)
     {
         var categories = GetCategories().ToArray();
         var srcCat = categories.FirstOrDefault(o => o.Id == sourceCategory) ?? throw new ArgumentException("Invalid sourceCategory");
@@ -374,9 +379,9 @@ GROUP BY WalletId", new
             Created = DateTime.UtcNow,
             Changed = DateTime.UtcNow,
             WalletId = sourceWallet,
-            DueDate = date,
+            DueDate = dueDate,
             DueValue = -value,
-            PaymentDate = date,
+            PaymentDate = paymentDate,
             PaidValue = -value,
             Description = description,
             Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid,
@@ -389,9 +394,9 @@ GROUP BY WalletId", new
             Created = DateTime.UtcNow,
             Changed = DateTime.UtcNow,
             WalletId = destinationWallet,
-            DueDate = date,
+            DueDate = dueDate,
             DueValue = value,
-            PaymentDate = date,
+            PaymentDate = paymentDate,
             PaidValue = value,
             Description = description,
             Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid,
@@ -421,20 +426,27 @@ GROUP BY WalletId", new
         saveChangeLog(cnn, null, first);
         saveChangeLog(cnn, null, second);
     }
+
+    [Obsolete("Use separated dates instead", error: false)]
     public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description, Tables.Transac.PaymentStatus status)
+        => UpdateWalletTransfer(oneOfTransactions, newValue, newDate, newDate, description, status);
+
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDueDate, DateTime newPaymentDate, string description, Tables.Transac.PaymentStatus status)
     {
         updateWalletTransfer(oneOfTransactions,
             expenseUpdate =>
             {
                 expenseUpdate.DueValue = expenseUpdate.PaidValue = newValue * (-1);
-                expenseUpdate.DueDate = expenseUpdate.PaymentDate = newDate;
+                expenseUpdate.DueDate = newDueDate;
+                expenseUpdate.PaymentDate = newPaymentDate;
                 expenseUpdate.Description = description;
                 expenseUpdate.Status = status;
             },
             incomeUpdate =>
             {
                 incomeUpdate.DueValue = incomeUpdate.PaidValue = newValue * (+1);
-                incomeUpdate.DueDate = incomeUpdate.PaymentDate = newDate;
+                incomeUpdate.DueDate = newDueDate;
+                incomeUpdate.PaymentDate = newPaymentDate;
                 incomeUpdate.Description = description;
                 incomeUpdate.Status = status;
             });
