@@ -9,7 +9,7 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgUpdateWalletTransfer : DialogBase
     {
-        private Manager manager;
+        private readonly Manager manager;
         private Transac oneTransaction = null!;
 
         public dlgUpdateWalletTransfer()

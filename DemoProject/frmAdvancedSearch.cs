@@ -13,7 +13,7 @@ namespace DemoProject
 {
     public partial class frmAdvancedSearch : Form
     {
-        private Manager manager;
+        private readonly Manager manager;
 
         public frmAdvancedSearch()
         {

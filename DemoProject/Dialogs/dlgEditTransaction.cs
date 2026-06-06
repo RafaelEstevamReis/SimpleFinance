@@ -14,9 +14,9 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgEditTransaction : DialogBase
     {
-        private Manager manager;
-        private Category[] categories;
-        private Wallet[] wallets;
+        private readonly Manager manager;
+        private readonly Category[] categories;
+        private readonly Wallet[] wallets;
         private Transac transaction = null!;
 
         public dlgEditTransaction()

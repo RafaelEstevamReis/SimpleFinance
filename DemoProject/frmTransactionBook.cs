@@ -13,7 +13,7 @@ namespace DemoProject
 {
     public partial class frmTransactionBook : Form
     {
-        private Manager manager;
+        private readonly Manager manager;
         private Dictionary<long, Category> categories;
 
         public frmTransactionBook()

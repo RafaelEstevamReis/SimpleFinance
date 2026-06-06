@@ -11,8 +11,8 @@ namespace DemoProject.Dialogs
 {
     public partial class dlgAddBulkTransactions : DialogBase
     {
-        private Manager manager;
-        private Category[] categories;
+        private readonly Manager manager;
+        private readonly Category[] categories;
         private Transac[] initTransactions = [];
 
         public dlgAddBulkTransactions()
@@ -23,7 +23,6 @@ namespace DemoProject.Dialogs
         }
         private void dlgAddBulkTransactions_Load(object sender, EventArgs e)
         {
-            categories = manager.GetCategories().ToArray();
             cboWallet.DataSource = manager.GetWallets().ToArray();
             cboWallet.ValueMember = "Id";
             cboWallet.DisplayMember = "Name";
