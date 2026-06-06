@@ -57,7 +57,8 @@ namespace DemoProject.Dialogs
                                          dtDate.Value,
                                          dtDate.Value,
                                          txtName.Text.Trim(),
-                                         status);
+                                         status,
+                                         null);
 
             DialogResult = DialogResult.OK;
 

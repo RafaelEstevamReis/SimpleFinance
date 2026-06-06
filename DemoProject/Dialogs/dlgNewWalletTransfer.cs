@@ -105,7 +105,8 @@ namespace DemoProject.Dialogs
                                          txtValue.Value,
                                          dtDate.Value,
                                          dtDate.Value,
-                                         rdoPaid.Checked);
+                                         rdoPaid.Checked,
+                                         null);
 
             DialogResult = DialogResult.OK;
         }

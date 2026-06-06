@@ -366,9 +366,9 @@ GROUP BY WalletId", new
 
     [Obsolete("Use separated dates instead", error: false)]
     public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date, bool paid)
-        => CreateWalletTransfer(sourceWallet, sourceCategory, destinationWallet, destinationCategory, description, value, date, date, paid);
+        => CreateWalletTransfer(sourceWallet, sourceCategory, destinationWallet, destinationCategory, description, value, date, date, paid, null);
 
-    public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime dueDate, DateTime paymentDate, bool paid)
+    public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime dueDate, DateTime paymentDate, bool paid, string? paymentDetails)
     {
         if (sourceCategory != 0 || destinationCategory != 0)
         {
@@ -393,6 +393,7 @@ GROUP BY WalletId", new
             PaymentDate = paymentDate,
             PaidValue = -value,
             Description = description,
+            PaymentDetails = paymentDetails,
             Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid,
             Type = Tables.Transac.TransactionType.Simple, // Start as Simple
         };
@@ -408,6 +409,7 @@ GROUP BY WalletId", new
             PaymentDate = paymentDate,
             PaidValue = value,
             Description = description,
+            PaymentDetails = paymentDetails,
             Status = paid ? Tables.Transac.PaymentStatus.Paid : Tables.Transac.PaymentStatus.Unpaid,
             Type = Tables.Transac.TransactionType.Simple, // Start as Simple
         };
@@ -438,9 +440,9 @@ GROUP BY WalletId", new
 
     [Obsolete("Use separated dates instead", error: false)]
     public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDate, string description, Tables.Transac.PaymentStatus status)
-        => UpdateWalletTransfer(oneOfTransactions, newValue, newDate, newDate, description, status);
+        => UpdateWalletTransfer(oneOfTransactions, newValue, newDate, newDate, description, status, null);
 
-    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDueDate, DateTime newPaymentDate, string description, Tables.Transac.PaymentStatus status)
+    public void UpdateWalletTransfer(long oneOfTransactions, decimal newValue, DateTime newDueDate, DateTime newPaymentDate, string description, Tables.Transac.PaymentStatus status, string? paymentDetails)
     {
         updateWalletTransfer(oneOfTransactions,
             expenseUpdate =>
@@ -450,6 +452,7 @@ GROUP BY WalletId", new
                 expenseUpdate.PaymentDate = newPaymentDate;
                 expenseUpdate.Description = description;
                 expenseUpdate.Status = status;
+                expenseUpdate.PaymentDetails = paymentDetails;
             },
             incomeUpdate =>
             {
@@ -458,6 +461,7 @@ GROUP BY WalletId", new
                 incomeUpdate.PaymentDate = newPaymentDate;
                 incomeUpdate.Description = description;
                 incomeUpdate.Status = status;
+                incomeUpdate.PaymentDetails = paymentDetails;
             });
     }
     void updateWalletTransfer(long oneOfTransactions, Action<Tables.Transac> expenseUpdate, Action<Tables.Transac> incomeUpdate)
