@@ -59,25 +59,10 @@ public record Transac
     /// <summary>
     /// Get Transaction category name using provided cache
     /// </summary>
-    public string GetCategoryName(Dictionary<long, string> categories)
-    {
-        if(categories.ContainsKey(CategoryId)) return categories[CategoryId];
-        return "[-]";
-    }
-    /// <summary>
-    /// Get Transaction category name using provided cache
-    /// </summary>
     public string GetCategoryName(Dictionary<long, Category> categories)
     {
+        if (Type == TransactionType.WalletTransfer && CategoryId == 0) return "Internal Transfer";
         if (categories.ContainsKey(CategoryId)) return categories[CategoryId].Name;
-        return "[-]";
-    }
-    /// <summary>
-    /// Get Transaction wallet name using provided cache
-    /// </summary>
-    public string GetWalletName(Dictionary<long, string> wallets)
-    {
-        if (wallets.ContainsKey(WalletId)) return wallets[WalletId];
         return "[-]";
     }
     /// <summary>
@@ -99,6 +84,6 @@ public record Transac
         return string.Empty;
     }
 
-    public override string ToString() 
-        => $"#{Id:0000} [{Type}/{Status, -6}] {EfectiveDate:d} {EfectiveValue:N2} {Description}";
+    public override string ToString()
+        => $"#{Id:0000} [{Type}/{Status,-6}] {EfectiveDate:d} {EfectiveValue:N2} {Description}";
 }
