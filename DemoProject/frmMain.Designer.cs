@@ -32,9 +32,6 @@ namespace DemoProject
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
@@ -42,17 +39,14 @@ namespace DemoProject
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             groupBox1 = new GroupBox();
             grdWallets = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
-            Column2 = new DataGridViewTextBoxColumn();
-            Column3 = new DataGridViewTextBoxColumn();
             groupBox2 = new GroupBox();
             grdCategories = new DataGridView();
-            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            Column4 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             groupBox3 = new GroupBox();
             grdTxRecent = new DataGridView();
             Column5 = new DataGridViewTextBoxColumn();
@@ -104,6 +98,12 @@ namespace DemoProject
             btnReports = new Button();
             cntxReports = new ContextMenuStrip(components);
             yearlySummaryToolStripMenuItem = new ToolStripMenuItem();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column2 = new DataGridViewTextBoxColumn();
+            Column3 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            Column4 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)grdWallets).BeginInit();
             groupBox2.SuspendLayout();
@@ -152,32 +152,6 @@ namespace DemoProject
             grdWallets.CellDoubleClick += grdWallets_CellDoubleClick;
             grdWallets.CellMouseClick += grdWallets_CellMouseClick;
             // 
-            // Column1
-            // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            Column1.DefaultCellStyle = dataGridViewCellStyle1;
-            Column1.HeaderText = "Id";
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
-            Column1.Width = 30;
-            // 
-            // Column2
-            // 
-            Column2.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Column2.HeaderText = "Name";
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
-            // 
-            // Column3
-            // 
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            Column3.DefaultCellStyle = dataGridViewCellStyle2;
-            Column3.HeaderText = "Balance";
-            Column3.Name = "Column3";
-            Column3.ReadOnly = true;
-            Column3.Width = 75;
-            // 
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -207,29 +181,6 @@ namespace DemoProject
             grdCategories.TabIndex = 1;
             grdCategories.CellDoubleClick += grdCategories_CellDoubleClick;
             grdCategories.CellMouseClick += grdCategories_CellMouseClick;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle3;
-            dataGridViewTextBoxColumn1.HeaderText = "Id";
-            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            dataGridViewTextBoxColumn1.ReadOnly = true;
-            dataGridViewTextBoxColumn1.Width = 30;
-            // 
-            // Column4
-            // 
-            Column4.HeaderText = "Type";
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
-            Column4.Width = 70;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            dataGridViewTextBoxColumn2.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewTextBoxColumn2.HeaderText = "Name";
-            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
             // groupBox3
             // 
@@ -657,6 +608,57 @@ namespace DemoProject
             yearlySummaryToolStripMenuItem.Text = "Yearly Summary";
             yearlySummaryToolStripMenuItem.Click += yearlySummaryToolStripMenuItem_Click;
             // 
+            // Column1
+            // 
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            Column1.HeaderText = "Id";
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            Column1.Visible = false;
+            Column1.Width = 30;
+            // 
+            // Column2
+            // 
+            Column2.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Column2.HeaderText = "Name";
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            // 
+            // Column3
+            // 
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N2";
+            Column3.DefaultCellStyle = dataGridViewCellStyle2;
+            Column3.HeaderText = "Balance";
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            Column3.Width = 75;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewTextBoxColumn1.HeaderText = "Id";
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
+            dataGridViewTextBoxColumn1.Visible = false;
+            dataGridViewTextBoxColumn1.Width = 30;
+            // 
+            // Column4
+            // 
+            Column4.HeaderText = "Type";
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            Column4.Width = 70;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewTextBoxColumn2.HeaderText = "Name";
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -728,12 +730,6 @@ namespace DemoProject
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripSeparator toolStripMenuItem2;
         private ToolStripMenuItem importOFXToolStripMenuItem;
-        private DataGridViewTextBoxColumn Column1;
-        private DataGridViewTextBoxColumn Column2;
-        private DataGridViewTextBoxColumn Column3;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn Column4;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private GroupBox grpChartAssets;
         private System.Windows.Forms.DataVisualization.Charting.Chart chtAssets;
         private ContextMenuStrip cntxChartPeriod;
@@ -760,5 +756,11 @@ namespace DemoProject
         private Button btnReports;
         private ContextMenuStrip cntxReports;
         private ToolStripMenuItem yearlySummaryToolStripMenuItem;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn Column2;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn Column4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
     }
 }

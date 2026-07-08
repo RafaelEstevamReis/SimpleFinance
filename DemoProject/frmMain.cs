@@ -140,6 +140,15 @@ namespace DemoProject
 
                 var ix = grdCategories.Rows.Add(category.Id, category.IsExpense ? "Expense" : "Income", category.Name);
                 grdCategories.Rows[ix].Tag = category;
+
+                if (category.IsExpense)
+                {
+                    grdCategories.Rows[ix].DefaultCellStyle.BackColor = Color.MistyRose;
+                }
+                else
+                {
+                    grdCategories.Rows[ix].DefaultCellStyle.BackColor = Color.LightGreen;
+                }
             }
         }
         void updateMyTransactions()
