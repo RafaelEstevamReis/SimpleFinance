@@ -30,14 +30,6 @@ namespace DemoProject.Dialogs
             cboDestinationWallet.DataSource = wallets.ToArray();
             cboDestinationWallet.DisplayMember = "Name";
             cboDestinationWallet.ValueMember = "Id";
-
-            cboSourceCategory.DataSource = categories.Where(o => o.IsExpense).Union([new Category() { Id = 0, Name = "[Uncategorized]", IsExpense = true }]).ToArray();
-            cboSourceCategory.DisplayMember = "Name";
-            cboSourceCategory.ValueMember = "Id";
-
-            cboDestinationCategory.DataSource = categories.Where(o => !o.IsExpense).Union([new Category() { Id = 0, Name = "[Uncategorized]", IsExpense = false }]).ToArray();
-            cboDestinationCategory.DisplayMember = "Name";
-            cboDestinationCategory.ValueMember = "Id";
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -47,19 +39,9 @@ namespace DemoProject.Dialogs
                 MessageBox.Show("Source wallet must be selected");
                 return;
             }
-            if (cboSourceCategory.SelectedIndex < 0)
-            {
-                MessageBox.Show("Source category must be selected");
-                return;
-            }
             if (cboDestinationWallet.SelectedIndex < 0)
             {
                 MessageBox.Show("Destination wallet must be selected");
-                return;
-            }
-            if (cboDestinationCategory.SelectedIndex < 0)
-            {
-                MessageBox.Show("Destination category must be selected");
                 return;
             }
             if ((long)cboSourceWallet.SelectedValue! == (long)cboDestinationWallet.SelectedValue!)
@@ -98,9 +80,9 @@ namespace DemoProject.Dialogs
             }
 
             manager.CreateWalletTransfer(sourceWalletId,
-                                         (long)cboSourceCategory.SelectedValue!,
+                                         0, // Fixed as [Uncategorized]
                                          destinationWalletId,
-                                         (long)cboDestinationCategory.SelectedValue!,
+                                         0, // Fixed as [Uncategorized]
                                          txtName.Text.Trim(),
                                          txtValue.Value,
                                          dtDate.Value,

@@ -32,17 +32,13 @@
             btnSave = new System.Windows.Forms.Button();
             txtValue = new DemoProject.Components.MoneyBox();
             label3 = new System.Windows.Forms.Label();
-            cboSourceCategory = new System.Windows.Forms.ComboBox();
             cboSourceWallet = new System.Windows.Forms.ComboBox();
-            label12 = new System.Windows.Forms.Label();
             label11 = new System.Windows.Forms.Label();
             dtDate = new System.Windows.Forms.DateTimePicker();
             label9 = new System.Windows.Forms.Label();
             txtName = new System.Windows.Forms.TextBox();
             label1 = new System.Windows.Forms.Label();
-            cboDestinationCategory = new System.Windows.Forms.ComboBox();
             cboDestinationWallet = new System.Windows.Forms.ComboBox();
-            label2 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -56,7 +52,7 @@
             // btnCancel
             // 
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(195, 300);
+            btnCancel.Location = new System.Drawing.Point(195, 270);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
             btnCancel.TabIndex = 8;
@@ -65,7 +61,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(93, 300);
+            btnSave.Location = new System.Drawing.Point(93, 270);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 7;
@@ -76,7 +72,7 @@
             // txtValue
             // 
             txtValue.DecimalPlaces = 2;
-            txtValue.Location = new System.Drawing.Point(252, 212);
+            txtValue.Location = new System.Drawing.Point(252, 182);
             txtValue.MoneySign = "";
             txtValue.Name = "txtValue";
             txtValue.Size = new System.Drawing.Size(101, 23);
@@ -88,20 +84,11 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(213, 216);
+            label3.Location = new System.Drawing.Point(213, 186);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(38, 15);
             label3.TabIndex = 38;
             label3.Text = "Value:";
-            // 
-            // cboSourceCategory
-            // 
-            cboSourceCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            cboSourceCategory.FormattingEnabled = true;
-            cboSourceCategory.Location = new System.Drawing.Point(134, 62);
-            cboSourceCategory.Name = "cboSourceCategory";
-            cboSourceCategory.Size = new System.Drawing.Size(219, 23);
-            cboSourceCategory.TabIndex = 1;
             // 
             // cboSourceWallet
             // 
@@ -111,15 +98,6 @@
             cboSourceWallet.Name = "cboSourceWallet";
             cboSourceWallet.Size = new System.Drawing.Size(219, 23);
             cboSourceWallet.TabIndex = 0;
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new System.Drawing.Point(7, 65);
-            label12.Name = "label12";
-            label12.Size = new System.Drawing.Size(97, 15);
-            label12.TabIndex = 37;
-            label12.Text = "Source Cateogry:";
             // 
             // label11
             // 
@@ -133,7 +111,7 @@
             // dtDate
             // 
             dtDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            dtDate.Location = new System.Drawing.Point(48, 212);
+            dtDate.Location = new System.Drawing.Point(48, 182);
             dtDate.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
             dtDate.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDate.Name = "dtDate";
@@ -143,7 +121,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(8, 216);
+            label9.Location = new System.Drawing.Point(8, 186);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(34, 15);
             label9.TabIndex = 35;
@@ -151,7 +129,7 @@
             // 
             // txtName
             // 
-            txtName.Location = new System.Drawing.Point(8, 264);
+            txtName.Location = new System.Drawing.Point(8, 234);
             txtName.MaxLength = 64;
             txtName.Name = "txtName";
             txtName.Size = new System.Drawing.Size(345, 23);
@@ -160,43 +138,25 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(8, 245);
+            label1.Location = new System.Drawing.Point(8, 215);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(130, 15);
             label1.TabIndex = 32;
             label1.Text = "Transaction Description";
             // 
-            // cboDestinationCategory
-            // 
-            cboDestinationCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            cboDestinationCategory.FormattingEnabled = true;
-            cboDestinationCategory.Location = new System.Drawing.Point(134, 145);
-            cboDestinationCategory.Name = "cboDestinationCategory";
-            cboDestinationCategory.Size = new System.Drawing.Size(219, 23);
-            cboDestinationCategory.TabIndex = 3;
-            // 
             // cboDestinationWallet
             // 
             cboDestinationWallet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cboDestinationWallet.FormattingEnabled = true;
-            cboDestinationWallet.Location = new System.Drawing.Point(134, 116);
+            cboDestinationWallet.Location = new System.Drawing.Point(134, 86);
             cboDestinationWallet.Name = "cboDestinationWallet";
             cboDestinationWallet.Size = new System.Drawing.Size(219, 23);
             cboDestinationWallet.TabIndex = 2;
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(7, 148);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(121, 15);
-            label2.TabIndex = 42;
-            label2.Text = "Destination Cateogry:";
-            // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(7, 119);
+            label4.Location = new System.Drawing.Point(7, 89);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(106, 15);
             label4.TabIndex = 41;
@@ -214,7 +174,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(7, 95);
+            label6.Location = new System.Drawing.Point(7, 65);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(126, 15);
             label6.TabIndex = 44;
@@ -223,7 +183,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(8, 183);
+            label8.Location = new System.Drawing.Point(8, 153);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(105, 15);
             label8.TabIndex = 46;
@@ -233,7 +193,7 @@
             // 
             panel2.Controls.Add(rdoPaid);
             panel2.Controls.Add(rdoUnpaid);
-            panel2.Location = new System.Drawing.Point(128, 178);
+            panel2.Location = new System.Drawing.Point(128, 148);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(150, 27);
             panel2.TabIndex = 45;
@@ -264,20 +224,16 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(362, 333);
+            ClientSize = new System.Drawing.Size(362, 302);
             Controls.Add(label8);
             Controls.Add(panel2);
             Controls.Add(label6);
             Controls.Add(label5);
-            Controls.Add(cboDestinationCategory);
             Controls.Add(cboDestinationWallet);
-            Controls.Add(label2);
             Controls.Add(label4);
             Controls.Add(txtValue);
             Controls.Add(label3);
-            Controls.Add(cboSourceCategory);
             Controls.Add(cboSourceWallet);
-            Controls.Add(label12);
             Controls.Add(label11);
             Controls.Add(dtDate);
             Controls.Add(label9);
@@ -303,17 +259,13 @@
         private System.Windows.Forms.Button btnSave;
         private Components.MoneyBox txtValue;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox cboSourceCategory;
         private System.Windows.Forms.ComboBox cboSourceWallet;
-        private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.DateTimePicker dtDate;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cboDestinationCategory;
         private System.Windows.Forms.ComboBox cboDestinationWallet;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
