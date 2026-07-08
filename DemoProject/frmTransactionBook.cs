@@ -167,6 +167,117 @@ namespace DemoProject
             refresh();
         }
 
+        private void grdTransactions_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right) return;
+            if (e.RowIndex < 0) return;
+
+            // If the row is not selected, unselect all and reselect this ne
+            if (!grdTransactions.Rows[e.RowIndex].Selected)
+            {
+                grdTransactions.ClearSelection();
+                grdTransactions.Rows[e.RowIndex].Selected = true;
+            }
+
+            cntxGrid.Show(Cursor.Position);
+        }
+
+        private void markAsPaidAsOfTodayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            markAsPaid(asToday: true);
+        }
+        private void markAsPaidAsOfOriginalDueDateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            markAsPaid(asToday: false);
+        }
+        void markAsPaid(bool asToday)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+
+            if (selected.Any(o => o.Status == Transac.PaymentStatus.Paid))
+            {
+                MessageBox.Show("Paid transactions cannot be paid");
+                return;
+            }
+            if (selected.Any(o => o.Status == Transac.PaymentStatus.Reversed))
+            {
+                MessageBox.Show("Reversed transactions cannot be paid");
+                return;
+            }
+            if (selected.Any(o => o.Type != Transac.TransactionType.Simple))
+            {
+                MessageBox.Show("Only SIMPLE transactions can be paid");
+                return;
+            }
+
+            foreach (var tx in selected)
+            {
+                tx.Status = Transac.PaymentStatus.Paid;
+                if (asToday)
+                {
+                    tx.PaymentDate = DateTime.Now;
+                    tx.PaidValue = tx.DueValue;
+                }
+                else
+                {
+                    tx.PaymentDate = tx.DueDate.Date;
+                    tx.PaidValue = tx.DueValue;
+                }
+            }
+
+            manager.CreateUpdateBulkTransaction(selected);
+            refresh();
+        }
+
+        private void cloneTransactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = getSelectedTransactions();
+            if (selected.Length == 0)
+            {
+                MessageBox.Show("No transactions selected");
+                return;
+            }
+            if (selected.Length != 1)
+            {
+                MessageBox.Show("Select only one transaction to clone");
+                return;
+            }
+
+            var tx = selected[0];
+
+            if (tx.Type != Transac.TransactionType.Simple)
+            {
+                MessageBox.Show("Only SIMPLE transactions can be cloned");
+                return;
+            }
+
+            tx.Id = 0; // new
+            tx.Created = DateTime.UtcNow;
+            tx.Changed = DateTime.UtcNow;
+            tx.Description += " (clone)";
+
+            editTransaction(tx);
+
+            refresh();
+        }
+
+        private Transac[] getSelectedTransactions()
+        {
+            var selectedCellsIndex = grdTransactions.SelectedCells
+                .Cast<DataGridViewCell>()
+                .Select(c => c.RowIndex)
+                .Distinct();
+
+            var trx = selectedCellsIndex.Select(ix => grdTransactions.Rows[ix].Tag)
+                                        .OfType<Transac>();
+            return trx.ToArray();
+        }
+
         public static void ShowForm()
         {
             var frm = new frmTransactionBook();

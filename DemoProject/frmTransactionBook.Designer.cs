@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             dtDate = new System.Windows.Forms.DateTimePicker();
             btnNext = new System.Windows.Forms.Button();
             btnPrev = new System.Windows.Forms.Button();
@@ -47,8 +47,14 @@
             newWalletTransferToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             cboWallet = new System.Windows.Forms.ComboBox();
             label1 = new System.Windows.Forms.Label();
+            cntxGrid = new System.Windows.Forms.ContextMenuStrip(components);
+            markAsPaidAsOfTodayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            markAsPaidAsOfOriginalDueDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            cloneTransactionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)grdTransactions).BeginInit();
             cntxBtn.SuspendLayout();
+            cntxGrid.SuspendLayout();
             SuspendLayout();
             // 
             // dtDate
@@ -98,11 +104,12 @@
             grdTransactions.Size = new System.Drawing.Size(726, 490);
             grdTransactions.TabIndex = 3;
             grdTransactions.CellDoubleClick += grdTransactions_CellDoubleClick;
+            grdTransactions.CellMouseClick += grdTransactions_CellMouseClick;
             // 
             // Column1
             // 
-            dataGridViewCellStyle1.Format = "dd/MM HH:mm";
-            Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Format = "dd/MM HH:mm";
+            Column1.DefaultCellStyle = dataGridViewCellStyle7;
             Column1.HeaderText = "Date";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
@@ -124,18 +131,18 @@
             // 
             // clnValue
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            clnValue.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle8.Format = "N2";
+            clnValue.DefaultCellStyle = dataGridViewCellStyle8;
             clnValue.HeaderText = "Value";
             clnValue.Name = "clnValue";
             clnValue.ReadOnly = true;
             // 
             // clnNetAmount
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "N2";
-            clnNetAmount.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle9.Format = "N2";
+            clnNetAmount.DefaultCellStyle = dataGridViewCellStyle9;
             clnNetAmount.HeaderText = "Net Amount";
             clnNetAmount.Name = "clnNetAmount";
             clnNetAmount.ReadOnly = true;
@@ -191,6 +198,38 @@
             label1.TabIndex = 5;
             label1.Text = "Wallet:";
             // 
+            // cntxGrid
+            // 
+            cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { markAsPaidAsOfTodayToolStripMenuItem, markAsPaidAsOfOriginalDueDateToolStripMenuItem, toolStripMenuItem3, cloneTransactionToolStripMenuItem });
+            cntxGrid.Name = "cntxGrid";
+            cntxGrid.Size = new System.Drawing.Size(276, 98);
+            // 
+            // markAsPaidAsOfTodayToolStripMenuItem
+            // 
+            markAsPaidAsOfTodayToolStripMenuItem.Name = "markAsPaidAsOfTodayToolStripMenuItem";
+            markAsPaidAsOfTodayToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
+            markAsPaidAsOfTodayToolStripMenuItem.Text = "Mark as Paid - As of Today";
+            markAsPaidAsOfTodayToolStripMenuItem.Click += markAsPaidAsOfTodayToolStripMenuItem_Click;
+            // 
+            // markAsPaidAsOfOriginalDueDateToolStripMenuItem
+            // 
+            markAsPaidAsOfOriginalDueDateToolStripMenuItem.Name = "markAsPaidAsOfOriginalDueDateToolStripMenuItem";
+            markAsPaidAsOfOriginalDueDateToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
+            markAsPaidAsOfOriginalDueDateToolStripMenuItem.Text = "Mark as Paid - As of Original Due Date";
+            markAsPaidAsOfOriginalDueDateToolStripMenuItem.Click += markAsPaidAsOfOriginalDueDateToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new System.Drawing.Size(272, 6);
+            // 
+            // cloneTransactionToolStripMenuItem
+            // 
+            cloneTransactionToolStripMenuItem.Name = "cloneTransactionToolStripMenuItem";
+            cloneTransactionToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
+            cloneTransactionToolStripMenuItem.Text = "Clone Transaction";
+            cloneTransactionToolStripMenuItem.Click += cloneTransactionToolStripMenuItem_Click;
+            // 
             // frmTransactionBook
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -211,6 +250,7 @@
             Load += frmTransactionBook_Load;
             ((System.ComponentModel.ISupportInitialize)grdTransactions).EndInit();
             cntxBtn.ResumeLayout(false);
+            cntxGrid.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -232,5 +272,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
         private System.Windows.Forms.DataGridViewTextBoxColumn clnValue;
         private System.Windows.Forms.DataGridViewTextBoxColumn clnNetAmount;
+        private System.Windows.Forms.ContextMenuStrip cntxGrid;
+        private System.Windows.Forms.ToolStripMenuItem markAsPaidAsOfTodayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem markAsPaidAsOfOriginalDueDateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem cloneTransactionToolStripMenuItem;
     }
 }
