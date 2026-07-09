@@ -52,7 +52,7 @@
             // btnCancel
             // 
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(195, 270);
+            btnCancel.Location = new System.Drawing.Point(195, 237);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
             btnCancel.TabIndex = 8;
@@ -61,7 +61,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(93, 270);
+            btnSave.Location = new System.Drawing.Point(93, 237);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 7;
@@ -72,7 +72,7 @@
             // txtValue
             // 
             txtValue.DecimalPlaces = 2;
-            txtValue.Location = new System.Drawing.Point(252, 182);
+            txtValue.Location = new System.Drawing.Point(252, 149);
             txtValue.MoneySign = "";
             txtValue.Name = "txtValue";
             txtValue.Size = new System.Drawing.Size(101, 23);
@@ -84,7 +84,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(213, 186);
+            label3.Location = new System.Drawing.Point(213, 153);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(38, 15);
             label3.TabIndex = 38;
@@ -111,7 +111,7 @@
             // dtDate
             // 
             dtDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            dtDate.Location = new System.Drawing.Point(48, 182);
+            dtDate.Location = new System.Drawing.Point(48, 149);
             dtDate.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
             dtDate.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
             dtDate.Name = "dtDate";
@@ -121,7 +121,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(8, 186);
+            label9.Location = new System.Drawing.Point(8, 153);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(34, 15);
             label9.TabIndex = 35;
@@ -129,7 +129,7 @@
             // 
             // txtName
             // 
-            txtName.Location = new System.Drawing.Point(8, 234);
+            txtName.Location = new System.Drawing.Point(8, 201);
             txtName.MaxLength = 64;
             txtName.Name = "txtName";
             txtName.Size = new System.Drawing.Size(345, 23);
@@ -138,7 +138,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(8, 215);
+            label1.Location = new System.Drawing.Point(8, 182);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(130, 15);
             label1.TabIndex = 32;
@@ -183,7 +183,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(8, 153);
+            label8.Location = new System.Drawing.Point(8, 120);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(105, 15);
             label8.TabIndex = 46;
@@ -193,7 +193,7 @@
             // 
             panel2.Controls.Add(rdoPaid);
             panel2.Controls.Add(rdoUnpaid);
-            panel2.Location = new System.Drawing.Point(128, 148);
+            panel2.Location = new System.Drawing.Point(128, 115);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(150, 27);
             panel2.TabIndex = 45;
@@ -224,7 +224,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(362, 302);
+            ClientSize = new System.Drawing.Size(362, 269);
             Controls.Add(label8);
             Controls.Add(panel2);
             Controls.Add(label6);

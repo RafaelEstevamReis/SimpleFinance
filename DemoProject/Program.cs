@@ -16,7 +16,6 @@ namespace DemoProject
         [STAThread]
         static void Main()
         {
-            GenerateTypesXSDs();
             // Set DI
             var manager = new Manager("data.db");
             manager.Initialize(createBackup: true, backupName: $"bkp/data_{DateTime.Now:yyyyMMddHH}.db");

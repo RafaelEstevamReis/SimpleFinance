@@ -35,6 +35,7 @@ namespace DemoProject
             this.GetConfig(chkIncludeTransfersInTotals, false);
 
             clnValue.FormatColumn(manager);
+            chkFilterReference_CheckedChanged(new(), EventArgs.Empty);
         }
         private void frmAdvancedSearch_Shown(object sender, EventArgs e)
         {
@@ -51,6 +52,10 @@ namespace DemoProject
             cboReferenceItem.DisplayMember = "Name";
         }
 
+        private void chkFilterReference_CheckedChanged(object sender, EventArgs e)
+        {
+            cboReferenceType.Enabled = cboReferenceItem.Enabled = chkFilterReference.Checked;
+        }
         private void btnSearch_Click(object sender, EventArgs e)
         {
             search();

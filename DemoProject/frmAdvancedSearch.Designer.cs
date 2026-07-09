@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             groupBox1 = new System.Windows.Forms.GroupBox();
             label4 = new System.Windows.Forms.Label();
             dtTo = new System.Windows.Forms.DateTimePicker();
@@ -211,6 +211,7 @@
             chkFilterReference.TabIndex = 8;
             chkFilterReference.Text = "Filter:";
             chkFilterReference.UseVisualStyleBackColor = true;
+            chkFilterReference.CheckedChanged += chkFilterReference_CheckedChanged;
             // 
             // label5
             // 
@@ -316,9 +317,9 @@
             // 
             // clnDueDate
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "d";
-            clnDueDate.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Format = "d";
+            clnDueDate.DefaultCellStyle = dataGridViewCellStyle5;
             clnDueDate.HeaderText = "Due Date";
             clnDueDate.Name = "clnDueDate";
             clnDueDate.ReadOnly = true;
@@ -326,18 +327,18 @@
             // 
             // clnValue
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N2";
-            clnValue.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Format = "N2";
+            clnValue.DefaultCellStyle = dataGridViewCellStyle6;
             clnValue.HeaderText = "Value";
             clnValue.Name = "clnValue";
             clnValue.ReadOnly = true;
             // 
             // clnPaidDate
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "d";
-            clnPaidDate.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle7.Format = "d";
+            clnPaidDate.DefaultCellStyle = dataGridViewCellStyle7;
             clnPaidDate.HeaderText = "Paid Date";
             clnPaidDate.Name = "clnPaidDate";
             clnPaidDate.ReadOnly = true;
@@ -345,9 +346,9 @@
             // 
             // clnBalance
             // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Format = "N2";
-            clnBalance.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle8.Format = "N2";
+            clnBalance.DefaultCellStyle = dataGridViewCellStyle8;
             clnBalance.HeaderText = "Net Amount";
             clnBalance.Name = "clnBalance";
             clnBalance.ReadOnly = true;
@@ -502,9 +503,9 @@
             chkIncludeTransfersInTotals.AutoSize = true;
             chkIncludeTransfersInTotals.Location = new System.Drawing.Point(6, 57);
             chkIncludeTransfersInTotals.Name = "chkIncludeTransfersInTotals";
-            chkIncludeTransfersInTotals.Size = new System.Drawing.Size(160, 19);
+            chkIncludeTransfersInTotals.Size = new System.Drawing.Size(196, 19);
             chkIncludeTransfersInTotals.TabIndex = 4;
-            chkIncludeTransfersInTotals.Text = "Include Transfers in Totals";
+            chkIncludeTransfersInTotals.Text = "Include Wallet Transfers in Totals";
             chkIncludeTransfersInTotals.UseVisualStyleBackColor = true;
             // 
             // chkIncludeUnpaidBalance
@@ -521,7 +522,7 @@
             // 
             cntxGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeDueValueToolStripMenuItem, changeDueDayToolStripMenuItem, changeCategoryToolStripMenuItem, reverseTransactionToolStripMenuItem, toolStripMenuItem1, markAsPaidAsOfTodayToolStripMenuItem, markAsPaidAsOfOriginalDueDateToolStripMenuItem, toolStripMenuItem3, cloneTransactionToolStripMenuItem });
             cntxGrid.Name = "cntxGrid";
-            cntxGrid.Size = new System.Drawing.Size(276, 192);
+            cntxGrid.Size = new System.Drawing.Size(276, 170);
             // 
             // changeDueValueToolStripMenuItem
             // 

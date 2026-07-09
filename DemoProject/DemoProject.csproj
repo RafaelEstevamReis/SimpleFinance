@@ -19,6 +19,7 @@
 		<PackageReleaseNotes>See examples and documentation on the GitHub page https://github.com/RafaelEstevamReis/SimpleFinance</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+		<AssemblyName>MyPersonalFinances</AssemblyName>
 
 	</PropertyGroup>
 

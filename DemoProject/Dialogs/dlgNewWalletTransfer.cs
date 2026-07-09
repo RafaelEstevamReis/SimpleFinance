@@ -11,7 +11,6 @@ namespace DemoProject.Dialogs
     public partial class dlgNewWalletTransfer : DialogBase
     {
         private Manager manager = null!;
-        private Category[] categories = [];
         private Wallet[] wallets = [];
 
         public dlgNewWalletTransfer()
@@ -97,7 +96,6 @@ namespace DemoProject.Dialogs
         {
             using var frm = new dlgNewWalletTransfer();
             frm.manager = manager;
-            frm.categories = manager.GetCategories().Where(o => !o.IsDeleted).ToArray();
             frm.wallets = manager.GetWallets().Where(o => !o.IsDeleted).ToArray();
             return frm.ShowDialog();
         }
