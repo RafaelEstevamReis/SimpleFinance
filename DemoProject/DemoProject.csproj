@@ -20,6 +20,8 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
 		<AssemblyName>MyPersonalFinances</AssemblyName>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<FileVersion>$(AssemblyVersion)</FileVersion>
 
 	</PropertyGroup>
 
