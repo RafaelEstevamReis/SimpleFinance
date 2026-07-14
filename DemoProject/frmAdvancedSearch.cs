@@ -45,8 +45,18 @@ namespace DemoProject
         private void cboReferenceType_SelectedIndexChanged(object sender, EventArgs e)
         {
             cboReferenceItem.DataSource = null;
-            if (cboReferenceType.SelectedIndex == 0) cboReferenceItem.DataSource = manager.GetWallets();
-            if (cboReferenceType.SelectedIndex == 1) cboReferenceItem.DataSource = manager.GetCategories();
+            if (cboReferenceType.SelectedIndex == 0)
+            {
+                cboReferenceItem.DataSource = manager.GetWallets();
+            }
+            if (cboReferenceType.SelectedIndex == 1)
+            {
+                cboReferenceItem.DataSource = manager
+                    .GetCategories()
+                    .OrderBy(o => o.IsExpense)
+                    .ThenBy(o => o.Name)
+                    .ToList();
+            }
             // Set after DataSource
             cboReferenceItem.ValueMember = "Id";
             cboReferenceItem.DisplayMember = "Name";

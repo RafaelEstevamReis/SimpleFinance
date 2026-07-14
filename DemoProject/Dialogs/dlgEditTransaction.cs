@@ -22,7 +22,7 @@ namespace DemoProject.Dialogs
         public dlgEditTransaction()
         {
             manager = Injector.Get<Manager>();
-            categories = manager.GetCategories().ToArray();
+            categories = manager.GetCategories().OrderBy(o => o.Name).ToArray();
             wallets = manager.GetWallets().ToArray();
             InitializeComponent();
         }
