@@ -18,10 +18,24 @@
 		<PackageTags>Simple API Finance Manager</PackageTags>
 		<PackageReleaseNotes>See examples and documentation on the GitHub page https://github.com/RafaelEstevamReis/SimpleFinance</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+
+		<!-- ============================================================ -->
+		<!-- Nome e versão do assembly -->
+		<!-- ============================================================ -->
 		<AssemblyName>MyPersonalFinances</AssemblyName>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<AssemblyVersion>1.1.0</AssemblyVersion>
+		<Version>$(AssemblyVersion)</Version>
 		<FileVersion>$(AssemblyVersion)</FileVersion>
+		
+		<!-- ============================================================ -->
+		<!-- Single file content -->
+		<!-- ============================================================ -->
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>false</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<PublishTrimmed>false</PublishTrimmed>
+		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
 
 	</PropertyGroup>
 

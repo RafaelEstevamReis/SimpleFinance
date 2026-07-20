@@ -1,0 +1,48 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Triggers when you push a tag like v1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore Dependencies
+      run: dotnet restore
+
+    - name: Publish Win-x64 Executable
+      run: >
+        dotnet publish DemoProject/DemoProject.csproj
+        -c Release
+        -r win-x64
+        -o ./publish
+        --self-contained true
+        -p:PublishSingleFile=true
+        -p:PublishReadyToRun=true
+
+    - name: Zip Configuration alongside Executable
+      shell: pwsh
+      run: |
+        # Copies appsettings.json to the publish directory so it goes into the release zip
+        Compress-Archive -Path "./publish/*" -DestinationPath "./MyPersonalFinances.Sample-win-x64.zip"
+
+    - name: Create GitHub Release and Upload Asset
+      uses: softprops/action-gh-release@v2
+      with:
+        files: MyPersonalFinances.Sample-win-x64.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
