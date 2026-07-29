@@ -1,0 +1,206 @@
+# AGENTS.md — SimpleFinance
+
+Guidance for AI agents reading in this repository and using this library.
+
+## What this is
+
+`Simple.Finance` is a small personal-finance manager **library** (NuGet: `Simple.Finance`),
+backed by SQLite through `Simple.Sqlite`. Everything is a plain CRUD-over-SQLite
+`Manager` class plus helpers for currency conversion and bank-file import.
+There is no service layer, no DI container, no async data access.
+
+## Solution layout
+
+| Project | TFM | Role |
+| --- | --- | --- |
+| `Simple.Finance/` | `netstandard2.1`, LangVersion 12, nullable enabled | The library. **Everything of value lives here.** |
+| `UnitTests/` | `net8.0` | xUnit v3 automated tests. The real test suite. |
+| `Tests/` | `net8.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
+| `DemoProject/` | `net8.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
+| `Assets/` | — | `TemporalSeries_*.json` rate series, served over HTTP from `main` and consumed by `ExternalRepoSeries`. |
+| `SampleFiles/` | — | Sample bank/fiscal files (OFX, OFC, CNAB, MT940, SPED, NFe, IFF, PDF statements). |
+
+External packages the library depends on: `Simple.Sqlite`, `Simple.API`, `RafaelEstevam.TextSerializer`.
+
+## Commands
+
+```
+dotnet build                                # whole solution
+dotnet test                                 # runs UnitTests
+dotnet test UnitTests/UnitTests.csproj
+dotnet run --project Tests                  # console smoke run against ./data.db
+```
+
+CI (`.github/workflows/dotnet.yml`): `windows-latest`, .NET 8, restore → build → test on push/PR to `main`.
+Release (`.github/workflows/release.yml`): tag `v*.*.*` → publishes `DemoProject` as a self-contained
+single-file `win-x64` zip and creates a GitHub Release. NuGet version is `<Version>` in `Simple.Finance.csproj`.
+
+## Architecture
+
+```mermaid
+graph TD
+  A[Manager] --> B[ConnectionFactory / Simple.Sqlite]
+  A --> C[ChangeLog + ChangeLogItem]
+  A --> D[EventNotifier event]
+  E[ManagerExtensions] --> A
+  F[TransactionImporter] --> G[OFX / MT940 / CSV]
+  H[ExchangeRateConverter] --> I[ExchangeGraph BFS]
+  H --> J[IExchangeRateTable]
+  J --> K[TemporalSeries_* generated]
+  J --> L[ExternalRepoSeries HTTP]
+  H --> M[IExchangeRateCaching]
+```
+
+### Tables (`Simple.Finance/Tables/`)
+
+`record` types with `Simple.DatabaseWrapper.Attributes` (`[PrimaryKey]`, `[Index]`).
+Schema is created/migrated by `Manager.Initialize()` via `cnn.CreateTables().Add<T>()…Commit()`.
+
+- `Wallet` — `Id, Name, Description, BaseCurrency, IsDeleted`
+- `Category` — `Id, IsExpense, Name, Description, IsDeleted`
+- `Person` — counterparty; `Id, Name, IsDeleted`
+- `Transac` — the transaction record.
+- `ChangeLog` / `ChangeLogItem` — audit trail; `TableLogRegistry` is the flattened join projection.
+
+### Manager (`Manager.cs`, ~650 lines)
+
+One class, region-separated: Wallets / Categories / Persons / Transactions / ChangeLog / Notification / Search Enums.
+
+- Connection-per-call: every method does `using var cnn = db.GetConnection();`. No shared connection, no transactions
+  spanning methods. `CreateUpdateBulkTransaction` is the only batching path (one connection, notifications fired
+  after the connection closes).
+- `Manager(string dbFile)` for file-backed; `Manager.FromDatabase(ConnectionFactory)` for an external database
+  (backup is then unsupported — `Initialize(createBackup: true)` throws).
+- `Initialize(createBackup, backupName)` gzips the current db file to `backupName + ".gz"` before migrating.
+- `protected virtual InternalInitialize(ISqliteConnection)` is the extension point for derived classes
+  (README pitches subclassing for users/auth).
+
+### Invariants enforced in `createUpdateTransaction` — do not weaken
+
+1. `DueValue != 0`, else `InvalidOperationException`.
+2. Sign is **forced** from the category: `IsExpense` → negative, else positive; applied to
+   `DueValue`, `PaidValue`, `RC_DueValue`, `RC_PaidValue`. With `CategoryId == 0` the caller's sign is kept.
+3. `WalletId` must resolve; `CategoryId`/`CounterpartyId` must resolve when non-zero.
+4. `PaymentCurrency` is upper-cased and, when both sides are non-empty, must equal `Wallet.BaseCurrency`.
+5. `Type == WalletTransfer` throws here — transfers have their own API. `Special` is `NotImplementedException`.
+6. `Changed` always set to `UtcNow`; `Created` preserved from the original row on update.
+7. `Category.IsExpense` cannot change after creation (`CreateUpdateCategory` throws).
+
+### Transfers
+
+`CreateWalletTransfer(...)` writes **two** `Transac` rows (negative on source wallet, positive on destination),
+then `UPDATE`s both to `Type = WalletTransfer` with `TypeOtherId` cross-linking them, then logs both.
+Source category must be `IsExpense`, destination must not. Update the pair via `UpdateWalletTransfer` /
+`ManagerExtensions.GetTransferPair` — never through `CreateUpdateTransaction`.
+
+### ChangeLog + notifications
+
+`saveChangeLog<T>(cnn, older, newer, notify)` diffs writable properties via `ModelHelpers.ModelDiff`
+(null → `"[NL]"`, `ToString()` comparison) and bulk-inserts one `ChangeLogItem` per changed field.
+`older == null` ⇒ notification action `New`, else `Update`.
+
+`getTableName(Type)` = last segment of `Type.FullName`; that string lands in `ChangeLog.TableName` and is
+re-mapped to a notification item by the static `notificationItems` dictionary, itself keyed off the same
+function — so a table rename carries the routing with it.
+
+`EventLogCurrentExternalId` is stamped into every `ChangeLog.ExternalId` — the hook for "which user did this".
+One event has one author, so `ChangeLogItem` does not repeat it; queries filter `cl.ExternalId` and
+`TableLogRegistry` flattens it into each joined row for consumers.
+
+### Exchange rates (`ExchangeRate/`)
+
+- `IExchangeRateTable`: `Initialize()`, `GetRateFor(base, quote, date)`, `AvailableCurrencyPairs()`.
+- `ExchangeGraph` builds a currency graph from all pairs (each pair adds both directions, the reverse marked
+  `Inverted`) and BFS-routes `start → target` — so the route has the fewest hops, and the first table that
+  declared a pair owns that hop. Hop nodes keep the *declared* `BaseCur`/`QuoteCur` orientation; only
+  `Inverted` says which way it is crossed. Currency codes are compared `OrdinalIgnoreCase` throughout
+  (`graphTable`, `visited`, `parent` — all three must stay in sync, or path reconstruction throws).
+- `ExchangeRateConverter.GetRateFor` walks the route, multiplying rates (inverting where flagged), falling back
+  to other tables per hop when the graph's table has no data for that date; the fallback re-queries in
+  `ExchangeRateTables` order, always in the declared orientation, and stops at the first answer.
+  Any missing hop ⇒ `null`, and `null` is never memoised. A hop rate of `0` is *not* inverted (guard against
+  division by zero), so the crossing yields `0`.
+  Results memoised per `base/quote#yyyyMMdd` via `IExchangeRateCaching` (`ExchangeRateMemoryCache` default,
+  never evicts) — endpoints only, never the intermediate hops; the key is case-sensitive and day-granular.
+  `InitializeTables()` must run before use: it is what (re)builds the graph, so tables added afterwards stay
+  invisible until it runs again.
+- `TemporalSeries_*.cs` are **generated data files** (up to 162 KB each) — `decimal[][][]` indexed
+  `[year - firstYear][month - 1][day - 1]`, read by `ExchangeRateConverter.getTableValue`. Do not hand-edit;
+  regenerate with the scrapers in `Tests/Ignore.cs`. `TemporalSeries_BTCUSD` also derives `SAT` (`BTC / 1e8`).
+- `ExternalRepoSeries` fetches `Assets/TemporalSeries_*.json` from `raw.githubusercontent.com/.../main/Assets/`
+  via a `Simple.API` client interface. **Network-dependent — never put it in a unit test.**
+  Its file list is hard-coded in `IExternalSeries`; adding an asset means adding a method there too.
+
+### Importers (`Importers/`)
+
+`TransactionImporter` is the only entry point that produces `Transac`: `FromOFX` (path or `OfxFile`),
+`FromMT940` (`"D"` ⇒ negative), `FromCSV(path, Func<string[], Transac>, delimiter)`.
+Imported rows are `Status = Paid`, `Type = Simple`, both dates set to the posted date; OFX keeps `FitId`
+in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — callers must.
+
+- `OFX/` — `OfxFile` XML deserializer (`FromFile`, `FromFile_Encoding1252`, `FromXML`) + `OfxWriter`.
+- `MT940/` — `MT940Parser` / `MT940Statement`, rule-driven field splitting via `MTHelper`.
+- `CNAB/` — fixed-width CNAB240/CNAB400 record models declared with `TextSerializer` attributes
+  (`[RegistrySize]`, `[Index]`, `[Type]`, `[Length]`). Field names and Portuguese comments follow the bank specs;
+  keep them.
+
+### Helpers
+
+`DateHelpers` (Start/EndOf Year|Month|Day|Hour|Minute, `MinOf`/`MaxOf`), `CurrencyHelpers`
+(system currencies from `CultureInfo` + custom `BTC`/`SAT` formats, `decimal?.FormatFor(code)`),
+`ModelHelpers.ModelDiff`.
+
+## Code conventions
+
+Match the existing style exactly; it is consistent and deliberate.
+
+- File-scoped `namespace X;` **first**, `using` directives **inside/after** the namespace declaration.
+- `ImplicitUsings` is **disabled** in `Simple.Finance` — every `using` is explicit.
+- Public members `PascalCase`; private/protected members and locals `camelCase`
+  (`saveChangeLog`, `getTableName`, `compress`, `updateWalletTransfer`).
+- Data types are `record`s with `{ get; set; }` and `= string.Empty;` defaults; `Nullable` is enabled — honor it.
+- SQL is inline, parameterised with anonymous objects, and uses `nameof(...)` for table/column names where practical.
+- Collection expressions (`[]`, `[…]`) and C# 12 primary constructors are used; target framework is
+  `netstandard2.1`, so **no** .NET-only BCL APIs.
+- Validation throws `InvalidOperationException` / `ArgumentException` with a message naming the offending field.
+
+## Deliberate design
+
+These are choices, not defects. Work with them; changing any of them is a product decision, not a cleanup.
+
+- **`Manager` is synchronous, single-connection-per-call and not thread-safe.** Don't sprinkle `async`,
+  don't add locking or a shared connection.
+- **Deprecation is a slow ladder.** They become `error: true` after many revisions, and are only
+  removed long after that. Don't call them from new code and don't accelerate the ladder.
+- **`Tests/Ignore.cs` is a sandbox** for new ideas and one-off data scraping. Don't lint it, refactor it, test it, or take its warnings seriously.
+- **`IsDeleted` is a soft flag with no delete API.** Nothing in `Manager` filters on it; presentation decides.
+
+## Landmines
+
+- `TemporalSeries_*.cs` are generated; hand-editing them desyncs the `Assets/*.json` served to
+  `ExternalRepoSeries` and moves the pinned rates in `UnitTests`.
+
+## Testing expectations
+
+- Folders mirror the subject: `ManagerTests/` (core CRUD, validation, transfers, change log, notifications),
+  `ExchangeTableTests/`, `HelperTests/`. xUnit v3, `[Fact]`/`[Theory]` + `[InlineData]`.
+- **Test classes must be `public`** — xUnit does not discover `internal` ones.
+- `ManagerTests/ManagerTestBase.cs` gives each test its own temp SQLite file plus `newWallet`/`newCategory`/
+  `newPerson`/`tx`/`newTx` builders and a `past` date constant. Inherit it instead of hand-rolling a database.
+- Timezone matters: `GetWalletBalance` compares against SQLite `CURRENT_TIMESTAMP` (UTC). Use the `past`
+  constant for "already settled" rows and `DateTime.UtcNow.AddDays(n)` for future ones — never `DateTime.Now`.
+- Existing exchange tests pin exact rates at `2020-12-31` with `precision: 6|10` — regenerating a
+  `TemporalSeries_*` file will move those numbers. Update expectations deliberately, not blindly.
+- Tests must be offline and deterministic: use `ExchangeRateConverter.CreateWithTemporalSeries()`, never
+  `ExternalRepoSeries`.
+- Routing/crossing mechanics are tested against `ExchangeTableTests/FakeRateTable.cs`, not the generated
+  series: `Pair` (declared + served), `Declare` (visible to the graph, no data — drives the per-hop fallback),
+  `Serve`/`ServeOn` (data without a graph edge), plus `Queries`/`InitializeCalls` and a `SpyRateCache`
+  recording cache hits. Prefer it over `CreateWithTemporalSeries()` whenever the assertion is about the graph.
+- `dotnet run --project Tests` is the manual smoke test; it writes `data.db` in the working directory.
+
+## Unread areas
+
+- `SampleFiles/` contents were not inspected; the SPED, NFe, IFF, OFC, Ponto and PDF-statement folders have
+  **no importer** in `Simple.Finance/Importers/` (only OFX, MT940, CNAB models, and generic CSV).
+- Bulk generated rate data in `ExchangeRate/ExchangeTables/TemporalSeries_*.cs` was sampled, not read in full.
