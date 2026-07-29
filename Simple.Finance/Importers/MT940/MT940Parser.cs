@@ -44,7 +44,7 @@ public class MT940Parser
     {
         var mt940 = new MT940Statement()
         {
-            TransacationReferenceNumber = MT940Statement.MTTransacationReferenceNumber.Parse(record.R20TransactionReferenceNumber),
+            TransactionReferenceNumber = MT940Statement.MTTransactionReferenceNumber.Parse(record.R20TransactionReferenceNumber),
             RelatedReference = MT940Statement.MTRelatedReference.Parse(record.R21RelatedReference),
             AccountIdentification = MT940Statement.MTAccountIdentification.Parse(record.R25AccountIdentification),
             StatementNumberSequence = MT940Statement.MTStatementNumberSequence.Parse(record.R28CStatementNumberSequence),
@@ -189,7 +189,7 @@ public class MT940Parser
 }
 public class MT940Statement
 {
-    public MTTransacationReferenceNumber? TransacationReferenceNumber { get; set; }
+    public MTTransactionReferenceNumber? TransactionReferenceNumber { get; set; }
     public MTRelatedReference? RelatedReference { get; set; }
     public MTAccountIdentification? AccountIdentification { get; set; }
     public MTStatementNumberSequence? StatementNumberSequence { get; set; }
@@ -200,15 +200,15 @@ public class MT940Statement
     public MTBalance? FowardAvailableBalance { get; set; }
     public MTInformationToAccountOwner? InformationToAccountOwner { get; set; }
 
-    public class MTTransacationReferenceNumber
+    public class MTTransactionReferenceNumber
     {
         public string ReferenceId { get; set; } = string.Empty;
 
-        internal static MTTransacationReferenceNumber? Parse(MT940Parser.MTRecord? r20TransactionReferenceNumber)
+        internal static MTTransactionReferenceNumber? Parse(MT940Parser.MTRecord? r20TransactionReferenceNumber)
         {
             if (r20TransactionReferenceNumber == null) return null;
 
-            return new MTTransacationReferenceNumber
+            return new MTTransactionReferenceNumber
             {
                 ReferenceId = r20TransactionReferenceNumber.Data[0],
             };

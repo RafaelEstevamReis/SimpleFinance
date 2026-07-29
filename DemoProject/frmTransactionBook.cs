@@ -72,9 +72,9 @@ namespace DemoProject
                 clnNetAmount.HeaderText = "Balance";
             }
 
-            txs = txs.OrderBy(o => o.EfectiveDate.Date)
+            txs = txs.OrderBy(o => o.EffectiveDate.Date)
                      .ThenByDescending(o => (int)o.Status)
-                     .ThenByDescending(o => o.EfectiveValue)
+                     .ThenByDescending(o => o.EffectiveValue)
                      .ToArray();
 
             foreach (var tx in txs)
@@ -92,8 +92,8 @@ namespace DemoProject
                     else add = "◀ ";
                 }
 
-                balance += tx.EfectiveValue;
-                int ix = grdTransactions.Rows.Add(tx.EfectiveDate, tx.GetCategoryName(categories), add + tx.Description, tx.EfectiveValue, balance);
+                balance += tx.EffectiveValue;
+                int ix = grdTransactions.Rows.Add(tx.EffectiveDate, tx.GetCategoryName(categories), add + tx.Description, tx.EffectiveValue, balance);
                 grdTransactions.Rows[ix].Tag = tx;
 
                 if (tx.Status == Transac.PaymentStatus.Paid) grdTransactions.Rows[ix].DefaultCellStyle.BackColor = Color.PaleGreen;

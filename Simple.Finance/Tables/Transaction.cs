@@ -53,8 +53,8 @@ public record Transac
 
     public string? PaymentDetails { get; set; }
 
-    public DateTime EfectiveDate => Status == PaymentStatus.Paid ? PaymentDate : DueDate.Date;
-    public decimal EfectiveValue => Status == PaymentStatus.Paid ? PaidValue : DueValue;
+    public DateTime EffectiveDate => Status == PaymentStatus.Paid ? PaymentDate : DueDate.Date;
+    public decimal EffectiveValue => Status == PaymentStatus.Paid ? PaidValue : DueValue;
 
     /// <summary>
     /// Get Transaction category name using provided cache
@@ -76,7 +76,7 @@ public record Transac
     /// <summary>
     /// Get transaction PaymentCurrency code, if empty, wallet's BaseCurrency is returned instead
     /// </summary>
-    public string GetTransacationCurrencyCode(Dictionary<long, Wallet> wallets)
+    public string GetTransactionCurrencyCode(Dictionary<long, Wallet> wallets)
     {
         if (!string.IsNullOrEmpty(PaymentCurrency)) return PaymentCurrency;
         if (wallets.ContainsKey(WalletId)) return wallets[WalletId].BaseCurrency;
@@ -85,5 +85,5 @@ public record Transac
     }
 
     public override string ToString()
-        => $"#{Id:0000} [{Type}/{Status,-6}] {EfectiveDate:d} {EfectiveValue:N2} {Description}";
+        => $"#{Id:0000} [{Type}/{Status,-6}] {EffectiveDate:d} {EffectiveValue:N2} {Description}";
 }

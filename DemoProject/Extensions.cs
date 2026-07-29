@@ -54,7 +54,7 @@ internal static class Extensions
             var tx = grid.Rows[e.RowIndex].Tag as Transac;
             if (tx == null) return;
 
-            var code = tx.GetTransacationCurrencyCode(wallets);
+            var code = tx.GetTransactionCurrencyCode(wallets);
             if (string.IsNullOrEmpty(code)) return;
 
             e.FormattingApplied = true;
@@ -62,7 +62,7 @@ internal static class Extensions
         };
     }
     public static void SumMoneyBoxFor(this MoneyBox moneyBox, Manager manager, IEnumerable<Transac> txs)
-        => SumMoneyBoxFor(moneyBox, manager, txs, o => o.EfectiveValue);
+        => SumMoneyBoxFor(moneyBox, manager, txs, o => o.EffectiveValue);
     public static void SumMoneyBoxFor(this MoneyBox moneyBox, Manager manager, IEnumerable<Transac> txs, Func<Transac, decimal> selector)
     {
         var transactionsByCurrency = manager.SumTransactionsByBaseCurrency(txs, selector).ToArray();

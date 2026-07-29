@@ -136,7 +136,7 @@ namespace DemoProject
             var dicWallets = manager.GetWalletsDict();
             var dicCategories = manager.GetCategoriesDict();
 
-            txs = txs.OrderBy(o => o.EfectiveDate.Date)
+            txs = txs.OrderBy(o => o.EffectiveDate.Date)
                      .ThenByDescending(o => o.Status)
                      .ThenBy(o => o.Type)
                      .ThenByDescending(o => o.DueValue)
@@ -160,7 +160,7 @@ namespace DemoProject
                     else add = "◀ ";
                 }
 
-                var currencyCode = tx.GetTransacationCurrencyCode(dicWallets) ?? "";
+                var currencyCode = tx.GetTransactionCurrencyCode(dicWallets) ?? "";
                 if (!balances.ContainsKey(currencyCode)) balances[currencyCode] = 0;
 
                 if (tx.Status == Transac.PaymentStatus.Paid)
@@ -177,7 +177,7 @@ namespace DemoProject
                                                   tx.GetCategoryName(dicCategories),
                                                   add + tx.Description,
                                                   tx.DueDate,
-                                                  tx.EfectiveValue,
+                                                  tx.EffectiveValue,
                                                   paymentDate,
                                                   balances[currencyCode]);
                 grdTransactions.Rows[ix].Tag = tx;
@@ -216,8 +216,8 @@ namespace DemoProject
 
             txtTotalPaid.SumMoneyBoxFor(manager, txs.Where(o => o.Status == Transac.PaymentStatus.Paid), o => o.PaidValue);
             txtTotalUnpaid.SumMoneyBoxFor(manager, txs.Where(o => o.Status == Transac.PaymentStatus.Unpaid), o => o.DueValue);
-            txtTotalIncome.SumMoneyBoxFor(manager, txs.Where(o => o.DueValue > 0), o => o.EfectiveValue);
-            txtTotalExpenses.SumMoneyBoxFor(manager, txs.Where(o => o.DueValue < 0), o => -o.EfectiveValue);
+            txtTotalIncome.SumMoneyBoxFor(manager, txs.Where(o => o.DueValue > 0), o => o.EffectiveValue);
+            txtTotalExpenses.SumMoneyBoxFor(manager, txs.Where(o => o.DueValue < 0), o => -o.EffectiveValue);
 
             txtTotalNet.Value = txtTotalIncome.Value - txtTotalExpenses.Value;
         }
@@ -557,8 +557,8 @@ namespace DemoProject
             {
                 CategoryName = o.GetCategoryName(categories),
                 Description = o.Description,
-                Date = o.EfectiveDate,
-                Value = o.EfectiveValue,
+                Date = o.EffectiveDate,
+                Value = o.EffectiveValue,
             }).ToArray();
 
             if (items.Length == 0)

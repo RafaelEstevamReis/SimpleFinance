@@ -33,7 +33,7 @@ namespace DemoProject.Dialogs
             else rdoReversed.Checked = true;
 
             var pair = manager.GetTransferPair(oneTransaction);
-            lblSourceWallet.Text = pair.soruce.GetWalletName(wallets);
+            lblSourceWallet.Text = pair.source.GetWalletName(wallets);
             lblDestinationWallet.Text = pair.destination.GetWalletName(wallets);
         }
 

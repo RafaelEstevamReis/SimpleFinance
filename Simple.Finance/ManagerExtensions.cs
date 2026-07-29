@@ -22,7 +22,7 @@ public static class ManagerExtensions
     public static Dictionary<long, Tables.Person> GetPersonsDict(this Manager mgr)
         => mgr.GetAllPersons().ToDictionary(o => o.Id, o => o);
 
-    public static (Tables.Transac soruce, Tables.Transac destination) GetTransferPair(this Manager mgr, Tables.Transac oneTransaction)
+    public static (Tables.Transac source, Tables.Transac destination) GetTransferPair(this Manager mgr, Tables.Transac oneTransaction)
     {
         if (oneTransaction.Type != Tables.Transac.TransactionType.WalletTransfer)
         {

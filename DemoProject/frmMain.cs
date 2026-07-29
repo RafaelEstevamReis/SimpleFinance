@@ -161,13 +161,13 @@ namespace DemoProject
 
             var recentDuePaid = manager.GetTransactions(Manager.SearchTransactionsDate.EffectiveDate, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow.AddDays(7));
             var recentChanged = manager.GetTransactions(Manager.SearchTransactionsDate.Changed, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddMinutes(1));
-            var txs = recentDuePaid.Union(recentChanged).DistinctBy(o => o.Id).OrderBy(o => o.EfectiveDate);
+            var txs = recentDuePaid.Union(recentChanged).DistinctBy(o => o.Id).OrderBy(o => o.EffectiveDate);
             foreach (var tx in txs)
             {
                 string category = tx.GetCategoryName(categories);
                 string wallet = tx.GetWalletName(wallets);
 
-                int ix = grdTxRecent.Rows.Add(tx.Status, tx.EfectiveDate, category, tx.Description, tx.EfectiveValue, wallet);
+                int ix = grdTxRecent.Rows.Add(tx.Status, tx.EffectiveDate, category, tx.Description, tx.EffectiveValue, wallet);
                 grdTxRecent.Rows[ix].Tag = tx;
 
                 if (tx.Status == Transac.PaymentStatus.Reversed)
@@ -226,11 +226,11 @@ namespace DemoProject
                     if (tx.Status == Transac.PaymentStatus.Reversed) continue;
                     if (tx.WalletId != wallet.Id) continue;
 
-                    var effDateIx = (int)(tx.EfectiveDate.Date - dateBefore.Date).TotalDays;
+                    var effDateIx = (int)(tx.EffectiveDate.Date - dateBefore.Date).TotalDays;
                     if (effDateIx >= valuesDay.Length) continue;
 
-                    var referenceValueConverted = tx.EfectiveValue;
-                    valuesDay[effDateIx] += tx.EfectiveValue;
+                    var referenceValueConverted = tx.EffectiveValue;
+                    valuesDay[effDateIx] += tx.EffectiveValue;
                 }
 
                 DateTime[] arrDates = new DateTime[valuesDay.Length];
@@ -375,7 +375,7 @@ namespace DemoProject
                 var tx = grdTxRecent.Rows[e.RowIndex].Tag as Transac;
                 if (tx == null) return;
 
-                var code = tx.GetTransacationCurrencyCode(wallets);
+                var code = tx.GetTransactionCurrencyCode(wallets);
                 if (string.IsNullOrEmpty(code)) return;
 
                 e.FormattingApplied = true;
@@ -681,7 +681,7 @@ namespace DemoProject
                     dicCategories[catName] = new decimal[12];
                 }
 
-                dicCategories[catName][tx.EfectiveDate.Month - 1] += tx.EfectiveValue;
+                dicCategories[catName][tx.EffectiveDate.Month - 1] += tx.EffectiveValue;
             }
 
             List<YearlySummaryModel> lst = [];

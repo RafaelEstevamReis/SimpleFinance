@@ -532,7 +532,7 @@ GROUP BY WalletId", new
             cli.NewValue   AS NewValue
         FROM ChangeLog cl
         INNER JOIN ChangeLogItem cli ON cli.LogId = cl.Id
-        WHERE cl.Event BETWEEN @start AND @end AND cli.ExternalId = @externalId
+        WHERE cl.Event BETWEEN @start AND @end AND cl.ExternalId = @externalId
         ORDER BY cl.Event, cli.Id, cli.FieldName";
 
         using var cnn = db.GetConnection();

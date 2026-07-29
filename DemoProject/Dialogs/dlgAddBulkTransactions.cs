@@ -43,7 +43,7 @@ namespace DemoProject.Dialogs
             foreach (var tx in initTransactions)
             {
                 bool isExpense = tx.DueValue < 0;
-                var ix = grdData.Rows.Add(tx.EfectiveDate, isExpense, null, tx.Description, Math.Abs(tx.EfectiveValue), tx.Status == Transac.PaymentStatus.Paid);
+                var ix = grdData.Rows.Add(tx.EffectiveDate, isExpense, null, tx.Description, Math.Abs(tx.EffectiveValue), tx.Status == Transac.PaymentStatus.Paid);
                 updateCategoryCell(ix, isExpense);
                 grdData.Rows[ix].Tag = tx;
             }
