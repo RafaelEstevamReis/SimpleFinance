@@ -43,7 +43,9 @@ public class ExchangeGraph
 
         var queue = new Queue<string>();
         var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var parent = new Dictionary<string, (string from, Node nodeUsed)>();
+        // must match 'visited'/'graphTable': edges are keyed with the casing declared by the table,
+        // while startCur/targetCur come from the caller
+        var parent = new Dictionary<string, (string from, Node nodeUsed)>(StringComparer.OrdinalIgnoreCase);
 
         queue.Enqueue(startCur);
         visited.Add(startCur);
