@@ -107,7 +107,7 @@ public class Manager
     public decimal GetWalletBalance(long walletId)
     {
         using var cnn = db.GetConnection();
-        return cnn.ExecuteScalar<decimal>("SELECT COALESCE(SUM(PaidValue),0) FROM Transac WHERE WalletId = @id AND Status = @status AND PaymentDate <= CURRENT_TIMESTAMP", new
+        return cnn.ExecuteScalar<decimal>($"SELECT COALESCE(SUM(PaidValue),0) FROM {nameof(Tables.Transac)} WHERE WalletId = @id AND Status = @status AND PaymentDate <= CURRENT_TIMESTAMP", new
         {
             id = walletId,
             status = Tables.Transac.PaymentStatus.Paid,
@@ -116,19 +116,28 @@ public class Manager
     public IEnumerable<Models.WalletBalance> GetWalletsBalance()
     {
         using var cnn = db.GetConnection();
-        return cnn.Query<Models.WalletBalance>("SELECT WalletId, COALESCE(SUM(PaidValue),0) as Balance FROM Transac WHERE Status = 1 GROUP BY WalletId", null);
+        return cnn.Query<Models.WalletBalance>(
+$@"SELECT WalletId, COALESCE(SUM(PaidValue),0) as Balance 
+  FROM {nameof(Tables.Transac)} 
+  WHERE Status = @statusPaid 
+GROUP BY WalletId", new
+{
+    statusPaid = Tables.Transac.PaymentStatus.Paid,
+});
     }
     public IEnumerable<Models.WalletBalance> GetWalletsBalance(DateTime atDate)
     {
         using var cnn = db.GetConnection();
         return cnn.Query<Models.WalletBalance>(
-@"SELECT WalletId, COALESCE(SUM(CASE WHEN Status = 1 THEN  PaidValue ELSE DueValue END),0) as Balance 
-  FROM Transac 
-  WHERE (Status = 1 AND PaymentDate < @date) 
-     OR (Status = 0 AND DueDate <= @date AND DueDate > CURRENT_TIMESTAMP ) 
+$@"SELECT WalletId, COALESCE(SUM(CASE WHEN Status = @statusPaid THEN  PaidValue ELSE DueValue END),0) as Balance 
+  FROM {nameof(Tables.Transac)} 
+  WHERE (Status = @statusPaid AND PaymentDate < @date) 
+     OR (Status = @statusUnpaid AND DueDate <= @date AND DueDate > CURRENT_TIMESTAMP ) 
 GROUP BY WalletId", new
 {
     date = atDate,
+    statusPaid = Tables.Transac.PaymentStatus.Paid,
+    statusUnpaid = Tables.Transac.PaymentStatus.Unpaid,
 });
     }
 
@@ -494,46 +503,35 @@ GROUP BY WalletId", new
 
     #region ChangeLog
 
-    public IEnumerable<Tables.TableLogRegistry> GetLogs(DateTime start, DateTime end)
-    {
-        const string sql = @"
+    private const string sqlLogSelect = $@"
         SELECT 
             cl.Id          AS LogId,
             cl.Event       AS Event,
             cl.TableName   AS TableName,
             cl.TableId     AS TableId,
             cl.ExternalId  AS ExternalId,
-            
+
             cli.Id         AS LogItemId,
             cli.FieldName  AS FieldName,
             cli.OldValue   AS OldValue,
             cli.NewValue   AS NewValue
-        FROM ChangeLog cl
-        INNER JOIN ChangeLogItem cli ON cli.LogId = cl.Id
-        WHERE cl.Event BETWEEN @start AND @end
+        FROM {nameof(Tables.ChangeLog)} cl
+        INNER JOIN {nameof(Tables.ChangeLogItem)} cli ON cli.LogId = cl.Id";
+    private const string sqlLogOrder = @"
         ORDER BY cl.Event, cli.Id, cli.FieldName";
+
+    public IEnumerable<Tables.TableLogRegistry> GetLogs(DateTime start, DateTime end)
+    {
+        const string sql = sqlLogSelect + @"
+        WHERE cl.Event BETWEEN @start AND @end" + sqlLogOrder;
 
         using var cnn = db.GetConnection();
         return cnn.Query<Tables.TableLogRegistry>(sql, new { start, end });
     }
     public IEnumerable<Tables.TableLogRegistry> GetLogs(DateTime start, DateTime end, long externalId)
     {
-        const string sql = @"
-        SELECT 
-            cl.Id          AS LogId,
-            cl.Event       AS Event,
-            cl.TableName   AS TableName,
-            cl.TableId     AS TableId,
-            cl.ExternalId  AS ExternalId,
-            
-            cli.Id         AS LogItemId,
-            cli.FieldName  AS FieldName,
-            cli.OldValue   AS OldValue,
-            cli.NewValue   AS NewValue
-        FROM ChangeLog cl
-        INNER JOIN ChangeLogItem cli ON cli.LogId = cl.Id
-        WHERE cl.Event BETWEEN @start AND @end AND cl.ExternalId = @externalId
-        ORDER BY cl.Event, cli.Id, cli.FieldName";
+        const string sql = sqlLogSelect + @"
+        WHERE cl.Event BETWEEN @start AND @end AND cl.ExternalId = @externalId" + sqlLogOrder;
 
         using var cnn = db.GetConnection();
         return cnn.Query<Tables.TableLogRegistry>(sql, new { start, end, externalId });
@@ -543,22 +541,8 @@ GROUP BY WalletId", new
         if (tableId <= 0) return [];
         var tableName = getTableName(typeof(T));
 
-        const string sql = @"
-        SELECT 
-            cl.Id          AS LogId,
-            cl.Event       AS Event,
-            cl.TableName   AS TableName,
-            cl.TableId     AS TableId,
-            cl.ExternalId  AS ExternalId,
-            
-            cli.Id         AS LogItemId,
-            cli.FieldName  AS FieldName,
-            cli.OldValue   AS OldValue,
-            cli.NewValue   AS NewValue
-        FROM ChangeLog cl
-        INNER JOIN ChangeLogItem cli ON cli.LogId = cl.Id
-        WHERE cl.TableName = @tableName AND cl.TableId = @tableId
-        ORDER BY cl.Event, cli.Id, cli.FieldName";
+        const string sql = sqlLogSelect + @"
+        WHERE cl.TableName = @tableName AND cl.TableId = @tableId" + sqlLogOrder;
 
         using var cnn = db.GetConnection();
         return cnn.Query<Tables.TableLogRegistry>(sql, new { tableName, tableId });
@@ -602,18 +586,26 @@ GROUP BY WalletId", new
 
     #region Notification
 
+    /// <summary>
+    /// Maps a table name, as stored on <see cref="Tables.ChangeLog.TableName"/>, to its notification item.
+    /// Built from the types themselves so renaming a table cannot silently break the routing
+    /// </summary>
+    private static readonly Dictionary<string, ManagerNotificationEventArgs.EventNotificationItem> notificationItems = new()
+    {
+        [getTableName(typeof(Tables.Category))] = ManagerNotificationEventArgs.EventNotificationItem.Category,
+        [getTableName(typeof(Tables.Person))] = ManagerNotificationEventArgs.EventNotificationItem.Person,
+        [getTableName(typeof(Tables.Transac))] = ManagerNotificationEventArgs.EventNotificationItem.Transaction,
+        [getTableName(typeof(Tables.Wallet))] = ManagerNotificationEventArgs.EventNotificationItem.Wallet,
+    };
+
     protected void triggerNotification(string tableName, ManagerNotificationEventArgs.EventNotificationAction eventNotificationAction, long id)
     {
         if (EventNotifier == null) return;
 
-        var tableEnum = tableName switch
+        if (!notificationItems.TryGetValue(tableName, out var tableEnum))
         {
-            "Category" => ManagerNotificationEventArgs.EventNotificationItem.Category,
-            "Person" => ManagerNotificationEventArgs.EventNotificationItem.Person,
-            "Transac" => ManagerNotificationEventArgs.EventNotificationItem.Transaction,
-            "Wallet" => ManagerNotificationEventArgs.EventNotificationItem.Wallet,
-            _ => ManagerNotificationEventArgs.EventNotificationItem.Other,
-        };
+            tableEnum = ManagerNotificationEventArgs.EventNotificationItem.Other;
+        }
 
         EventNotifier.Invoke(this, new ManagerNotificationEventArgs
         {
