@@ -75,4 +75,19 @@ public class CurrencyPairsTest
         Assert.Equal(expected, (decimal)actual, precision: expected > 100_000 ? 6 : 10);
     }
 
+    [Theory]
+    [InlineData("brl", "usd")]     // direct
+    [InlineData("brl", "jpy")]     // crossed: BRL → USD → XAU → JPY
+    [InlineData("jpy", "brl")]
+    public void CasingDoesNotChangeTheRate(string baseCur, string quoteCur)
+    {
+        var date = new DateTime(2020, 12, 31);
+
+        var lower = exchange.GetRateFor(baseCur, quoteCur, date);
+        var upper = exchange.GetRateFor(baseCur.ToUpperInvariant(), quoteCur.ToUpperInvariant(), date);
+
+        ArgumentNullException.ThrowIfNull(lower);
+        Assert.Equal(upper, lower);
+    }
+
 }
