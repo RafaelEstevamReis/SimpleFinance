@@ -2,11 +2,12 @@
 
 using Simple.Finance;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public class SampleFunctions
 {
-    static Random Rnd = new();
+    static readonly Random Rnd = new();
     public static void Run(Manager mgr)
     {
         Console.WriteLine(">> Sample Functions\n");
