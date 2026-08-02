@@ -21,9 +21,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- Packed into the NuGet (PackageReadmeFile); shown in the solution's SolutionItems folder, not in this project -->
 		<None Include="..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
+			<Visible>False</Visible>
 		</None>
 	</ItemGroup>
 

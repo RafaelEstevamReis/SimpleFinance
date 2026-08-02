@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoProject", "DemoProject\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{A2802D16-997E-4D69-BC08-A1BE4CE66B03}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE1}") = "SolutionItems", "SolutionItems", "{F0E31DC4-9B2F-4C9C-AD5C-9BA3A4AA2172}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
