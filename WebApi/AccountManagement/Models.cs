@@ -31,9 +31,15 @@ public record AccountPreference
 {
     [PrimaryKey]
     public long Id { get; set; }
-    [Index("ixAccountPreference_Account", 1)]
+    /// <summary>
+    /// '{AccountKey}/{Name}'. Composed by <see cref="ManagementDb"/> and by nobody else,
+    /// it exists only to carry the uniqueness of the pair on a single column.
+    /// The '/' is a safe separator because a preference name can never contain one
+    /// </summary>
+    [Unique]
+    public string Key { get; set; } = string.Empty;
+    [Index("ixAccountPreference_Account")]
     public Guid AccountKey { get; set; }
-    [Index("ixAccountPreference_Account", 2)]
     public string Name { get; set; } = string.Empty;
     public string Value { get; set; } = string.Empty;
 }

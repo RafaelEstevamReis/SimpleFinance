@@ -103,18 +103,58 @@ public class AccountController : AccountControllerBase
         => management.GetPreferences(AccountKey).Select(PreferenceResponse.From).ToArray();
 
     /// <summary>
-    /// Creates or replaces a single preference
+    /// Creates or replaces a single preference.
+    /// The name is a single segment of lowercase words joined by '-', like 'ui-theme'
     /// </summary>
     [HttpPut("preferences/{name}")]
     [ProducesResponseType(typeof(PreferenceResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public ActionResult<PreferenceResponse> SetPreference(string name, [FromBody] PreferenceRequest request)
     {
-        if (string.IsNullOrWhiteSpace(name)) return BadRequest("Preference name is required");
+        if (!isValidName(name)) return BadRequest(invalidNameMessage);
 
         var value = request.Value ?? string.Empty;
+        if (value.Length > maxValueLength) return BadRequest($"Preference value must be at most {maxValueLength} characters");
+
         management.SetPreference(AccountKey, name, value);
 
         return new PreferenceResponse { Name = name, Value = value };
+    }
+
+    /// <summary>
+    /// Removes a single preference
+    /// </summary>
+    [HttpDelete("preferences/{name}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult RemovePreference(string name)
+    {
+        if (!isValidName(name)) return BadRequest(invalidNameMessage);
+
+        return management.RemovePreference(AccountKey, name) ? NoContent() : NotFound();
+    }
+
+    private const int maxNameLength = 50;
+    private const int maxValueLength = 512;
+    private static readonly string invalidNameMessage = $"Preference name must be at most {maxNameLength} characters of 'a'-'z', '0'-'9' and '-'";
+
+    /// <summary>
+    /// Keeps the keys boring: lowercase, digits and hyphens, nothing else.
+    /// '/' is deliberately out — it would need a catch-all route, it is mangled differently by
+    /// proxies when encoded, and <see cref="AccountManagement.ManagementDb"/> reserves it as the
+    /// separator of the stored unique key. Do not add it back
+    /// </summary>
+    private static bool isValidName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return false;
+        if (name.Length > maxNameLength) return false;
+
+        foreach (var c in name)
+        {
+            var allowed = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-';
+            if (!allowed) return false;
+        }
+        return true;
     }
 }

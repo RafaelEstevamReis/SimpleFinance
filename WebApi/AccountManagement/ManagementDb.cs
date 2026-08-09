@@ -78,26 +78,42 @@ public class ManagementDb
     public AccountPreference[] GetPreferences(Guid accountKey)
     {
         using var cnn = db.GetConnection();
-        return cnn.GetWhere<AccountPreference>(nameof(AccountPreference.AccountKey), accountKey).ToArray();
+        return [.. cnn.GetWhere<AccountPreference>(nameof(AccountPreference.AccountKey), accountKey)];
     }
 
     /// <summary>
-    /// Creates or updates a single preference of an account
+    /// Creates or replaces a single preference of an account.
+    /// The unique key makes this a single statement, with no read-then-write window
     /// </summary>
     public void SetPreference(Guid accountKey, string name, string value)
     {
         using var cnn = db.GetConnection();
-        var current = cnn.Query<AccountPreference>(
-            $"SELECT * FROM {nameof(AccountPreference)} WHERE {nameof(AccountPreference.AccountKey)} = @accountKey AND {nameof(AccountPreference.Name)} = @name",
-            new { accountKey, name })
-            .FirstOrDefault();
-
         cnn.Insert(new AccountPreference
         {
-            Id = current?.Id ?? 0,
+            Id = 0,
+            Key = keyOf(accountKey, name),
             AccountKey = accountKey,
             Name = name,
             Value = value,
         }, OnConflict.Replace);
     }
+
+    /// <summary>
+    /// Removes a single preference, returns false when there was nothing to remove
+    /// </summary>
+    public bool RemovePreference(Guid accountKey, string name)
+    {
+        using var cnn = db.GetConnection();
+        var affected = cnn.Execute(
+            $"DELETE FROM {nameof(AccountPreference)} WHERE {nameof(AccountPreference.Key)} = @key",
+            new { key = keyOf(accountKey, name) });
+
+        return affected > 0;
+    }
+
+    /// <summary>
+    /// The only place a preference key is composed. Both halves are slash-free,
+    /// so the pair can never be ambiguous
+    /// </summary>
+    private static string keyOf(Guid accountKey, string name) => $"{accountKey:D}/{name}";
 }
