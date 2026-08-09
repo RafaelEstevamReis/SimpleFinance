@@ -151,6 +151,35 @@ in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — caller
 (system currencies from `CultureInfo` + custom `BTC`/`SAT` formats, `decimal?.FormatFor(code)`),
 `ModelHelpers.ModelDiff`.
 
+## WebApi (`WebApi/`)
+
+ASP.NET Core service over the library. Deliberately exposes only the direct features: **no** currency
+conversion, **no** import/export, **no** `EventNotifier`, **no** `ChangeLog`.
+
+Everything it writes lives under the application folder, composed by `AppPaths`:
+`data/db.sqlite` (management), `data/log/LogyyyyMMdd.log` (Serilog, file sink only),
+`data/users/db_{accountKey}.sqlite` (one finance database per account),
+`data/users/bkp/{accountKey}/{yyyyMMdd}.gz`.
+
+- **Accounts** (`AccountManagement/`) — `Account` (Guid `Key` as `[PrimaryKey]`) and `AccountPreference`
+  live in the management database. Creating an account *is* creating a Key; it is returned once and
+  cannot be recovered, and whoever holds it owns that finance database.
+- **Authentication** (`Auth/`) — `ApiKeyAuthenticationHandler` reads the Key from the header named by
+  `ApiKeyDefaults.HeaderName`. The authorization `FallbackPolicy` requires an authenticated user, so the
+  service fails closed: only `[AllowAnonymous]` (`/api/hello`, `POST /api/account`, `/` redirect) is open.
+- **`ManagerCache`** — one `Manager` per account in `IMemoryCache`, 30 min sliding. Entering the cache is
+  what runs `Initialize`, and it takes the daily backup — first session of the day wins, later ones skip so
+  a damaged database cannot overwrite the good copy. A lock guards **creation only**, never usage.
+- **Controllers** — everything account-scoped derives from `AccountControllerBase`, which turns the Key
+  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, plus account preferences.
+- **`DomainExceptionFilter`** — the library validates by throwing; `ArgumentException` and
+  `InvalidOperationException` become `400 ProblemDetails`, `NotImplementedException` becomes `501`.
+  Anything else stays a 500.
+- **JSON** — `DataConverters/UtcDateTimeConverter` forces every date onto the wire as explicit UTC
+  (SQLite hands them back as `Unspecified`); enums travel as names.
+- Namespaces inside `Simple.Finance.WebApi` must never shadow the library's (`Tables`, `Models`,
+  `Helpers`): the compiler would bind the nearest one and silently pick the wrong type.
+
 ## Code conventions
 
 Match the existing style exactly; it is consistent and deliberate.

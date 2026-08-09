@@ -377,7 +377,7 @@ GROUP BY WalletId", new
     public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime date, bool paid)
         => CreateWalletTransfer(sourceWallet, sourceCategory, destinationWallet, destinationCategory, description, value, date, date, paid, null);
 
-    public void CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime dueDate, DateTime paymentDate, bool paid, string? paymentDetails)
+    public (long payId, long receiveId) CreateWalletTransfer(long sourceWallet, long sourceCategory, long destinationWallet, long destinationCategory, string description, decimal value, DateTime dueDate, DateTime paymentDate, bool paid, string? paymentDetails)
     {
         if (sourceCategory != 0 || destinationCategory != 0)
         {
@@ -445,6 +445,8 @@ GROUP BY WalletId", new
         var second = cnn.Get<Tables.Transac>(txReceive.Id) ?? throw new ArgumentException("Invalid second transaction");
         saveChangeLog(cnn, null, first);
         saveChangeLog(cnn, null, second);
+
+        return (txPay.Id, txReceive.Id);
     }
 
     [Obsolete("Use separated dates instead", error: false)]

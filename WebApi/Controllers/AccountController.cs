@@ -92,4 +92,29 @@ public class AccountController : AccountControllerBase
             LastBackupUtc = lastBackup?.LastWriteTimeUtc,
         };
     }
+
+    /// <summary>
+    /// Preferences of this account. They live on the management database,
+    /// not on the finance one
+    /// </summary>
+    [HttpGet("preferences")]
+    [ProducesResponseType(typeof(PreferenceResponse[]), StatusCodes.Status200OK)]
+    public ActionResult<PreferenceResponse[]> GetPreferences()
+        => management.GetPreferences(AccountKey).Select(PreferenceResponse.From).ToArray();
+
+    /// <summary>
+    /// Creates or replaces a single preference
+    /// </summary>
+    [HttpPut("preferences/{name}")]
+    [ProducesResponseType(typeof(PreferenceResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult<PreferenceResponse> SetPreference(string name, [FromBody] PreferenceRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return BadRequest("Preference name is required");
+
+        var value = request.Value ?? string.Empty;
+        management.SetPreference(AccountKey, name, value);
+
+        return new PreferenceResponse { Name = name, Value = value };
+    }
 }

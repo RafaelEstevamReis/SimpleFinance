@@ -10,9 +10,11 @@ using Simple.Finance.WebApi;
 using Simple.Finance.WebApi.AccountManagement;
 using Simple.Finance.WebApi.Auth;
 using Simple.Finance.WebApi.DataConverters;
+using Simple.Finance.WebApi.Filters;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text.Json.Serialization;
 
 AppPaths.EnsureFolders();
 Log.Logger = new LoggerConfiguration()
@@ -39,11 +41,13 @@ try
     // Fail closed: everything requires a Key unless explicitly marked [AllowAnonymous]
     builder.Services.AddAuthorization(cfg => cfg.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
-    builder.Services.AddControllers()
+    builder.Services.AddControllers(cfg => cfg.Filters.Add<DomainExceptionFilter>())
                     .AddJsonOptions(cfg =>
                     {
                         cfg.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
                         cfg.JsonSerializerOptions.Converters.Add(new NullableUtcDateTimeConverter());
+                        // Statuses and types travel as names, not as opaque numbers
+                        cfg.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(cfg =>
