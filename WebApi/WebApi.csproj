@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<RootNamespace>Simple.Finance.WebApi</RootNamespace>
+		<AssemblyName>Simple.Finance.WebApi</AssemblyName>
+
+		<!-- OpenAPI descriptions come from the XML doc comments -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
+		<AssemblyVersion>0.1.0</AssemblyVersion>
+		<Version>$(AssemblyVersion)</Version>
+		<FileVersion>$(AssemblyVersion)</FileVersion>
+
+		<Authors>RafaelEstevam.Net</Authors>
+		<Company>RafaelEstevam.Net</Company>
+		<Product>Simple C# personal finance manager</Product>
+		<Description>Web API over Simple.Finance</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Simple.Finance\Simple.Finance.csproj" />
+	</ItemGroup>
+
+</Project>
