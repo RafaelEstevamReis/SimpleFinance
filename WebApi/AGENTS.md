@@ -21,6 +21,14 @@ graph LR
 
 - **Wallet** — a place money sits: checking account, savings, cash, a card, a broker.
   It owns a `baseCurrency`, and every balance is expressed in it.
+  `externallType` is an integer the API stores and returns untouched — nothing here reads it, and
+  there is no registry of values. It exists so an external app can say **what kind of account** the
+  wallet is: checking, savings, credit card, investment, cash. The meaning of each number is the
+  client's own convention, so keep it written down somewhere the client owns; `0` means "not set".
+  One kind changes how you must feed it: an **investment** wallet's balance is still only the sum of
+  its transactions — the API never marks anything to market, and no rate or quote reaches it. Its
+  yield has to be entered by hand, as periodic income transactions on a yield category, or the
+  wallet reports what was deposited instead of what it is worth.
 - **Category** — what the money is *for*, and the single source of truth for the **sign**.
   `isExpense: true` makes values negative, `false` makes them positive.
 - **Person** — the counterparty: employer, landlord, market, a friend. Optional.

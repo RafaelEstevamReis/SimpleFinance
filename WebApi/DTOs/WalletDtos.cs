@@ -5,6 +5,11 @@
 /// </summary>
 public record WalletRequest
 {
+    /// <summary>
+    /// Free slot for external applications: the library never reads or validates it,
+    /// it is stored and returned as sent. 0 means unused
+    /// </summary>
+    public int ExternallType { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     /// <summary>
@@ -19,6 +24,7 @@ public record WalletRequest
     public Tables.Wallet ToTable(long id) => new()
     {
         Id = id,
+        ExternallType = ExternallType,
         Name = Name,
         Description = Description,
         BaseCurrency = BaseCurrency,
@@ -29,6 +35,10 @@ public record WalletRequest
 public record WalletResponse
 {
     public long Id { get; set; }
+    /// <summary>
+    /// Free slot for external applications, stored and returned as sent. 0 means unused
+    /// </summary>
+    public int ExternallType { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string BaseCurrency { get; set; } = string.Empty;
@@ -37,6 +47,7 @@ public record WalletResponse
     public static WalletResponse From(Tables.Wallet wallet) => new()
     {
         Id = wallet.Id,
+        ExternallType = wallet.ExternallType,
         Name = wallet.Name,
         Description = wallet.Description,
         BaseCurrency = wallet.BaseCurrency,
