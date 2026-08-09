@@ -280,11 +280,19 @@ case — a "To classify (out)" / "To classify (in)" pair, or a card whose whole 
 spending — where a sane starting category saves the person fifty clicks. Either way the category is a
 per-row decision the client owns; the import only offers a starting point.
 
-**Nothing is deduplicated.** Importing the same file twice creates the rows twice, and the API will not
-notice. OFX carries a `FitId` per movement and the importer appends it to the description as `[fitid]`,
-which is the only handle you get: to skip what is already in, search the wallet over the statement's
-period and match on that suffix before posting. MT940 has no such id — dedupe there is date, value and
+**The API does not deduplicate, but it hands you everything you need to.** Importing the same file
+twice returns the same rows twice, and posting them twice creates them twice — the service will not
+notice. What it does give you is **`externalIdentifier`**: the bank's own id for the movement, carried
+on every imported row, accepted by `POST`/`PUT` and returned by every read. Having one means the row
+is linked to a statement.
+
+So the dedupe is three lines on your side: search the wallet over the statement's period, collect the
+`externalIdentifier` of what is already there, and drop the imported rows whose id is in that set.
+OFX fills it from `FitId`. MT940 carries no such id, so there the match is date, value and
 description, or ask the person.
+
+`PUT` leaves the field alone when you send it `null`, so settling or editing a row never breaks its
+link to the bank. Send a value only to set or correct one.
 
 Encoding is handled: the upload is read as UTF-8 and falls back to Latin1, so the Windows-1252 files
 most Brazilian banks emit keep their accents. Both the XML and the older SGML flavours of OFX parse.
@@ -369,9 +377,10 @@ day, in the middle of someone's evening.
 - A ledger's running total counts overdue rows; the projection does not. They disagree on purpose.
 - The projection excludes overdue rows **by design**. Query them separately; never fold them in.
 - `Reversed` rows vanish from balances but stay in searches.
-- `PUT` is a full replacement, not a patch. Fields this API does not expose (`ReferenceCurrency`,
-  `RC_*`, `ExternalIdentifier`) are reset by it — never point this service at a database written by
-  the desktop app.
+- `PUT` is a full replacement of the fields it carries, not a patch — send back everything you want
+  to keep. Fields the API does not expose (`ReferenceCurrency`, `RC_*`) are left exactly as they were,
+  and so is `externalIdentifier` when you send it `null`: an update never destroys what the client
+  did not send.
 - Send dates in **UTC** (`...Z`). Everything stored and returned is UTC, so "today" for a balance is
   the UTC day, which can differ from the person's local day near midnight.
 - No pagination: a wide date range returns everything at once.
@@ -379,7 +388,8 @@ day, in the middle of someone's evening.
   turns every edit into read-modify-write, and concurrent edits of unrelated settings clobber each other.
 - Creating an account is cheap and irreversible — there is no way to list or delete accounts.
 - Importing stores nothing. `/api/import/*` answers with rows; if you do not `POST` them, nothing
-  happened. Importing twice, or importing then posting twice, duplicates everything.
+  happened. Importing twice, or importing then posting twice, duplicates everything — unless you
+  dedupe on `externalIdentifier` yourself, which is what it is there for.
 - The import takes **two** default categories, picked by the sign of each row, and each must sit on its
   own side of `isExpense` — one category for a whole statement would invert half of it. `0`/`0` is a
   fine answer; categorising row by row is the client's job either way.
@@ -496,6 +506,55 @@ direction. The grid should be readable without reading text.
 
 **Seed the first run.** A couple of wallets and a handful of categories, expense and income, so the
 first transaction does not stall on an empty dropdown.
+
+### More of them, one line each
+
+Same status as everything above — suggestions, not contract. The first block assumes you are
+importing statements.
+
+**Match before creating** — an imported row that lines up with a bill already entered should settle
+it, not become a second line.
+
+**Dedupe on the bank's own id** — compare the movement id against what is already in, before posting
+anything.
+
+**Fingerprint as the fallback** — banks repeat, reshape and regenerate those ids; wallet + date +
+amount + description is the second layer.
+
+**Dedupe inside the file too** — two statements with overlapping ranges carry the same rows twice.
+
+**A review queue** — three piles before anything is written: matched, new, duplicate.
+
+**Categorise before storing an imported row** — with no category the row keeps the file's sign and
+disappears from every per-category report.
+
+**Reconcile against the statement's closing balance** — type the bank's figure, tick row by row,
+close when the difference reaches zero.
+
+**An import that knows about cards** — the invoice debit on the checking account becomes a
+category-less transfer, never an expense.
+
+**Counterparty memory** — a new entry inherits category, wallet and amount from the last one with the
+same counterparty.
+
+**Import rules** — a trigger on description, amount or wallet sets the category and the name, so the
+review queue does not turn into monthly work.
+
+**Spot recurrence in the history** — what has repeated for months becomes an offer to materialise the
+next ones, always on approval.
+
+**A bill calendar** — the action queue in the shape that shows how the month is distributed.
+
+**A future line in the statement** — a separator between what has happened and what has not, because
+card installments are future and already paid.
+
+**Since last time** — on opening: what fell due, what to settle, and how long since a statement was
+imported.
+
+**Named saved searches** — keep several cuts, not only the last one.
+
+**Proactive alerts** — a bill above its own average, overdue piling up, an invoice left unreconciled
+for too long.
 
 ## Errors
 

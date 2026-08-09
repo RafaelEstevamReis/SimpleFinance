@@ -36,27 +36,43 @@ public record TransactionRequest
     /// </summary>
     public decimal PaidValue { get; set; }
     public string? PaymentDetails { get; set; }
-
-    public Tables.Transac ToTable(long id) => new()
-    {
-        Id = id,
-        WalletId = WalletId,
-        CategoryId = CategoryId,
-        CounterpartyId = CounterpartyId,
-        DueDate = DueDate,
-        PaymentDate = PaymentDate,
-        Description = Description,
-        Status = Status,
-        PaymentCurrency = PaymentCurrency,
-        DueValue = DueValue,
-        PaidValue = PaidValue,
-        PaymentDetails = PaymentDetails,
-        Type = Tables.Transac.TransactionType.Simple,
-    };
+    /// <summary>
+    /// The bank's own id for this movement
+    /// </summary>
+    public string? ExternalIdentifier { get; set; }
 
     /// <summary>
-    /// Carries a transaction parsed by an importer: it is not stored yet, it is a
-    /// candidate the client reviews and posts back
+    /// A brand new row. The type is decided here: transfers have their own endpoint
+    /// </summary>
+    public Tables.Transac ToTable(long id) => ApplyTo(new Tables.Transac
+    {
+        Id = id,
+        Type = Tables.Transac.TransactionType.Simple,
+    });
+
+    /// <summary>
+    /// Writes the request over a row that already exists. Everything this API does not carry
+    /// </summary>
+    public Tables.Transac ApplyTo(Tables.Transac tx)
+    {
+        tx.WalletId = WalletId;
+        tx.CategoryId = CategoryId;
+        tx.CounterpartyId = CounterpartyId;
+        tx.DueDate = DueDate;
+        tx.PaymentDate = PaymentDate;
+        tx.Description = Description;
+        tx.Status = Status;
+        tx.PaymentCurrency = PaymentCurrency;
+        tx.DueValue = DueValue;
+        tx.PaidValue = PaidValue;
+        tx.PaymentDetails = PaymentDetails;
+        tx.ExternalIdentifier = ExternalIdentifier;
+
+        return tx;
+    }
+
+    /// <summary>
+    /// Carries a transaction parsed by an importer
     /// </summary>
     public static TransactionRequest From(Tables.Transac tx) => new()
     {
@@ -71,6 +87,7 @@ public record TransactionRequest
         DueValue = tx.DueValue,
         PaidValue = tx.PaidValue,
         PaymentDetails = tx.PaymentDetails,
+        ExternalIdentifier = tx.ExternalIdentifier,
     };
 }
 
@@ -104,6 +121,10 @@ public record TransactionResponse
     /// </summary>
     public decimal EffectiveValue { get; set; }
     public string? PaymentDetails { get; set; }
+    /// <summary>
+    /// The bank's own id for this movement, null when there is none
+    /// </summary>
+    public string? ExternalIdentifier { get; set; }
 
     public DateTime Created { get; set; }
     public DateTime Changed { get; set; }
@@ -126,6 +147,7 @@ public record TransactionResponse
         PaidValue = tx.PaidValue,
         EffectiveValue = tx.EffectiveValue,
         PaymentDetails = tx.PaymentDetails,
+        ExternalIdentifier = tx.ExternalIdentifier,
         Created = tx.Created,
         Changed = tx.Changed,
     };

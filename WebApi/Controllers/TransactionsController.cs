@@ -83,7 +83,7 @@ public class TransactionsController : AccountControllerBase
             return BadRequest($"Transaction {id} is a wallet transfer, update it through /api/transfers/{id}");
         }
 
-        var tx = request.ToTable(id);
+        var tx = request.ApplyTo(current);
         Manager.CreateUpdateTransaction(tx);
 
         return TransactionResponse.From(tx);
