@@ -1,5 +1,6 @@
 ﻿namespace Simple.Finance.WebApi.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using System;
 /// Public endpoints, no Key required
 /// </summary>
 [ApiController]
+[AllowAnonymous]
 [Route("api/[controller]")]
 [Produces("application/json")]
 public class HelloController : ControllerBase
