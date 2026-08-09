@@ -78,6 +78,17 @@ try
         if (File.Exists(xmlFile)) cfg.IncludeXmlComments(xmlFile, includeControllerXmlComments: true);
     });
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowOrigins",
+            policy =>
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+    });
+
     var app = builder.Build();
     app.Services.GetRequiredService<ManagementDb>().Initialize();
 
@@ -88,6 +99,8 @@ try
         cfg.SwaggerEndpoint("/swagger/v1/swagger.json", $"{ApiInfo.Title} v1");
         cfg.DocumentTitle = ApiInfo.Title;
     });
+
+    app.UseCors("AllowOrigins");
 
     app.UseAuthentication();
     app.UseAuthorization();
