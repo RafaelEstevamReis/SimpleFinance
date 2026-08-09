@@ -52,6 +52,30 @@ public class ChangeLogTests : ManagerTestBase
     }
 
     [Fact]
+    public void Update_FromAFreshModel_DoesNotLogUntouchedDecimals()
+    {
+        // A client rebuilds the row instead of resaving the one it read, so the decimals
+        // arrive with a different scale than the stored ones. Same money, no change to log
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: true);
+        var txId = newTx(walletId, categoryId, 100m, past);
+
+        var rebuilt = tx(walletId, categoryId, 100m, past);
+        rebuilt.Id = txId;
+        rebuilt.Description = "renamed";
+        mgr.CreateUpdateTransaction(rebuilt);
+
+        var lastEvent = mgr.GetLogs<Transac>(txId).GroupBy(o => o.LogId).OrderBy(g => g.Key).Last();
+        var changedFields = lastEvent.Select(o => o.FieldName).ToArray();
+
+        Assert.Contains(nameof(Transac.Description), changedFields);
+        Assert.DoesNotContain(nameof(Transac.DueValue), changedFields);
+        Assert.DoesNotContain(nameof(Transac.PaidValue), changedFields);
+        Assert.DoesNotContain(nameof(Transac.RC_DueValue), changedFields);
+        Assert.DoesNotContain(nameof(Transac.RC_PaidValue), changedFields);
+    }
+
+    [Fact]
     public void GetLogsByType_UsesTheTableNameOfTheType()
     {
         var walletId = newWallet();
