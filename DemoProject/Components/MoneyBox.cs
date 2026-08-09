@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace DemoProject.Components
@@ -6,6 +7,7 @@ namespace DemoProject.Components
     public class MoneyBox : TextBox
     {
         private decimal value = 0;
+        [DefaultValue(typeof(decimal), "0")]
         public decimal Value
         {
             get => value;
@@ -16,7 +18,9 @@ namespace DemoProject.Components
             }
         }
 
+        [DefaultValue(2)]
         public int DecimalPlaces { get; set; } = 2;
+        [DefaultValue("")]
         public string MoneySign { get; set; } = "";
 
         protected override void OnCreateControl()

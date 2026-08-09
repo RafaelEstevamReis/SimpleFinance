@@ -14,9 +14,10 @@ There is no service layer, no DI container, no async data access.
 | Project | TFM | Role |
 | --- | --- | --- |
 | `Simple.Finance/` | `netstandard2.1`, LangVersion 12, nullable enabled | The library. **Everything of value lives here.** |
-| `UnitTests/` | `net8.0` | xUnit v3 automated tests. The real test suite. |
-| `Tests/` | `net8.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
-| `DemoProject/` | `net8.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
+| `UnitTests/` | `net9.0` | xUnit v3 automated tests. The real test suite. |
+| `Tests/` | `net9.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
+| `DemoProject/` | `net9.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
+| `WebApi/` | `net9.0`, ASP.NET Core | Web API over the library (`AssemblyName` = `Simple.Finance.WebApi`). Serilog + Swashbuckle, everything local under `[app]/data`. |
 | `Assets/` | — | `TemporalSeries_*.json` rate series, served over HTTP from `main` and consumed by `ExternalRepoSeries`. |
 | `SampleFiles/` | — | Sample bank/fiscal files (OFX, OFC, CNAB, MT940, SPED, NFe, IFF, PDF statements). |
 
@@ -31,7 +32,7 @@ dotnet test UnitTests/UnitTests.csproj
 dotnet run --project Tests                  # console smoke run against ./data.db
 ```
 
-CI (`.github/workflows/dotnet.yml`): `windows-latest`, .NET 8, restore → build → test on push/PR to `main`.
+CI (`.github/workflows/dotnet.yml`): `windows-latest`, .NET 9, restore → build → test on push/PR to `main`.
 Release (`.github/workflows/release.yml`): tag `v*.*.*` → publishes `DemoProject` as a self-contained
 single-file `win-x64` zip and creates a GitHub Release. NuGet version is `<Version>` in `Simple.Finance.csproj`.
 
