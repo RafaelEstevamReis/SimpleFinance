@@ -9,14 +9,14 @@ using System.Linq;
 
 public static class TransactionImporter
 {
-    public static IEnumerable<Transac> FromOFX(string filePath, long walletId, long categoryId)
+    public static IEnumerable<Transac> FromOFX(string filePath, long walletId, long defaultIncomeCategoryId, long defaultExpenseCategoryId)
     {
         var ofx = OfxFile.FromFile(filePath);
         if (ofx == null) return [];
-        return FromOFX(ofx, walletId, categoryId);
+        return FromOFX(ofx, walletId, defaultIncomeCategoryId, defaultExpenseCategoryId);
     }
 
-    public static IEnumerable<Transac> FromOFX(OfxFile ofx, long walletId, long categoryId)
+    public static IEnumerable<Transac> FromOFX(OfxFile ofx, long walletId, long defaultIncomeCategoryId, long defaultExpenseCategoryId)
     {
         var acc = ofx.GetAllAccountTransactions();
         var credit = ofx.GetAllCreditTransactions();
@@ -30,7 +30,7 @@ public static class TransactionImporter
                 Created = DateTime.UtcNow,
                 Changed = DateTime.UtcNow,
                 WalletId = walletId,
-                CategoryId = categoryId,
+                CategoryId = tx.Ammount < 0 ? defaultExpenseCategoryId : defaultIncomeCategoryId,
                 CounterpartyId = 0,
                 Status = Transac.PaymentStatus.Paid,
 
@@ -46,7 +46,7 @@ public static class TransactionImporter
         }
     }
 
-    public static IEnumerable<Transac> FromMT940(MT940Statement mt, long walletId, long categoryId)
+    public static IEnumerable<Transac> FromMT940(MT940Statement mt, long walletId, long defaultIncomeCategoryId, long defaultExpenseCategoryId)
     {
         foreach (var tx in mt.Statement)
         {
@@ -59,7 +59,7 @@ public static class TransactionImporter
                 Created = DateTime.UtcNow,
                 Changed = DateTime.UtcNow,
                 WalletId = walletId,
-                CategoryId = categoryId,
+                CategoryId = value < 0 ? defaultExpenseCategoryId : defaultIncomeCategoryId,
                 CounterpartyId = 0,
                 Status = Transac.PaymentStatus.Paid,
 

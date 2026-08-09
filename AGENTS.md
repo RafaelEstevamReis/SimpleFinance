@@ -14,9 +14,10 @@ There is no service layer, no DI container, no async data access.
 | Project | TFM | Role |
 | --- | --- | --- |
 | `Simple.Finance/` | `netstandard2.1`, LangVersion 12, nullable enabled | The library. **Everything of value lives here.** |
-| `UnitTests/` | `net8.0` | xUnit v3 automated tests. The real test suite. |
-| `Tests/` | `net8.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
-| `DemoProject/` | `net8.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
+| `UnitTests/` | `net9.0` | xUnit v3 automated tests. The real test suite. |
+| `Tests/` | `net9.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
+| `DemoProject/` | `net9.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
+| `WebApi/` | `net9.0`, ASP.NET Core | Web API over the library (`AssemblyName` = `Simple.Finance.WebApi`). Serilog + Swashbuckle, everything local under `[app]/data`. |
 | `Assets/` | — | `TemporalSeries_*.json` rate series, served over HTTP from `main` and consumed by `ExternalRepoSeries`. |
 | `SampleFiles/` | — | Sample bank/fiscal files (OFX, OFC, CNAB, MT940, SPED, NFe, IFF, PDF statements). |
 
@@ -31,7 +32,7 @@ dotnet test UnitTests/UnitTests.csproj
 dotnet run --project Tests                  # console smoke run against ./data.db
 ```
 
-CI (`.github/workflows/dotnet.yml`): `windows-latest`, .NET 8, restore → build → test on push/PR to `main`.
+CI (`.github/workflows/dotnet.yml`): `windows-latest`, .NET 9, restore → build → test on push/PR to `main`.
 Release (`.github/workflows/release.yml`): tag `v*.*.*` → publishes `DemoProject` as a self-contained
 single-file `win-x64` zip and creates a GitHub Release. NuGet version is `<Version>` in `Simple.Finance.csproj`.
 
@@ -96,7 +97,11 @@ Source category must be `IsExpense`, destination must not. Update the pair via `
 ### ChangeLog + notifications
 
 `saveChangeLog<T>(cnn, older, newer, notify)` diffs writable properties via `ModelHelpers.ModelDiff`
-(null → `"[NL]"`, `ToString()` comparison) and bulk-inserts one `ChangeLogItem` per changed field.
+and bulk-inserts one `ChangeLogItem` per changed field. The diff compares the **rendered text**, so that
+rendering is culture-independent by design: null → `"[NL]"`, `decimal` rounded to 10 places without
+trailing zeros, `DateTime` as `yyyy-MM-dd HH:mm:ss` (**seconds, milliseconds are dropped on purpose**),
+anything else `IFormattable` on the invariant culture. Rendering a value differently on two machines, or
+for two scales of the same amount, would log changes that never happened.
 `older == null` ⇒ notification action `New`, else `Update`.
 
 `getTableName(Type)` = last segment of `Type.FullName`; that string lands in `ChangeLog.TableName` and is
@@ -135,6 +140,11 @@ One event has one author, so `ChangeLogItem` does not repeat it; queries filter 
 
 `TransactionImporter` is the only entry point that produces `Transac`: `FromOFX` (path or `OfxFile`),
 `FromMT940` (`"D"` ⇒ negative), `FromCSV(path, Func<string[], Transac>, delimiter)`.
+`FromOFX` and `FromMT940` take **two** default categories, `(walletId, defaultIncomeCategoryId,
+defaultExpenseCategoryId)`, and pick between them by the sign the bank gave the row. A statement runs
+both ways, and `createUpdateTransaction` forces the sign from the category, so one category for the
+whole file would invert half of it; two categories keep every row on the side it arrived on. Pass `0`
+for either to leave those rows uncategorised.
 Imported rows are `Status = Paid`, `Type = Simple`, both dates set to the posted date; OFX keeps `FitId`
 in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — callers must.
 
@@ -149,6 +159,56 @@ in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — caller
 `DateHelpers` (Start/EndOf Year|Month|Day|Hour|Minute, `MinOf`/`MaxOf`), `CurrencyHelpers`
 (system currencies from `CultureInfo` + custom `BTC`/`SAT` formats, `decimal?.FormatFor(code)`),
 `ModelHelpers.ModelDiff`.
+
+## WebApi (`WebApi/`)
+
+ASP.NET Core service over the library. Deliberately exposes only the direct features: **no** currency
+conversion, **no** export, **no** `EventNotifier`. Statement *import* is exposed, but read-only:
+it parses and answers, it never writes.
+
+Everything it writes lives under the application folder, composed by `AppPaths`:
+`data/db.sqlite` (management), `data/log/LogyyyyMMdd.log` (Serilog, file sink only),
+`data/users/db_{accountKey}.sqlite` (one finance database per account),
+`data/users/bkp/{accountKey}/{yyyyMMdd}.gz`.
+
+- **Accounts** (`AccountManagement/`) — `Account` (Guid `Key` as `[PrimaryKey]`) and `AccountPreference`
+  live in the management database. Creating an account *is* creating a Key; it is returned once and
+  cannot be recovered, and whoever holds it owns that finance database.
+- **Authentication** (`Auth/`) — `ApiKeyAuthenticationHandler` reads the Key from the header named by
+  `ApiKeyDefaults.HeaderName`. The authorization `FallbackPolicy` requires an authenticated user, so the
+  service fails closed: only `[AllowAnonymous]` (`/api/hello`, `POST /api/account`, `/` redirect) is open.
+- **`ManagerCache`** — one `Manager` per account in `IMemoryCache`, 30 min sliding. Entering the cache is
+  what runs `Initialize`, and it takes the daily backup — first session of the day wins, later ones skip so
+  a damaged database cannot overwrite the good copy. A lock guards **creation only**, never usage.
+- **Controllers** — everything account-scoped derives from `AccountControllerBase`, which turns the Key
+  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, ChangeLog, Import, plus account
+  preferences.
+- **Import** (`ImportController`) — `TransactionImporter` over an upload: `POST /api/import/{ofx|mt940}`
+  takes `multipart/form-data` (512 KB cap) and answers `TransactionRequest[]`, the same shape
+  `POST /api/transactions` accepts, so a parsed row goes back untouched. Nothing is persisted and nothing
+  is deduplicated. The importer picks the category by the sign the bank gave the row —
+  `DefaultIncomeCategoryId` for positive, `DefaultExpenseCategoryId` for negative — so the controller
+  checks that `WalletId` resolves, that each category exists when non-zero, and that each one sits on its
+  own side of `IsExpense`: a swapped pair would land on exactly the rows whose sign `Manager` then flips.
+  The import never reaches the `Manager`, so without those checks the client would only learn the ids are
+  wrong one POST later. It parses from text, not from disk (`OfxFile.FromXML` / `MT940Parser.FromLines`) —
+  no temp file — and decodes the upload as UTF-8 falling back to `Latin1`, since bank files are commonly
+  Windows-1252. CSV is deliberately absent: `TransactionImporter.FromCSV` needs a
+  `Func<string[], Transac>` per layout, which is a client concern.
+- **ChangeLog** — read only, it is written by the library itself. The flat join `TableLogRegistry` is folded
+  into one entry per event, and `OldValue`/`NewValue` are served exactly as stored, sentinel `[NL]` included:
+  rewriting an audit trail on the way out would make the API disagree with the database.
+- **`DomainExceptionFilter`** — the library validates by throwing; `ArgumentException` and
+  `InvalidOperationException` become `400 ProblemDetails`, `NotImplementedException` becomes `501`.
+  Anything else stays a 500.
+- **JSON** — `DataConverters/UtcDateTimeConverter` forces every date onto the wire as explicit UTC
+  (SQLite hands them back as `Unspecified`); enums travel as names.
+- Namespaces inside `Simple.Finance.WebApi` must never shadow the library's (`Tables`, `Models`,
+  `Helpers`): the compiler would bind the nearest one and silently pick the wrong type.
+
+`WebApi/AGENTS.md` exists: guidance for agents **using** the API to run someone's finances
+(auth, the three balance endpoints, credit cards, recipes, traps). Read it before touching endpoint
+semantics; it is not repeated here.
 
 ## Code conventions
 
