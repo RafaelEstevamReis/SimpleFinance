@@ -507,16 +507,10 @@ direction. The grid should be readable without reading text.
 **Seed the first run.** A couple of wallets and a handful of categories, expense and income, so the
 first transaction does not stall on an empty dropdown.
 
-### More of them, one line each
-
-Same status as everything above — suggestions, not contract. The first block assumes you are
-importing statements.
-
 **Match before creating** — an imported row that lines up with a bill already entered should settle
 it, not become a second line.
 
-**Dedupe on the bank's own id** — compare the movement id against what is already in, before posting
-anything.
+**Dedupe on the bank's own id** — compare the movement id against what is already in, before importing.
 
 **Fingerprint as the fallback** — banks repeat, reshape and regenerate those ids; wallet + date +
 amount + description is the second layer.
