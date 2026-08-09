@@ -97,7 +97,11 @@ Source category must be `IsExpense`, destination must not. Update the pair via `
 ### ChangeLog + notifications
 
 `saveChangeLog<T>(cnn, older, newer, notify)` diffs writable properties via `ModelHelpers.ModelDiff`
-(null → `"[NL]"`, `ToString()` comparison) and bulk-inserts one `ChangeLogItem` per changed field.
+and bulk-inserts one `ChangeLogItem` per changed field. The diff compares the **rendered text**, so that
+rendering is culture-independent by design: null → `"[NL]"`, `decimal` rounded to 10 places without
+trailing zeros, `DateTime` as `yyyy-MM-dd HH:mm:ss` (**seconds, milliseconds are dropped on purpose**),
+anything else `IFormattable` on the invariant culture. Rendering a value differently on two machines, or
+for two scales of the same amount, would log changes that never happened.
 `older == null` ⇒ notification action `New`, else `Update`.
 
 `getTableName(Type)` = last segment of `Type.FullName`; that string lands in `ChangeLog.TableName` and is
@@ -154,7 +158,7 @@ in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — caller
 ## WebApi (`WebApi/`)
 
 ASP.NET Core service over the library. Deliberately exposes only the direct features: **no** currency
-conversion, **no** import/export, **no** `EventNotifier`, **no** `ChangeLog`.
+conversion, **no** import/export, **no** `EventNotifier`.
 
 Everything it writes lives under the application folder, composed by `AppPaths`:
 `data/db.sqlite` (management), `data/log/LogyyyyMMdd.log` (Serilog, file sink only),
@@ -171,7 +175,10 @@ Everything it writes lives under the application folder, composed by `AppPaths`:
   what runs `Initialize`, and it takes the daily backup — first session of the day wins, later ones skip so
   a damaged database cannot overwrite the good copy. A lock guards **creation only**, never usage.
 - **Controllers** — everything account-scoped derives from `AccountControllerBase`, which turns the Key
-  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, plus account preferences.
+  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, ChangeLog, plus account preferences.
+- **ChangeLog** — read only, it is written by the library itself. The flat join `TableLogRegistry` is folded
+  into one entry per event, and `OldValue`/`NewValue` are served exactly as stored, sentinel `[NL]` included:
+  rewriting an audit trail on the way out would make the API disagree with the database.
 - **`DomainExceptionFilter`** — the library validates by throwing; `ArgumentException` and
   `InvalidOperationException` become `400 ProblemDetails`, `NotImplementedException` becomes `501`.
   Anything else stays a 500.

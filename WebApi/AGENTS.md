@@ -260,16 +260,6 @@ never happen, while the person may well decide to pay them.
 `GET /api/transactions?dateType=DueDate&start=<far past>&end=<now>`, keeping rows with
 `status == "Unpaid"`. These are exactly the rows the projection ignores.
 
-### Statement for a period ("extrato")
-
-1. Opening balance: `GET /api/wallets/balances?atDate=<start>`.
-2. Rows: `GET /api/transactions?dateType=EffectiveDate&start=<start>&end=<end>`, sorted by
-   `effectiveDate`, accumulating `effectiveValue`.
-
-Reconciliation note: if the window contains overdue unpaid rows, the running total will drift from
-`?atDate=<end>` by exactly their amount — the statement lists them, the projection does not count
-them. State the gap instead of hiding it; it is usually the most actionable thing on the screen.
-
 ### "How much did I spend on groceries this month?"
 
 `GET /api/transactions?dateType=EffectiveDate&start=…&end=…&kind=Category&id=<categoryId>`, summing
@@ -329,6 +319,9 @@ day, in the middle of someone's evening.
   the debt, and the invoice's date in place of the purchase's puts the expense in the wrong month.
 - The invoice payment is a transfer with **no category on either leg** — a categorised one double
   counts the expense and inflates income.
+- A running total seeded at zero is a **Net**, not a Balance, and it only means something inside a
+  single currency. Only a total seeded with `?atDate=<start>` of one wallet is a Balance.
+- A ledger's running total counts overdue rows; the projection does not. They disagree on purpose.
 - The projection excludes overdue rows **by design**. Query them separately; never fold them in.
 - `Reversed` rows vanish from balances but stay in searches.
 - `PUT` is a full replacement, not a patch. Fields this API does not expose (`ReferenceCurrency`,
