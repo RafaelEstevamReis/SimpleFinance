@@ -32,14 +32,29 @@ public record AccountPreference
     [PrimaryKey]
     public long Id { get; set; }
     /// <summary>
-    /// '{AccountKey}/{Name}'. Composed by <see cref="ManagementDb"/> and by nobody else,
-    /// it exists only to carry the uniqueness of the pair on a single column.
+    /// '{AccountKey}/{Name}', carrying the uniqueness of the pair on a single column.
+    /// It is computed, never stored on the instance, so it cannot drift from the pair it describes.
     /// The '/' is a safe separator because a preference name can never contain one
     /// </summary>
+    /// <remarks>
+    /// The discarding setter is load bearing: Simple.Sqlite only maps a property to a column when it
+    /// is both readable and writable (TableSchema), so turning this into a get-only property would
+    /// silently drop the column, and the UNIQUE constraint with it, on every new database
+    /// </remarks>
     [Unique]
-    public string Key { get; set; } = string.Empty;
+    public string Key
+    {
+        get
+        {
+           return KeyOf(AccountKey, Name);
+        }
+        set { _ = value; }
+    }
+
     [Index("ixAccountPreference_Account")]
     public Guid AccountKey { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Value { get; set; } = string.Empty;
+
+    internal static string KeyOf(Guid accountKey, string name) => $"{accountKey:D}/{name}";
 }

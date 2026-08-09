@@ -91,7 +91,6 @@ public class ManagementDb
         cnn.Insert(new AccountPreference
         {
             Id = 0,
-            Key = keyOf(accountKey, name),
             AccountKey = accountKey,
             Name = name,
             Value = value,
@@ -106,14 +105,9 @@ public class ManagementDb
         using var cnn = db.GetConnection();
         var affected = cnn.Execute(
             $"DELETE FROM {nameof(AccountPreference)} WHERE {nameof(AccountPreference.Key)} = @key",
-            new { key = keyOf(accountKey, name) });
+            new { key = AccountPreference.KeyOf(accountKey, name) });
 
         return affected > 0;
     }
 
-    /// <summary>
-    /// The only place a preference key is composed. Both halves are slash-free,
-    /// so the pair can never be ambiguous
-    /// </summary>
-    private static string keyOf(Guid accountKey, string name) => $"{accountKey:D}/{name}";
 }
