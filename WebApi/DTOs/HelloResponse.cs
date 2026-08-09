@@ -1,4 +1,4 @@
-﻿namespace Simple.Finance.WebApi.Models;
+﻿namespace Simple.Finance.WebApi.DTOs;
 
 using System;
 

@@ -1,4 +1,4 @@
-﻿namespace Simple.Finance.WebApi.Data;
+﻿namespace Simple.Finance.WebApi.AccountManagement;
 
 using Simple.Sqlite;
 using System;
@@ -24,8 +24,8 @@ public class ManagementDb
     {
         using var cnn = db.GetConnection();
         cnn.CreateTables()
-           .Add<Tables.Account>()
-           .Add<Tables.AccountPreference>()
+           .Add<Account>()
+           .Add<AccountPreference>()
            .Commit();
     }
 
@@ -33,9 +33,9 @@ public class ManagementDb
     /// Creates a new account with a brand new Key. The Key is returned only here,
     /// there is no way to recover it later
     /// </summary>
-    public Tables.Account CreateAccount(string name)
+    public Account CreateAccount(string name)
     {
-        var account = new Tables.Account
+        var account = new Account
         {
             Key = Guid.NewGuid(),
             Name = name,
@@ -53,19 +53,19 @@ public class ManagementDb
     /// <summary>
     /// Gets an account by its Key, null when there is no such account
     /// </summary>
-    public Tables.Account? GetAccount(Guid key)
+    public Account? GetAccount(Guid key)
     {
         using var cnn = db.GetConnection();
-        return cnn.Get<Tables.Account>(key);
+        return cnn.Get<Account>(key);
     }
 
     /// <summary>
-    /// Stamps <see cref="Tables.Account.LastAccess"/>, called on every authenticated request
+    /// Stamps <see cref="Account.LastAccess"/>, called on every authenticated request
     /// </summary>
     public void TouchLastAccess(Guid key)
     {
         using var cnn = db.GetConnection();
-        cnn.Execute($"UPDATE {nameof(Tables.Account)} SET {nameof(Tables.Account.LastAccess)} = @now WHERE {nameof(Tables.Account.Key)} = @key", new
+        cnn.Execute($"UPDATE {nameof(Account)} SET {nameof(Account.LastAccess)} = @now WHERE {nameof(Account.Key)} = @key", new
         {
             now = DateTime.UtcNow,
             key,
@@ -75,10 +75,10 @@ public class ManagementDb
     /// <summary>
     /// All preferences of an account
     /// </summary>
-    public Tables.AccountPreference[] GetPreferences(Guid accountKey)
+    public AccountPreference[] GetPreferences(Guid accountKey)
     {
         using var cnn = db.GetConnection();
-        return cnn.GetWhere<Tables.AccountPreference>(nameof(Tables.AccountPreference.AccountKey), accountKey).ToArray();
+        return cnn.GetWhere<AccountPreference>(nameof(AccountPreference.AccountKey), accountKey).ToArray();
     }
 
     /// <summary>
@@ -87,12 +87,12 @@ public class ManagementDb
     public void SetPreference(Guid accountKey, string name, string value)
     {
         using var cnn = db.GetConnection();
-        var current = cnn.Query<Tables.AccountPreference>(
-            $"SELECT * FROM {nameof(Tables.AccountPreference)} WHERE {nameof(Tables.AccountPreference.AccountKey)} = @accountKey AND {nameof(Tables.AccountPreference.Name)} = @name",
+        var current = cnn.Query<AccountPreference>(
+            $"SELECT * FROM {nameof(AccountPreference)} WHERE {nameof(AccountPreference.AccountKey)} = @accountKey AND {nameof(AccountPreference.Name)} = @name",
             new { accountKey, name })
             .FirstOrDefault();
 
-        cnn.Insert(new Tables.AccountPreference
+        cnn.Insert(new AccountPreference
         {
             Id = current?.Id ?? 0,
             AccountKey = accountKey,

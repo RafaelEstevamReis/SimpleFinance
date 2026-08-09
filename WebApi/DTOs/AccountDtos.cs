@@ -1,4 +1,4 @@
-﻿namespace Simple.Finance.WebApi.Models;
+﻿namespace Simple.Finance.WebApi.DTOs;
 
 using System;
 
@@ -35,4 +35,25 @@ public record AccountResponse
     public string Name { get; set; } = string.Empty;
     public DateTime Created { get; set; }
     public DateTime LastAccess { get; set; }
+}
+
+/// <summary>
+/// State of the finance database of an account
+/// </summary>
+public record AccountDatabaseResponse
+{
+    /// <summary>
+    /// File name inside data/users, never the full path
+    /// </summary>
+    public string FileName { get; set; } = string.Empty;
+    public long SizeBytes { get; set; }
+    /// <summary>
+    /// Wallets already registered, proves the schema is ready
+    /// </summary>
+    public int WalletCount { get; set; }
+    /// <summary>
+    /// Newest backup file in data/users/bkp, null when none was taken yet
+    /// </summary>
+    public string? LastBackup { get; set; }
+    public DateTime? LastBackupUtc { get; set; }
 }

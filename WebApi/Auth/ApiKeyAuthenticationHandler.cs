@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Simple.Finance.WebApi.Data;
+using Simple.Finance.WebApi.AccountManagement;
 using System;
 using System.Security.Claims;
 using System.Text.Encodings.Web;

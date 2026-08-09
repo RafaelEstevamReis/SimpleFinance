@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 using Simple.Finance.WebApi;
+using Simple.Finance.WebApi.AccountManagement;
 using Simple.Finance.WebApi.Auth;
-using Simple.Finance.WebApi.Data;
-using Simple.Finance.WebApi.Json;
+using Simple.Finance.WebApi.DataConverters;
 using System;
 using System.IO;
 using System.Reflection;
@@ -32,6 +31,8 @@ try
     builder.Host.UseSerilog();
 
     builder.Services.AddSingleton<ManagementDb>();
+    builder.Services.AddMemoryCache();
+    builder.Services.AddSingleton<ManagerCache>();
 
     builder.Services.AddAuthentication(ApiKeyDefaults.Scheme)
                     .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyDefaults.Scheme, null);

@@ -1,4 +1,4 @@
-﻿namespace Simple.Finance.WebApi.Json;
+﻿namespace Simple.Finance.WebApi.DataConverters;
 
 using System;
 using System.Text.Json;

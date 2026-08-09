@@ -1,4 +1,4 @@
-﻿namespace Simple.Finance.WebApi.Tables;
+﻿namespace Simple.Finance.WebApi.AccountManagement;
 
 using Simple.DatabaseWrapper.Attributes;
 using System;
@@ -21,4 +21,19 @@ public record Account
     /// Disabled accounts are rejected by the authentication, the database file is kept
     /// </summary>
     public bool IsEnabled { get; set; } = true;
+}
+
+/// <summary>
+/// A single preference of an account, kept on the management database
+/// so it survives independently of the finance data
+/// </summary>
+public record AccountPreference
+{
+    [PrimaryKey]
+    public long Id { get; set; }
+    [Index("ixAccountPreference_Account", 1)]
+    public Guid AccountKey { get; set; }
+    [Index("ixAccountPreference_Account", 2)]
+    public string Name { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
 }
