@@ -334,6 +334,119 @@ day, in the middle of someone's evening.
   turns every edit into read-modify-write, and concurrent edits of unrelated settings clobber each other.
 - Creating an account is cheap and irreversible — there is no way to list or delete accounts.
 
+## Nice to have, if you are building a UI
+
+None of this is required by the API and none of it is enforced. It is what a desktop client over the
+same library converged on after real use — the parts that turned out to be load-bearing for someone
+actually running their money, written as things you can do with the endpoints above.
+
+**Show the balance without being asked.** `GET /api/wallets/balances` is one call for every wallet.
+Put it on the first screen and refresh after every write. Nobody should have to ask for the number
+they came for.
+
+**Make the projection navigable.** One curve per wallet: a short fixed past for context, a
+configurable future (a month is a good default), a marker on today. The part that matters is the
+drill-down — clicking a day opens that day's rows (`dateType=EffectiveDate`, that day's window). A
+chart you cannot descend from is decoration. Let the person hide a wallet from the curve; a credit
+card is not part of net worth.
+
+**"Recent" means two different things.** Merge both in one list: what happened near today
+(`dateType=EffectiveDate`, a few days either side) and what *I* touched (`dateType=Changed`, the last
+day). A December bill edited this morning belongs on today's screen.
+
+**Keep an action queue.** Unpaid rows from a few days back to the end of the current month
+(`dateType=DueDate`). Include the overdue **here**, deliberately — this list is "what needs a
+decision", the exact opposite of the projection. Payables and receivables live together, told apart
+by sign.
+
+**The month statement is where Net and Balance separate.** Month by month, one wallet or all, rows by
+effective date with a running total. With a single wallet, seed it from `?atDate=<start of month>`
+and title the column **Balance**; with every wallet, seed at zero and title it **Net**. Change the
+label with the mode — a Net presented as a balance is wrong twice: no opening figure, and possibly
+more than one currency.
+
+**A yearly matrix, category × month, is half actual and half committed.** Exclude transfers (they are
+not spending), exclude reversed, exclude **overdue unpaid** (the same pessimism the projection uses),
+include **future unpaid**. That last inclusion is what makes the report useful in March instead of
+only in December.
+
+**A report is what is on the screen.** Print the current result set, with the filters that produced
+it, instead of re-querying under different criteria.
+
+**Offer two settle actions, not one.** *Pay on the due date* keeps the expense in the month it
+belongs to — the gesture for reconciling after the fact. *Pay today* moves the cash to now — the
+gesture for actually paying. Both settle at the agreed amount; a different one (interest, discount,
+partial) should force the full edit. A shortcut must never invent a figure.
+
+**Recurrence is materialisation.** Let a transaction be born as several, spaced in time: real,
+independent rows, not a rule the rest of the system would have to expand. They then appear in the
+projection, the statement and the yearly report for free, and June can be edited without touching May.
+
+The series identifies itself **in the description**, so the label travels with the row into every view
+with no extra column and no join. Two forms, picked by intent:
+
+| Label | Intent | Why |
+|---|---|---|
+| `(x/Y)` | installments | the series has a known end and the **position** is the information — `(3/12)` says how much is left |
+| `(Month/Year)` | a standing monthly bill | there is no meaningful position; the **period** is what matters — `Rent (Mar/2026)` |
+
+`(3/12)` on an electricity bill tells the person nothing. Pick the label from the intent.
+
+**Cloning is a separate verb.** Recurrence is "this one and N more ahead"; cloning is "another one
+just like this, now". Both earn their place.
+
+**"Show similar" — pivot off a row and drop the date window.** From one transaction, offer to open
+everything like it: same category, matched by name (`kind=Category`), or everything with the same
+counterparty (`kind=Counterparty`). January's rent becomes every rent; one payment to a contractor
+becomes everything ever paid to them.
+
+The whole point is the **period is discarded**. A date range is how you browse; the moment the person
+asks "and the others?", the range is exactly what stands in the way — they want the history of the
+thing, not of the month. Search wide (`start` far back, `end` far ahead) and let the answer be long;
+there is no pagination anyway.
+
+Two cuts, two questions. Category plus name answers *"how has this bill behaved?"* — the same expense
+across months, where a trend is visible. Counterparty answers *"what has this person or company cost
+me?"* — different categories, different wallets, one relationship. Both are one call, because
+`kind`/`id` cut server-side; the name match is yours to do on the result, since the search takes no
+text filter.
+
+Matching by name has one catch, and it comes from the item above: **strip the series label before
+comparing**. `Rent (3/12)` and `Rent (Mar/2026)` are the same bill wearing a counter. The suffix that
+makes a row readable on its own is the suffix that must be ignored when grouping rows together.
+
+**Never delete, and let each view decide.** Reversing is the only removal. One screen hides reversed
+rows, another strikes them through, a third lets them be filtered — the record stays, the
+presentation chooses.
+
+**Refuse to sum across currencies.** When a total or a selection spans more than one, show a dash
+instead of a number. It is not a failure, it is the answer: the question has no single one.
+
+**Give bulk verbs to a selection.** Change the amount, change the **due day**, change the category,
+settle, reverse. That is how someone fixes a whole series whose price or date moved without opening
+twelve screens. Guard by meaning, not only by type — only move rows between categories of the same sign.
+
+**Let the search remember itself.** Date type, range, filters, and the scroll position and selection
+after a refresh. Reconciling is iterative and losing your place on every refresh kills the flow. The
+preference endpoints exist for exactly this — one name per setting.
+
+**Inherit the context.** A transaction started from the statement arrives with that wallet and that
+month; started from a filtered search, with that wallet or category. The current filter is the
+current intent.
+
+**Display on `effectiveDate` / `effectiveValue` only.** No list should show the four raw fields; they
+belong to the edit screen. The grid says *when and how much, really*; the model keeps plan and cash
+apart underneath.
+
+**One event reads as one block.** In a record's history, fields written together are grouped, not
+repeated as loose lines sharing a timestamp.
+
+**Let colour and a prefix carry state** — paid, overdue, reversed, and the two legs of a transfer by
+direction. The grid should be readable without reading text.
+
+**Seed the first run.** A couple of wallets and a handful of categories, expense and income, so the
+first transaction does not stall on an empty dropdown.
+
 ## Errors
 
 | Code | Meaning |

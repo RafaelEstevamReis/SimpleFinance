@@ -187,6 +187,10 @@ Everything it writes lives under the application folder, composed by `AppPaths`:
 - Namespaces inside `Simple.Finance.WebApi` must never shadow the library's (`Tables`, `Models`,
   `Helpers`): the compiler would bind the nearest one and silently pick the wrong type.
 
+`WebApi/AGENTS.md` exists: guidance for agents **using** the API to run someone's finances
+(auth, the three balance endpoints, credit cards, recipes, traps). Read it before touching endpoint
+semantics; it is not repeated here.
+
 ## Code conventions
 
 Match the existing style exactly; it is consistent and deliberate.
