@@ -247,6 +247,51 @@ those matter.
 **`PUT` replaces the whole record** — send every field you want to keep. `GET` it first, change what
 moved, send it back.
 
+### Import a bank statement
+
+`POST /api/import/ofx` or `POST /api/import/mt940`, `multipart/form-data`, four fields:
+
+| Field | |
+|---|---|
+| `file` | the statement, up to **512 KB** (bigger is `400`) |
+| `walletId` | the wallet these movements belong to — must exist |
+| `defaultIncomeCategoryId` | category for the rows that came in **positive**, `0` for none |
+| `defaultExpenseCategoryId` | category for the rows that came in **negative**, `0` for none |
+
+The answer is a **`TransactionRequest[]`** — the exact body `POST /api/transactions` takes, so a parsed
+row goes back unchanged. **Nothing is stored by the import.** It reads the file and hands you the rows;
+creating them, editing them or throwing them away is yours to do, one `POST` at a time.
+
+Every row comes back `status: "Paid"`, with the posted date on **both** dates and the posted amount on
+both values, and `counterpartyId: 0`. The value already carries the bank's sign — OFX signs the amount,
+MT940 makes a `D` mark negative.
+
+**There are two default categories because there is no single one that fits.** A statement holds
+expenses *and* income, and a category forces the sign of everything it touches, so one category for the
+whole file would flip half of it and silently turn income into expense. The sign the bank gave the row
+is what picks between the pair, which is why each must sit on its own side: an income category in
+`defaultExpenseCategoryId` is `400`, and so is the mirror. Ids that do not exist are `400` too — the
+import never reaches the database, so it checks them itself rather than letting you find out one `POST`
+later.
+
+Send `0` for both and every row arrives uncategorised, which is the honest default when the person is
+going to classify them anyway: show the rows, let them assign, then post. The pair is for the other
+case — a "To classify (out)" / "To classify (in)" pair, or a card whose whole statement is one kind of
+spending — where a sane starting category saves the person fifty clicks. Either way the category is a
+per-row decision the client owns; the import only offers a starting point.
+
+**Nothing is deduplicated.** Importing the same file twice creates the rows twice, and the API will not
+notice. OFX carries a `FitId` per movement and the importer appends it to the description as `[fitid]`,
+which is the only handle you get: to skip what is already in, search the wallet over the statement's
+period and match on that suffix before posting. MT940 has no such id — dedupe there is date, value and
+description, or ask the person.
+
+Encoding is handled: the upload is read as UTF-8 and falls back to Latin1, so the Windows-1252 files
+most Brazilian banks emit keep their accents. Both the XML and the older SGML flavours of OFX parse.
+
+CSV is **not** here, on purpose: every bank lays its columns out differently, so the mapping belongs to
+whoever knows the file. Parse it on the client and `POST` the transactions.
+
 ### "Will I make it to the 30th?"
 
 `GET /api/wallets/balances?atDate=<end of the 30th, UTC>`, compared against
@@ -333,6 +378,11 @@ day, in the middle of someone's evening.
 - A preference write replaces the whole value of that name. One setting per name — a serialized blob
   turns every edit into read-modify-write, and concurrent edits of unrelated settings clobber each other.
 - Creating an account is cheap and irreversible — there is no way to list or delete accounts.
+- Importing stores nothing. `/api/import/*` answers with rows; if you do not `POST` them, nothing
+  happened. Importing twice, or importing then posting twice, duplicates everything.
+- The import takes **two** default categories, picked by the sign of each row, and each must sit on its
+  own side of `isExpense` — one category for a whole statement would invert half of it. `0`/`0` is a
+  fine answer; categorising row by row is the client's job either way.
 
 ## Nice to have, if you are building a UI
 
@@ -479,7 +529,7 @@ An empty history or an empty search is `200` with an empty list, never `404`.
 | `POST /api/transfers`, `GET`/`PUT /api/transfers/{id}` | transfers, always as a pair |
 | `GET /api/changelog?start=&end=[&externalId=]` | audit trail for a period |
 | `GET /api/changelog/{table}/{id}` | audit trail of one record |
+| `POST /api/import/ofx`, `POST /api/import/mt940` | parse a statement into transactions, storing nothing |
 
-Not exposed on purpose: currency conversion, statement import/export (OFX, MT940, CNAB, CSV) and
-change notifications. If the person needs those, they live in the `Simple.Finance` library itself,
-not here.
+Not exposed on purpose: currency conversion, statement export, CSV and CNAB import, and change
+notifications. If the person needs those, they live in the `Simple.Finance` library itself, not here.

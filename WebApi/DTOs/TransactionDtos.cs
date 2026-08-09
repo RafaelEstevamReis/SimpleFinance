@@ -53,6 +53,25 @@ public record TransactionRequest
         PaymentDetails = PaymentDetails,
         Type = Tables.Transac.TransactionType.Simple,
     };
+
+    /// <summary>
+    /// Carries a transaction parsed by an importer: it is not stored yet, it is a
+    /// candidate the client reviews and posts back
+    /// </summary>
+    public static TransactionRequest From(Tables.Transac tx) => new()
+    {
+        WalletId = tx.WalletId,
+        CategoryId = tx.CategoryId,
+        CounterpartyId = tx.CounterpartyId,
+        DueDate = tx.DueDate,
+        PaymentDate = tx.PaymentDate,
+        Description = tx.Description,
+        Status = tx.Status,
+        PaymentCurrency = tx.PaymentCurrency,
+        DueValue = tx.DueValue,
+        PaidValue = tx.PaidValue,
+        PaymentDetails = tx.PaymentDetails,
+    };
 }
 
 public record TransactionResponse

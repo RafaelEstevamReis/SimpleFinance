@@ -140,6 +140,11 @@ One event has one author, so `ChangeLogItem` does not repeat it; queries filter 
 
 `TransactionImporter` is the only entry point that produces `Transac`: `FromOFX` (path or `OfxFile`),
 `FromMT940` (`"D"` ⇒ negative), `FromCSV(path, Func<string[], Transac>, delimiter)`.
+`FromOFX` and `FromMT940` take **two** default categories, `(walletId, defaultIncomeCategoryId,
+defaultExpenseCategoryId)`, and pick between them by the sign the bank gave the row. A statement runs
+both ways, and `createUpdateTransaction` forces the sign from the category, so one category for the
+whole file would invert half of it; two categories keep every row on the side it arrived on. Pass `0`
+for either to leave those rows uncategorised.
 Imported rows are `Status = Paid`, `Type = Simple`, both dates set to the posted date; OFX keeps `FitId`
 in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — callers must.
 
@@ -158,7 +163,8 @@ in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — caller
 ## WebApi (`WebApi/`)
 
 ASP.NET Core service over the library. Deliberately exposes only the direct features: **no** currency
-conversion, **no** import/export, **no** `EventNotifier`.
+conversion, **no** export, **no** `EventNotifier`. Statement *import* is exposed, but read-only:
+it parses and answers, it never writes.
 
 Everything it writes lives under the application folder, composed by `AppPaths`:
 `data/db.sqlite` (management), `data/log/LogyyyyMMdd.log` (Serilog, file sink only),
@@ -175,7 +181,20 @@ Everything it writes lives under the application folder, composed by `AppPaths`:
   what runs `Initialize`, and it takes the daily backup — first session of the day wins, later ones skip so
   a damaged database cannot overwrite the good copy. A lock guards **creation only**, never usage.
 - **Controllers** — everything account-scoped derives from `AccountControllerBase`, which turns the Key
-  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, ChangeLog, plus account preferences.
+  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, ChangeLog, Import, plus account
+  preferences.
+- **Import** (`ImportController`) — `TransactionImporter` over an upload: `POST /api/import/{ofx|mt940}`
+  takes `multipart/form-data` (512 KB cap) and answers `TransactionRequest[]`, the same shape
+  `POST /api/transactions` accepts, so a parsed row goes back untouched. Nothing is persisted and nothing
+  is deduplicated. The importer picks the category by the sign the bank gave the row —
+  `DefaultIncomeCategoryId` for positive, `DefaultExpenseCategoryId` for negative — so the controller
+  checks that `WalletId` resolves, that each category exists when non-zero, and that each one sits on its
+  own side of `IsExpense`: a swapped pair would land on exactly the rows whose sign `Manager` then flips.
+  The import never reaches the `Manager`, so without those checks the client would only learn the ids are
+  wrong one POST later. It parses from text, not from disk (`OfxFile.FromXML` / `MT940Parser.FromLines`) —
+  no temp file — and decodes the upload as UTF-8 falling back to `Latin1`, since bank files are commonly
+  Windows-1252. CSV is deliberately absent: `TransactionImporter.FromCSV` needs a
+  `Func<string[], Transac>` per layout, which is a client concern.
 - **ChangeLog** — read only, it is written by the library itself. The flat join `TableLogRegistry` is folded
   into one entry per event, and `OldValue`/`NewValue` are served exactly as stored, sentinel `[NL]` included:
   rewriting an audit trail on the way out would make the API disagree with the database.

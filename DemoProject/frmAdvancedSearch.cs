@@ -308,7 +308,7 @@ namespace DemoProject
             var result = dlg.ShowDialog();
             if (result != DialogResult.OK) return;
 
-            var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0);
+            var trs = Simple.Finance.Importers.TransactionImporter.FromOFX(dlg.FileName, 0, 0, 0);
             Dialogs.dlgAddBulkTransactions.ShowDialog(trs);
             search();
         }
