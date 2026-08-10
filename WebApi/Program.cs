@@ -22,6 +22,7 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
     .Enrich.FromLogContext()
+    .WriteTo.Console()
     .WriteTo.File(AppPaths.LogFile, rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
