@@ -3,6 +3,15 @@
 using System;
 
 /// <summary>
+/// Direction a search is sorted in
+/// </summary>
+public enum SearchOrder
+{
+    Asc,
+    Desc,
+}
+
+/// <summary>
 /// Transaction to create or update. Transfers between wallets are not created here,
 /// they have their own endpoint
 /// </summary>

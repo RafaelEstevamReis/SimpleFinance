@@ -92,6 +92,12 @@ When searching, `dateType` picks which date rules the query:
 | `EffectiveDate` | paid rows by `paymentDate` **or** non-paid rows by `dueDate` — the timeline view |
 | `Created` / `Changed` | when the record was typed or last edited — auditing, not money |
 
+`order` (`Asc`/`Desc`) sorts by **that same date** — the one `dateType` chose, not a second one — and
+`limit` keeps the first rows of that order. Both are optional and the default is still "everything the
+window holds, in database order". `limit` without `order` is a `400`: the rows kept would be whichever
+ones the database happened to return first. Ties on the date fall back to `id`, so the same `limit`
+always answers the same rows.
+
 ## Balances: exactly what counts
 
 Three endpoints, three different questions. They are **allowed to disagree**, and which one is right
@@ -222,7 +228,7 @@ A card only reaches zero when no future installment is left. That is correct, no
 is debt already contracted.
 
 **Reading one invoice**: search the card wallet over the period the invoice covers (its closing
-window, not its due date) — `GET /api/transactions?dateType=PaymentDate&start=…&end=…&kind=Wallet&id=<cardWalletId>`
+window, not its due date) — `GET /api/transactions?dateType=PaymentDate&start=…&end=…&kind=Wallet&kindId=<cardWalletId>`
 — and sum `paidValue`. That total is what the transfer should carry.
 
 ## Recipes
@@ -323,8 +329,8 @@ never happen, while the person may well decide to pay them.
 
 ### "How much did I spend on groceries this month?"
 
-`GET /api/transactions?dateType=EffectiveDate&start=…&end=…&kind=Category&id=<categoryId>`, summing
-`effectiveValue`. Use `kind=Wallet` or `kind=Counterparty` for the other two cuts. `kind` and `id`
+`GET /api/transactions?dateType=EffectiveDate&start=…&end=…&kind=Category&kindId=<categoryId>`, summing
+`effectiveValue`. Use `kind=Wallet` or `kind=Counterparty` for the other two cuts. `kind` and `kindId`
 must always travel together.
 
 ### Move money between wallets
@@ -420,7 +426,9 @@ card is not part of net worth.
 
 **"Recent" means two different things.** Merge both in one list: what happened near today
 (`dateType=EffectiveDate`, a few days either side) and what *I* touched (`dateType=Changed`, the last
-day). A December bill edited this morning belongs on today's screen.
+day). A December bill edited this morning belongs on today's screen. Both are `order=Desc` with a
+`limit`: newest first is the only order that makes sense here, and the cut is what keeps the list a
+screen instead of a scroll.
 
 **Keep an action queue.** Unpaid rows from a few days back to the end of the current month
 (`dateType=DueDate`). Include the overdue **here**, deliberately — this list is "what needs a
@@ -470,13 +478,13 @@ becomes everything ever paid to them.
 
 The whole point is the **period is discarded**. A date range is how you browse; the moment the person
 asks "and the others?", the range is exactly what stands in the way — they want the history of the
-thing, not of the month. Search wide (`start` far back, `end` far ahead) and let the answer be long;
-there is no pagination anyway.
+thing, not of the month. Search wide (`start` far back, `end` far ahead) and let the answer be long:
+`limit` cuts the tail off an order, it does not page — there is no second page to ask for.
 
 Two cuts, two questions. Category plus name answers *"how has this bill behaved?"* — the same expense
 across months, where a trend is visible. Counterparty answers *"what has this person or company cost
 me?"* — different categories, different wallets, one relationship. Both are one call, because
-`kind`/`id` cut server-side; the name match is yours to do on the result, since the search takes no
+`kind`/`kindId` cut server-side; the name match is yours to do on the result, since the search takes no
 text filter.
 
 Matching by name has one catch, and it comes from the item above: **strip the series label before
@@ -585,7 +593,7 @@ An empty history or an empty search is `200` with an empty list, never `404`.
 | `GET /api/wallets/{id}/balance` | what has actually cleared, for reconciliation |
 | `GET`/`POST /api/categories`, `GET`/`PUT /api/categories/{id}` | categories |
 | `GET`/`POST /api/persons`, `GET`/`PUT /api/persons/{id}` | counterparties |
-| `GET /api/transactions?dateType=&start=&end=[&kind=&id=]` | search |
+| `GET /api/transactions?dateType=&start=&end=[&kind=&kindId=&order=&limit=]` | search |
 | `GET`/`POST /api/transactions`, `PUT /api/transactions/{id}` | transactions |
 | `POST /api/transfers`, `GET`/`PUT /api/transfers/{id}` | transfers, always as a pair |
 | `GET /api/changelog?start=&end=[&externalId=]` | audit trail for a period |
