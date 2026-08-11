@@ -11,12 +11,12 @@ adding a correcting record over rewriting history.
 
 ```mermaid
 graph LR
-  W["Wallet<br/>where the money is"] --> T["Transaction<br/>one movement"]
-  C["Category<br/>expense or income"] --> T
-  P["Person<br/>who with"] --> T
-  T --> B["Balance<br/>settled and projected"]
-  T --> X["Transfer<br/>a linked pair"]
-  T --> L["ChangeLog<br/>what changed"]
+  W["Wallet<br/>where the money is"] --> T["Transaction<br/> one movement"]
+  C["Category<br/> expense or income"] --> T
+  P["Person<br/> who with"] --> T
+  T --> B["Balance<br/> settled and projected"]
+  T --> X["Transfer<br/> a linked pair"]
+  T --> L["ChangeLog<br/> what changed"]
 ```
 
 - **Wallet** — a place money sits: checking account, savings, cash, a card, a broker.
