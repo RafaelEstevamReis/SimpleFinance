@@ -62,10 +62,11 @@ Schema is created/migrated by `Manager.Initialize()` via `cnn.CreateTables().Add
 - `Person` — counterparty; `Id, Name, IsDeleted`
 - `Transac` — the transaction record.
 - `ChangeLog` / `ChangeLogItem` — audit trail; `TableLogRegistry` is the flattened join projection.
+- `Scenario` / `ScenarioItem` — planning drafts, never money. See *Scenarios*.
 
-### Manager (`Manager.cs`, ~650 lines)
+### Manager
 
-One class, region-separated: Wallets / Categories / Persons / Transactions / ChangeLog / Notification / Search Enums.
+One class, region-separated: Wallets / Categories / Persons / Transactions / Scenarios / ChangeLog / Notification / Search Enums.
 
 - Connection-per-call: every method does `using var cnn = db.GetConnection();`. No shared connection, no transactions
   spanning methods. `CreateUpdateBulkTransaction` is the only batching path (one connection, notifications fired
@@ -111,6 +112,28 @@ function — so a table rename carries the routing with it.
 `EventLogCurrentExternalId` is stamped into every `ChangeLog.ExternalId` — the hook for "which user did this".
 One event has one author, so `ChangeLogItem` does not repeat it; queries filter `cl.ExternalId` and
 `TableLogRegistry` flattens it into each joined row for consumers.
+
+### Scenarios (planning)
+
+`Scenario` (`Name`, nullable `Description`, `IsActive`) plus `ScenarioItem` (`ScenarioId`, `WalletId`, `CategoryId`,
+`Date`, `Value`, `Name`, `IsEnabled`, nullable `ExternalIdentifier`). An item is a **hypothetical `Transac`**: one
+wallet, one date, one value. There is no recurrence type — a parcelling is N items, the same materialisation
+doctrine used for transactions.
+
+- **Drafts, not money.** They are the only records with a real `DELETE` (`DeleteScenario` also drops its items,
+  `DeleteScenarioItem` drops one), and the only writes that produce **no `ChangeLog` and no notification**:
+  an audit trail of what-ifs would bury the trail of what happened.
+- **Same invariants as a transaction**, because they will be compared against real rows: wallet must resolve,
+  category must resolve when non-zero, `Value != 0`, and the **category forces the sign** (`CategoryId == 0`
+  keeps the caller's). Currency is never stored — it is the wallet's `BaseCurrency`, as with `Transac`.
+- **`IsActive` composes, it does not exclude.** Two active scenarios are projected together; comparing A against B
+  is running the projection twice, never a flag. It is persisted so the selection survives a restart.
+- `CreateUpdateBulkScenarioItem` loads the referenced scenarios, wallets and categories **once each** into
+  dictionaries and then applies the rule per item — 3 reads, not 3 per item. Like the transaction bulk it is not
+  transactional: an invalid item throws and the previous ones stay.
+- `ProjectScenariosItems(start, end, isActive)` reads every wallet on a window, `ProjectScenariosItemsFor(walletId)`
+  reads one wallet with no window. Both are ordered by `Date` then `Id`, so equal dates never reshuffle.
+  "Active" means scenario active **and** item enabled; `false` is the exact complement, `null` takes everything.
 
 ### Exchange rates (`ExchangeRate/`)
 
@@ -261,6 +284,5 @@ These are choices, not defects. Work with them; changing any of them is a produc
 
 ## Unread areas
 
-- `SampleFiles/` contents were not inspected; the SPED, NFe, IFF, OFC, Ponto and PDF-statement folders have
-  **no importer** in `Simple.Finance/Importers/` (only OFX, MT940, CNAB models, and generic CSV).
+- `SampleFiles/` contents not to be inspected
 - Bulk generated rate data in `ExchangeRate/ExchangeTables/TemporalSeries_*.cs` was sampled, not read in full.

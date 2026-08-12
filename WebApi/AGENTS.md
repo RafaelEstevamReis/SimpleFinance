@@ -60,9 +60,10 @@ Do not work around these — they are the guardrails that keep the data sane.
   sums two of them. If the person has BRL and USD wallets there is no single "total" — say so
   instead of adding numbers that do not add.
 - **A category's `isExpense` can never change** after creation. Create a new category instead.
-- **Nothing is ever deleted.** `isDeleted` is a flag on wallets, categories and people; no endpoint
+- **No money record is ever deleted.** `isDeleted` is a flag on wallets, categories and people; no endpoint
   filters by it, so *you* decide whether to show them. Transactions cannot even be flagged — to
-  undo one, see *Cancelling something*.
+  undo one, see *Cancelling something*. Scenarios are the one exception: they are planning drafts, not
+  money, so `DELETE /api/scenarios/{id}` really removes them, items included, with no way back.
 - **Nothing is deduplicated.** Posting the same expense twice creates two expenses.
 
 ## The three dates — this is the whole model
@@ -599,6 +600,14 @@ An empty history or an empty search is `200` with an empty list, never `404`.
 | `GET /api/changelog?start=&end=[&externalId=]` | audit trail for a period |
 | `GET /api/changelog/{table}/{id}` | audit trail of one record |
 | `POST /api/import/ofx`, `POST /api/import/mt940` | parse a statement into transactions, storing nothing |
+| `GET`/`POST /api/scenarios`, `GET`/`PUT`/`DELETE /api/scenarios/{id}` | planning scenarios, `DELETE` is real |
+| `GET`/`POST /api/scenarios/{id}/items` | items of a scenario |
+| `GET`/`PUT`/`DELETE /api/scenarios/{id}/items/{itemId}` | one item of a scenario |
+| `POST /api/scenarios/{id}/items/bulk` | upserts many items at once, `id: 0` creates |
+| `PUT /api/scenarios/active` | mass toggle: `{ ids, state }`, writes only `isActive` |
+| `PUT /api/scenarios/items/enabled` | mass toggle: `{ ids, state }`, writes only `isEnabled` |
+| `GET /api/scenarios/projection?start=&end=[&isActive=]` | scenario items of every wallet on a window |
+| `GET /api/scenarios/projection/{walletId}` | active scenario items of one wallet |
 
 Not exposed on purpose: currency conversion, statement export, CSV and CNAB import, and change
 notifications. If the person needs those, they live in the `Simple.Finance` library itself, not here.
