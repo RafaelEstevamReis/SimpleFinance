@@ -533,6 +533,12 @@ GROUP BY WalletId", new
         cnn.Execute($"DELETE FROM {nameof(Tables.ScenarioItem)} WHERE {nameof(Tables.ScenarioItem.ScenarioId)} = @scenarioId", new { scenarioId });
         cnn.Execute($"DELETE FROM {nameof(Tables.Scenario)} WHERE Id = @scenarioId", new { scenarioId });
     }
+
+    /// <summary>
+    /// Turns many scenarios on or off at once
+    /// </summary>
+    public void SetScenarioActive(IEnumerable<long> ids, bool activeState)
+        => setFlagByIds<Tables.Scenario>(ids, nameof(Tables.Scenario.IsActive), activeState);
    
     public IEnumerable<Tables.ScenarioItem> GetScenarioItems(long scenarioId)
     {
@@ -605,6 +611,12 @@ GROUP BY WalletId", new
         cnn.Execute($"DELETE FROM {nameof(Tables.ScenarioItem)} WHERE Id = @scenarioItemId", new { scenarioItemId });
     }
 
+    /// <summary>
+    /// Enables or disables many ScenarioItems at once
+    /// </summary>
+    public void SetScenarioItemEnabled(IEnumerable<long> ids, bool enabledState)
+        => setFlagByIds<Tables.ScenarioItem>(ids, nameof(Tables.ScenarioItem.IsEnabled), enabledState);
+    
     /// <summary>
     /// Gets the enabled items of every active scenario for a wallet, oldest first.
     /// Active scenarios are composed, so items of all of them are returned together
@@ -806,6 +818,14 @@ ORDER BY si.{nameof(Tables.ScenarioItem.Date)}, si.Id", new
         // Ids are longs, there is nothing to escape
         var rows = cnn.Query<T>($"SELECT * FROM {getTableName(typeof(T))} WHERE Id IN ({string.Join(",", wanted)})");
         return rows.ToDictionary(getId, o => o);
+    }
+    private void setFlagByIds<T>(IEnumerable<long> ids, string column, bool state)
+    {
+        var wanted = ids.Where(o => o != 0).Distinct().ToArray();
+        if (wanted.Length == 0) return;
+
+        using var cnn = db.GetConnection();
+        cnn.Execute($"UPDATE {getTableName(typeof(T))} SET {column} = @state WHERE Id IN ({string.Join(",", wanted)})", new { state });
     }
 
 }

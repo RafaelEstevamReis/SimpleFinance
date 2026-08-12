@@ -279,6 +279,48 @@ public class ScenarioItemsTests : ManagerTestBase
     }
 
     [Fact]
+    public void SetScenarioItemEnabled_TogglesOnlyTheInformedOnes()
+    {
+        var a = mgr.CreateUpdateScenarioItem(item(-100m));
+        var b = mgr.CreateUpdateScenarioItem(item(-200m));
+        var untouched = mgr.CreateUpdateScenarioItem(item(-300m));
+
+        mgr.SetScenarioItemEnabled([a, b], false);
+
+        var stored = mgr.GetScenarioItems(scenarioId).ToDictionary(o => o.Id, o => o.IsEnabled);
+        Assert.False(stored[a]);
+        Assert.False(stored[b]);
+        Assert.True(stored[untouched]);
+    }
+
+    [Fact]
+    public void SetScenarioItemEnabled_CrossesScenarios_AndKeepsEveryOtherField()
+    {
+        var other = mgr.CreateUpdateScenario(new Scenario { Id = 0, Name = "Move" });
+        var here = mgr.CreateUpdateScenarioItem(item(-100m));
+        var there = mgr.CreateUpdateScenarioItem(item(-200m, scenario: other));
+
+        mgr.SetScenarioItemEnabled([here, there], false);
+
+        var stored = mgr.GetScenarioItemById(here)!;
+        Assert.False(stored.IsEnabled);
+        Assert.Equal(-100m, stored.Value);
+        Assert.Equal("installment", stored.Name);
+        Assert.False(mgr.GetScenarioItemById(there)!.IsEnabled);
+    }
+
+    [Fact]
+    public void SetScenarioItemEnabled_UnknownAndEmptyIds_DoNothing()
+    {
+        var id = mgr.CreateUpdateScenarioItem(item());
+
+        mgr.SetScenarioItemEnabled([id + 999], false);
+        mgr.SetScenarioItemEnabled([], false);
+
+        Assert.True(mgr.GetScenarioItemById(id)!.IsEnabled);
+    }
+
+    [Fact]
     public void DeleteScenarioItem_UnknownId_DoesNothing()
     {
         var id = mgr.CreateUpdateScenarioItem(item());

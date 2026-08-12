@@ -82,6 +82,18 @@ public class ScenariosController : AccountControllerBase
     }
 
     /// <summary>
+    /// Turns many scenarios on or off at once.
+    /// </summary>
+    [HttpPut("active")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult SetActive([FromBody] ScenarioToggleRequest request)
+    {
+        Manager.SetScenarioActive(request.Ids, request.State);
+        return NoContent();
+    }
+
+    /// <summary>
     /// Items of one scenario, enabled or not
     /// </summary>
     [HttpGet("{id:long}/items")]
@@ -172,6 +184,18 @@ public class ScenariosController : AccountControllerBase
         if (findItem(id, itemId) is null) return NotFound();
 
         Manager.DeleteScenarioItem(itemId);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Enables or disables many items at once.
+    /// </summary>
+    [HttpPut("items/enabled")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult SetItemsEnabled([FromBody] ScenarioToggleRequest request)
+    {
+        Manager.SetScenarioItemEnabled(request.Ids, request.State);
         return NoContent();
     }
 

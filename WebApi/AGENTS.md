@@ -604,6 +604,8 @@ An empty history or an empty search is `200` with an empty list, never `404`.
 | `GET`/`POST /api/scenarios/{id}/items` | items of a scenario |
 | `GET`/`PUT`/`DELETE /api/scenarios/{id}/items/{itemId}` | one item of a scenario |
 | `POST /api/scenarios/{id}/items/bulk` | upserts many items at once, `id: 0` creates |
+| `PUT /api/scenarios/active` | mass toggle: `{ ids, state }`, writes only `isActive` |
+| `PUT /api/scenarios/items/enabled` | mass toggle: `{ ids, state }`, writes only `isEnabled` |
 | `GET /api/scenarios/projection?start=&end=[&isActive=]` | scenario items of every wallet on a window |
 | `GET /api/scenarios/projection/{walletId}` | active scenario items of one wallet |
 

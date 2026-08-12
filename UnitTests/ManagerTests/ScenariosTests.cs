@@ -137,4 +137,54 @@ public class ScenariosTests : ManagerTestBase
         Assert.Single(mgr.GetScenarios());
         Assert.Single(mgr.GetScenarioItems(kept));
     }
+
+    [Fact]
+    public void SetScenarioActive_TogglesOnlyTheInformedOnes()
+    {
+        var a = newScenario("A");
+        var b = newScenario("B");
+        var untouched = newScenario("C", isActive: false);
+
+        mgr.SetScenarioActive([a, b], true);
+
+        var stored = mgr.GetScenarios().ToDictionary(o => o.Id, o => o.IsActive);
+        Assert.True(stored[a]);
+        Assert.True(stored[b]);
+        Assert.False(stored[untouched]);
+    }
+
+    [Fact]
+    public void SetScenarioActive_TurnsThemOffToo()
+    {
+        var a = newScenario("A", isActive: true);
+        var b = newScenario("B", isActive: true);
+
+        mgr.SetScenarioActive([a, b], false);
+
+        Assert.All(mgr.GetScenarios(), o => Assert.False(o.IsActive));
+    }
+
+    [Fact]
+    public void SetScenarioActive_KeepsEveryOtherField()
+    {
+        var id = mgr.CreateUpdateScenario(new Scenario { Id = 0, Name = "Car", Description = "12x", IsActive = false });
+
+        mgr.SetScenarioActive([id], true);
+
+        var stored = mgr.GetScenarioById(id)!;
+        Assert.Equal("Car", stored.Name);
+        Assert.Equal("12x", stored.Description);
+        Assert.True(stored.IsActive);
+    }
+
+    [Fact]
+    public void SetScenarioActive_UnknownAndEmptyIds_DoNothing()
+    {
+        var id = newScenario("Car", isActive: true);
+
+        mgr.SetScenarioActive([id + 999], false);
+        mgr.SetScenarioActive([], false);
+
+        Assert.True(mgr.GetScenarioById(id)!.IsActive);
+    }
 }

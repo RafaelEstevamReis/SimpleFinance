@@ -117,3 +117,16 @@ public record ScenarioItemResponse
         ExternalIdentifier = item.ExternalIdentifier,
     };
 }
+
+/// <summary>
+/// Mass toggle: the ids to write and the value to write on them.
+/// Only the flag is written, every other field of those rows is left alone
+/// </summary>
+public record ScenarioToggleRequest
+{
+    public long[] Ids { get; set; } = [];
+    /// <summary>
+    /// The value the flag takes: active for scenarios, enabled for items
+    /// </summary>
+    public bool State { get; set; }
+}
