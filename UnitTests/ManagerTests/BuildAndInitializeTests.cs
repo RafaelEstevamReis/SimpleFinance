@@ -27,6 +27,8 @@ public class BuildAndInitializeTests : IDisposable
     [InlineData("Wallet")]
     [InlineData("Person")]
     [InlineData("Transac")]
+    [InlineData("Scenario")]
+    [InlineData("ScenarioItem")]
     public void Initialize_CreatesEveryTable(string tableName)
     {
         var file = tempPath();
