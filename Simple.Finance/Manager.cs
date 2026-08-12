@@ -61,6 +61,8 @@ public class Manager
            .Add<Tables.Wallet>()
            .Add<Tables.Person>()
            .Add<Tables.Transac>()
+           .Add<Tables.Scenario>()
+           .Add<Tables.ScenarioItem>()
            .Commit();
 
         InternalInitialize(cnn);
@@ -318,7 +320,7 @@ GROUP BY WalletId", new
         if (tx.CategoryId != 0 && category == null) throw new InvalidOperationException($"Invalid Category Id: {tx.CategoryId}");
 
         // Check signs
-        if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not zero");
+        if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not be zero");
         var sign = Math.Sign(tx.DueValue);
         if (category != null)
         {
@@ -503,6 +505,160 @@ GROUP BY WalletId", new
 
     #endregion
 
+    #region Scenarios
+    public IEnumerable<Tables.Scenario> GetScenarios()
+    {
+        using var cnn = db.GetConnection();
+        return cnn.GetAll<Tables.Scenario>();
+    }
+    public Tables.Scenario? GetScenarioById(long scenarioId)
+    {
+        using var cnn = db.GetConnection();
+        return cnn.Get<Tables.Scenario>(scenarioId);
+    }
+    public long CreateUpdateScenario(Tables.Scenario scenario)
+    {
+        using var cnn = db.GetConnection();
+        scenario.Id = cnn.Insert(scenario, OnConflict.Replace);
+        return scenario.Id;
+    }
+    /// <summary>
+    /// Deletes a scenario and all its items.
+    /// Scenarios are drafts and not money records: they are really deleted, with no log and no notification
+    /// </summary>
+    public void DeleteScenario(long scenarioId)
+    {
+        using var cnn = db.GetConnection();
+        // Items first, so a failure never leaves items pointing at a scenario that is already gone
+        cnn.Execute($"DELETE FROM {nameof(Tables.ScenarioItem)} WHERE {nameof(Tables.ScenarioItem.ScenarioId)} = @scenarioId", new { scenarioId });
+        cnn.Execute($"DELETE FROM {nameof(Tables.Scenario)} WHERE Id = @scenarioId", new { scenarioId });
+    }
+   
+    public IEnumerable<Tables.ScenarioItem> GetScenarioItems(long scenarioId)
+    {
+        using var cnn = db.GetConnection();
+        return cnn.GetWhere<Tables.ScenarioItem>(nameof(Tables.ScenarioItem.ScenarioId), scenarioId);
+    }
+    public Tables.ScenarioItem? GetScenarioItemById(long scenarioItemId)
+    {
+        using var cnn = db.GetConnection();
+        return cnn.Get<Tables.ScenarioItem>(scenarioItemId);
+    }
+    public long CreateUpdateScenarioItem(Tables.ScenarioItem item)
+    {
+        using var cnn = db.GetConnection();
+
+        var scenario = cnn.Get<Tables.Scenario>(item.ScenarioId)
+            ?? throw new InvalidOperationException($"Invalid Scenario Id: {item.ScenarioId}");
+        var wallet = cnn.Get<Tables.Wallet>(item.WalletId)
+            ?? throw new InvalidOperationException($"Invalid Wallet Id: {item.WalletId}");
+
+        Tables.Category? category = null;
+        if (item.CategoryId != 0)
+        {
+            category = cnn.Get<Tables.Category>(item.CategoryId) ?? throw new InvalidOperationException($"Invalid Category Id: {item.CategoryId}");
+        }
+
+        if (item.Value == 0) throw new InvalidOperationException($"'{nameof(Tables.ScenarioItem.Value)}' must not be zero");
+
+        var sign = category == null ? Math.Sign(item.Value) : (category.IsExpense ? -1 : 1);
+        item.Value = Math.Abs(item.Value) * sign;
+
+        item.Id = cnn.Insert(item, OnConflict.Replace);
+        return item.Id;
+    }
+
+    public IEnumerable<long> CreateUpdateBulkScenarioItem(IEnumerable<Tables.ScenarioItem> items)
+    {
+        var all = items.ToArray();
+
+        using var cnn = db.GetConnection();
+        var scenarios = getByIds<Tables.Scenario>(cnn, all.Select(o => o.ScenarioId), o => o.Id);
+        var wallets = getByIds<Tables.Wallet>(cnn, all.Select(o => o.WalletId), o => o.Id);
+        var categories = getByIds<Tables.Category>(cnn, all.Select(o => o.CategoryId), o => o.Id);
+
+        List<long> lst = [];
+        foreach (var item in all)
+        {
+            if (!scenarios.ContainsKey(item.ScenarioId)) throw new InvalidOperationException($"Invalid Scenario Id: {item.ScenarioId}");
+            if (!wallets.ContainsKey(item.WalletId)) throw new InvalidOperationException($"Invalid Wallet Id: {item.WalletId}");
+
+            Tables.Category? category = null;
+            if (item.CategoryId != 0 && !categories.TryGetValue(item.CategoryId, out category))
+            {
+                throw new InvalidOperationException($"Invalid Category Id: {item.CategoryId}");
+            }
+
+            if (item.Value == 0) throw new InvalidOperationException($"'{nameof(Tables.ScenarioItem.Value)}' must not be zero");
+
+            var sign = category == null ? Math.Sign(item.Value) : (category.IsExpense ? -1 : 1);
+            item.Value = Math.Abs(item.Value) * sign;
+
+            item.Id = cnn.Insert(item, OnConflict.Replace);
+            lst.Add(item.Id);
+        }
+        return lst;
+    }
+    public void DeleteScenarioItem(long scenarioItemId)
+    {
+        using var cnn = db.GetConnection();
+        cnn.Execute($"DELETE FROM {nameof(Tables.ScenarioItem)} WHERE Id = @scenarioItemId", new { scenarioItemId });
+    }
+
+    /// <summary>
+    /// Gets the enabled items of every active scenario for a wallet, oldest first.
+    /// Active scenarios are composed, so items of all of them are returned together
+    /// </summary>
+    public IEnumerable<Tables.ScenarioItem> ProjectScenariosItemsFor(long walletId)
+    {
+        using var cnn = db.GetConnection();
+        return cnn.Query<Tables.ScenarioItem>(
+$@"SELECT si.* 
+  FROM {nameof(Tables.ScenarioItem)} si 
+  INNER JOIN {nameof(Tables.Scenario)} s ON s.Id = si.{nameof(Tables.ScenarioItem.ScenarioId)} 
+  WHERE si.{nameof(Tables.ScenarioItem.WalletId)} = @walletId 
+    AND si.{nameof(Tables.ScenarioItem.IsEnabled)} = @enabled 
+    AND s.{nameof(Tables.Scenario.IsActive)} = @active 
+ORDER BY si.{nameof(Tables.ScenarioItem.Date)}, si.Id", new
+{
+    walletId,
+    enabled = true,
+    active = true,
+});
+    }
+    /// <summary>
+    /// Gets scenario items of every wallet on a date window, oldest first.
+    /// An item is active when its scenario is active and the item itself is enabled:
+    /// pass true for only those, false for only the others, null for all of them
+    /// </summary>
+    public IEnumerable<Tables.ScenarioItem> ProjectScenariosItems(DateTime start, DateTime end, bool? isActive = true)
+    {
+        string add = "";
+        if (isActive != null)
+        {
+            add = isActive.Value
+                ? $"AND s.{nameof(Tables.Scenario.IsActive)} = @yes AND si.{nameof(Tables.ScenarioItem.IsEnabled)} = @yes "
+                : $"AND (s.{nameof(Tables.Scenario.IsActive)} = @no OR si.{nameof(Tables.ScenarioItem.IsEnabled)} = @no) ";
+        }
+
+        using var cnn = db.GetConnection();
+        return cnn.Query<Tables.ScenarioItem>(
+$@"SELECT si.* 
+  FROM {nameof(Tables.ScenarioItem)} si 
+  INNER JOIN {nameof(Tables.Scenario)} s ON s.Id = si.{nameof(Tables.ScenarioItem.ScenarioId)} 
+  WHERE si.{nameof(Tables.ScenarioItem.Date)} BETWEEN @start AND @end 
+    {add}
+ORDER BY si.{nameof(Tables.ScenarioItem.Date)}, si.Id", new
+{
+    start,
+    end,
+    yes = true,
+    no = false,
+});
+    }
+
+    #endregion
+
     #region ChangeLog
 
     private const string sqlLogSelect = $@"
@@ -640,5 +796,16 @@ GROUP BY WalletId", new
     }
 
     #endregion
+
+    private static Dictionary<long, T> getByIds<T>(ISqliteConnection cnn, IEnumerable<long> ids, Func<T, long> getId)
+        where T : new()
+    {
+        var wanted = ids.Where(o => o != 0).Distinct().ToArray();
+        if (wanted.Length == 0) return [];
+
+        // Ids are longs, there is nothing to escape
+        var rows = cnn.Query<T>($"SELECT * FROM {getTableName(typeof(T))} WHERE Id IN ({string.Join(",", wanted)})");
+        return rows.ToDictionary(getId, o => o);
+    }
 
 }
