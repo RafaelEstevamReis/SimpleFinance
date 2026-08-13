@@ -58,7 +58,9 @@ graph TD
 Schema is created/migrated by `Manager.Initialize()` via `cnn.CreateTables().Add<T>()…Commit()`.
 
 - `Wallet` — `Id, Name, Description, BaseCurrency, IsDeleted`
-- `Category` — `Id, IsExpense, Name, Description, IsDeleted`
+- `Category` — `Id, IsExpense, Name, Description, MonthlyBudget, IsDeleted`; `MonthlyBudget` is a
+  spending limit, not money — it stays positive on expense categories and `0` means none. Nothing
+  in the library reads it: it is stored, validated as non-negative, and handed back.
 - `Person` — counterparty; `Id, Name, IsDeleted`
 - `Transac` — the transaction record.
 - `ChangeLog` / `ChangeLogItem` — audit trail; `TableLogRegistry` is the flattened join projection.
@@ -87,6 +89,18 @@ One class, region-separated: Wallets / Categories / Persons / Transactions / Sce
 5. `Type == WalletTransfer` throws here — transfers have their own API. `Special` is `NotImplementedException`.
 6. `Changed` always set to `UtcNow`; `Created` preserved from the original row on update.
 7. `Category.IsExpense` cannot change after creation (`CreateUpdateCategory` throws).
+8. `Description` must not be `NullOrEmpty` — this reaches transfers too, since `CreateWalletTransfer`
+   writes both legs through this function. `TransactionImporter.FromOFX` already falls back to `"[?]"`,
+   but `FromMT940` passes `ReferenceForOwner` straight through, so a statement without that field
+   throws on save rather than on parse.
+
+### Required text
+
+`requireText` rejects `NullOrEmpty` on `Name` for `Wallet`, `Category`, `Person`, `Scenario` and
+`ScenarioItem`, on create and update; whitespace-only passes. `Description` on those records stays free
+text — `Transac.Description` is required by invariant 8 instead, since a transaction has no `Name`.
+Messages are qualified (`'Wallet.Name'`) because five tables carry a `Name`.
+`Category.MonthlyBudget` is validated in the same place and must not be negative.
 
 ### Transfers
 
@@ -124,8 +138,9 @@ doctrine used for transactions.
   `DeleteScenarioItem` drops one), and the only writes that produce **no `ChangeLog` and no notification**:
   an audit trail of what-ifs would bury the trail of what happened.
 - **Same invariants as a transaction**, because they will be compared against real rows: wallet must resolve,
-  category must resolve when non-zero, `Value != 0`, and the **category forces the sign** (`CategoryId == 0`
-  keeps the caller's). Currency is never stored — it is the wallet's `BaseCurrency`, as with `Transac`.
+  category must resolve when non-zero, `Value != 0`, `Name` must not be empty, and the **category forces
+  the sign** (`CategoryId == 0` keeps the caller's). Currency is never stored — it is the wallet's
+  `BaseCurrency`, as with `Transac`.
 - **`IsActive` composes, it does not exclude.** Two active scenarios are projected together; comparing A against B
   is running the projection twice, never a flag. It is persisted so the selection survives a restart.
 - `CreateUpdateBulkScenarioItem` loads the referenced scenarios, wallets and categories **once each** into

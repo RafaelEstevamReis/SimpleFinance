@@ -30,7 +30,9 @@ graph LR
   yield has to be entered by hand, as periodic income transactions on a yield category, or the
   wallet reports what was deposited instead of what it is worth.
 - **Category** — what the money is *for*, and the single source of truth for the **sign**.
-  `isExpense: true` makes values negative, `false` makes them positive.
+  `isExpense: true` makes values negative, `false` makes them positive. It also carries
+  `monthlyBudget`: a **limit, not money**, so it stays positive even on an expense category, and
+  `0` means "no budget".
 - **Person** — the counterparty: employer, landlord, market, a friend. Optional.
 - **Transaction** — one movement, carrying two dates and two values (see *The three dates*).
 - **Transfer** — money moving between two wallets. It is **two linked transactions**, never one.
@@ -65,6 +67,9 @@ Do not work around these — they are the guardrails that keep the data sane.
   undo one, see *Cancelling something*. Scenarios are the one exception: they are planning drafts, not
   money, so `DELETE /api/scenarios/{id}` really removes them, items included, with no way back.
 - **Nothing is deduplicated.** Posting the same expense twice creates two expenses.
+- **Every `name` is required** — wallets, categories, people, scenarios, scenario items — and so is a
+  transaction's `description`. Empty or missing is `400`; `description` elsewhere may be left empty.
+- **`monthlyBudget` must not be negative.** `0` means none.
 
 ## The three dates — this is the whole model
 
