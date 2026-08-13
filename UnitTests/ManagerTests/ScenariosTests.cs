@@ -1,6 +1,7 @@
 namespace UnitTests.ManagerTests;
 
 using Simple.Finance.Tables;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -26,6 +27,17 @@ public class ScenariosTests : ManagerTestBase
             Name = "item",
             IsEnabled = true,
         });
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void CreateScenario_WithoutName_Throws(string? name)
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateScenario(new Scenario { Id = 0, Name = name! }));
+
+        Assert.Contains(nameof(Scenario.Name), ex.Message);
+        Assert.Empty(mgr.GetScenarios());
+    }
 
     [Fact]
     public void CreateScenario_AssignsIdAndPersists()

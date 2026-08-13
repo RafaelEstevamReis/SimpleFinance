@@ -11,6 +11,35 @@ public class TransactionsTests : ManagerTestBase
 {
     /* Validation */
 
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Create_WithoutDescription_Throws(string? description)
+    {
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: true);
+
+        var t = tx(walletId, categoryId, 10m, past);
+        t.Description = description!;
+
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateTransaction(t));
+        Assert.Contains(nameof(Transac.Description), ex.Message);
+    }
+
+    [Fact]
+    public void CreateWalletTransfer_WithoutDescription_Throws()
+    {
+        // transfers are written through the same path, so they answer to the same rule
+        var source = newWallet("Source");
+        var destination = newWallet("Destination");
+
+        var ex = Assert.Throws<InvalidOperationException>(()
+            => mgr.CreateWalletTransfer(source, 0, destination, 0, "", 100m, past, past, paid: true, paymentDetails: null));
+
+        Assert.Contains(nameof(Transac.Description), ex.Message);
+        Assert.Empty(mgr.GetTransactions(Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1)));
+    }
+
     [Fact]
     public void Create_WithZeroDueValue_Throws()
     {
@@ -290,6 +319,7 @@ public class TransactionsTests : ManagerTestBase
             Id = 0,
             WalletId = walletId,
             CategoryId = categoryId,
+            Description = "paid inside the window",
             DueDate = outOfRange,
             PaymentDate = inRange,
             DueValue = 10m,
@@ -301,6 +331,7 @@ public class TransactionsTests : ManagerTestBase
             Id = 0,
             WalletId = walletId,
             CategoryId = categoryId,
+            Description = "unpaid inside the window",
             DueDate = inRange,
             PaymentDate = outOfRange,
             DueValue = 20m,
@@ -313,6 +344,7 @@ public class TransactionsTests : ManagerTestBase
             Id = 0,
             WalletId = walletId,
             CategoryId = categoryId,
+            Description = "paid outside the window",
             DueDate = inRange,
             PaymentDate = outOfRange,
             DueValue = 30m,

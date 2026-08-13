@@ -116,6 +116,32 @@ public class ScenarioItemsTests : ManagerTestBase
         Assert.Equal(0, mgr.GetScenarioItems(scenarioId).Single(o => o.Id == id).CategoryId);
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void CreateItem_WithoutName_Throws(string? name)
+    {
+        var bad = item();
+        bad.Name = name!;
+
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateScenarioItem(bad));
+
+        Assert.Contains(nameof(ScenarioItem.Name), ex.Message);
+        Assert.Empty(mgr.GetScenarioItems(scenarioId));
+    }
+
+    [Fact]
+    public void CreateUpdateBulk_WithoutName_Throws()
+    {
+        var bad = item(-100m);
+        bad.Name = string.Empty;
+
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateBulkScenarioItem([bad]));
+
+        Assert.Contains(nameof(ScenarioItem.Name), ex.Message);
+        Assert.Empty(mgr.GetScenarioItems(scenarioId));
+    }
+
     [Fact]
     public void CreateItem_WithZeroValue_Throws()
     {

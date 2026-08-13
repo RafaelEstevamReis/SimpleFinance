@@ -97,6 +97,8 @@ public class Manager
     }
     public long CreateUpdateWallet(Tables.Wallet wallet)
     {
+        requireText(wallet.Name, nameof(Tables.Wallet), nameof(Tables.Wallet.Name));
+
         using var cnn = db.GetConnection();
         var originalValue = wallet.Id == 0 ? null : cnn.Get<Tables.Wallet>(wallet.Id);
 
@@ -154,6 +156,9 @@ GROUP BY WalletId", new
     }
     public long CreateUpdateCategory(Tables.Category category)
     {
+        requireText(category.Name, nameof(Tables.Category), nameof(Tables.Category.Name));
+        if (category.MonthlyBudget < 0) throw new InvalidOperationException($"'{nameof(Tables.Category.MonthlyBudget)}' must not be negative");
+
         using var cnn = db.GetConnection();
         var originalValue = category.Id == 0 ? null : cnn.Get<Tables.Category>(category.Id);
 
@@ -185,6 +190,8 @@ GROUP BY WalletId", new
     }
     public long CreateUpdatePerson(Tables.Person person)
     {
+        requireText(person.Name, nameof(Tables.Person), nameof(Tables.Person.Name));
+
         using var cnn = db.GetConnection();
         var originalValue = person.Id == 0 ? null : cnn.Get<Tables.Person>(person.Id);
 
@@ -312,12 +319,14 @@ GROUP BY WalletId", new
         var originalValue = tx.Id == 0 ? null : cnn.Get<Tables.Transac>(tx.Id);
 
         // check wallet
-        var wallet = cnn.Get<Tables.Wallet>(tx.WalletId);
-        if (wallet == null) throw new InvalidOperationException($"Invalid Wallet Id: {tx.WalletId}");
+        var wallet = cnn.Get<Tables.Wallet>(tx.WalletId) ?? throw new InvalidOperationException($"Invalid Wallet Id: {tx.WalletId}");
 
         // Check Category
         var category = cnn.Get<Tables.Category>(tx.CategoryId);
         if (tx.CategoryId != 0 && category == null) throw new InvalidOperationException($"Invalid Category Id: {tx.CategoryId}");
+
+        // Check description
+        requireText(tx.Description, nameof(Tables.Transac), nameof(Tables.Transac.Description));
 
         // Check signs
         if (tx.DueValue == 0) throw new InvalidOperationException($"'{nameof(Tables.Transac.DueValue)}' must not be zero");
@@ -345,8 +354,7 @@ GROUP BY WalletId", new
 
         if (tx.CounterpartyId != 0)
         {
-            var cparty = cnn.Get<Tables.Person>(tx.CounterpartyId);
-            if (cparty == null) throw new InvalidOperationException($"Invalid Counterparty Id: {tx.CounterpartyId}");
+            _ = cnn.Get<Tables.Person>(tx.CounterpartyId) ?? throw new InvalidOperationException($"Invalid Counterparty Id: {tx.CounterpartyId}");
         }
 
         switch (tx.Type)
@@ -518,6 +526,8 @@ GROUP BY WalletId", new
     }
     public long CreateUpdateScenario(Tables.Scenario scenario)
     {
+        requireText(scenario.Name, nameof(Tables.Scenario), nameof(Tables.Scenario.Name));
+
         using var cnn = db.GetConnection();
         scenario.Id = cnn.Insert(scenario, OnConflict.Replace);
         return scenario.Id;
@@ -565,6 +575,7 @@ GROUP BY WalletId", new
             category = cnn.Get<Tables.Category>(item.CategoryId) ?? throw new InvalidOperationException($"Invalid Category Id: {item.CategoryId}");
         }
 
+        requireText(item.Name, nameof(Tables.ScenarioItem), nameof(Tables.ScenarioItem.Name));
         if (item.Value == 0) throw new InvalidOperationException($"'{nameof(Tables.ScenarioItem.Value)}' must not be zero");
 
         var sign = category == null ? Math.Sign(item.Value) : (category.IsExpense ? -1 : 1);
@@ -595,6 +606,7 @@ GROUP BY WalletId", new
                 throw new InvalidOperationException($"Invalid Category Id: {item.CategoryId}");
             }
 
+            requireText(item.Name, nameof(Tables.ScenarioItem), nameof(Tables.ScenarioItem.Name));
             if (item.Value == 0) throw new InvalidOperationException($"'{nameof(Tables.ScenarioItem.Value)}' must not be zero");
 
             var sign = category == null ? Math.Sign(item.Value) : (category.IsExpense ? -1 : 1);
@@ -826,6 +838,10 @@ ORDER BY si.{nameof(Tables.ScenarioItem.Date)}, si.Id", new
 
         using var cnn = db.GetConnection();
         cnn.Execute($"UPDATE {getTableName(typeof(T))} SET {column} = @state WHERE Id IN ({string.Join(",", wanted)})", new { state });
+    }
+    private static void requireText(string? value, string table, string field)
+    {
+        if (string.IsNullOrEmpty(value)) throw new InvalidOperationException($"'{table}.{field}' must not be empty");
     }
 
 }

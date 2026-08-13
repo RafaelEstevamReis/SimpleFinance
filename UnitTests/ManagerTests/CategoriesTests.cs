@@ -7,6 +7,55 @@ using Xunit;
 
 public class CategoriesTests : ManagerTestBase
 {
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void CreateCategory_WithoutName_Throws(string? name)
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateCategory(new Category
+        {
+            Id = 0,
+            Name = name!,
+            Description = "no name, still a category",
+            IsExpense = true,
+        }));
+
+        Assert.Contains(nameof(Category.Name), ex.Message);
+        Assert.Empty(mgr.GetCategories());
+    }
+
+    [Fact]
+    public void CreateCategory_WithNegativeBudget_Throws()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateCategory(new Category
+        {
+            Id = 0,
+            Name = "Rent",
+            IsExpense = true,
+            MonthlyBudget = -1200m,
+        }));
+
+        Assert.Contains(nameof(Category.MonthlyBudget), ex.Message);
+        Assert.Empty(mgr.GetCategories());
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1200)]
+    public void CreateCategory_KeepsBudgetAsSent(decimal budget)
+    {
+        // an expense budget is a limit, not money: it stays positive even though its transactions are negative
+        var id = mgr.CreateUpdateCategory(new Category
+        {
+            Id = 0,
+            Name = "Rent",
+            IsExpense = true,
+            MonthlyBudget = budget,
+        });
+
+        Assert.Equal(budget, mgr.GetCategories().Single(o => o.Id == id).MonthlyBudget);
+    }
+
     [Fact]
     public void CreateCategory_AssignsIdAndPersists()
     {

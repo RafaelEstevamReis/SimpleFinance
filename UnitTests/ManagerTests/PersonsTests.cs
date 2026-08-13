@@ -1,11 +1,23 @@
 namespace UnitTests.ManagerTests;
 
 using Simple.Finance.Tables;
+using System;
 using System.Linq;
 using Xunit;
 
 public class PersonsTests : ManagerTestBase
 {
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void CreatePerson_WithoutName_Throws(string? name)
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdatePerson(new Person { Id = 0, Name = name! }));
+
+        Assert.Contains(nameof(Person.Name), ex.Message);
+        Assert.Empty(mgr.GetAllPersons());
+    }
+
     [Fact]
     public void CreatePerson_AssignsIdAndPersists()
     {

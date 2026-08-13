@@ -7,6 +7,22 @@ using Xunit;
 
 public class WalletsTests : ManagerTestBase
 {
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void CreateWallet_WithoutName_Throws(string? name)
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateWallet(new Wallet
+        {
+            Id = 0,
+            Name = name!,
+            Description = "no name, still a wallet",
+        }));
+
+        Assert.Contains(nameof(Wallet.Name), ex.Message);
+        Assert.Empty(mgr.GetWallets());
+    }
+
     [Fact]
     public void CreateWallet_AssignsIdAndPersists()
     {
