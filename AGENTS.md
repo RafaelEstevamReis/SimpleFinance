@@ -83,8 +83,10 @@ One class, region-separated: Wallets / Categories / Persons / Transactions / Sce
 
 1. `DueValue != 0`, else `InvalidOperationException`.
 2. Sign is **forced** from the category: `IsExpense` → negative, else positive; applied to
-   `DueValue`, `PaidValue`, `RC_DueValue`, `RC_PaidValue`. With `CategoryId == 0` the caller's sign is kept.
-3. `WalletId` must resolve; `CategoryId`/`CounterpartyId` must resolve when non-zero.
+   `DueValue`, `PaidValue`, `RC_DueValue`, `RC_PaidValue`.
+3. `WalletId` must resolve; `CategoryId`/`CounterpartyId` must resolve when non-zero. `CategoryId == 0` is
+   refused earlier, by `CreateUpdateTransaction`/`CreateUpdateBulkTransaction` — not here, because
+   `CreateWalletTransfer` writes both legs through this function and a transfer carries no category.
 4. `PaymentCurrency` is upper-cased and, when both sides are non-empty, must equal `Wallet.BaseCurrency`.
 5. `Type == WalletTransfer` throws here — transfers have their own API. `Special` is `NotImplementedException`.
 6. `Changed` always set to `UtcNow`; `Created` preserved from the original row on update.
@@ -139,7 +141,8 @@ doctrine used for transactions.
   an audit trail of what-ifs would bury the trail of what happened.
 - **Same invariants as a transaction**, because they will be compared against real rows: wallet must resolve,
   category must resolve when non-zero, `Value != 0`, `Name` must not be empty, and the **category forces
-  the sign** (`CategoryId == 0` keeps the caller's). Currency is never stored — it is the wallet's
+  the sign** (`CategoryId == 0` keeps the caller's — a draft may stay uncategorised, a transaction may
+  not). Currency is never stored — it is the wallet's
   `BaseCurrency`, as with `Transac`.
 - **`IsActive` composes, it does not exclude.** Two active scenarios are projected together; comparing A against B
   is running the projection twice, never a flag. It is persisted so the selection survives a restart.
@@ -182,7 +185,8 @@ doctrine used for transactions.
 defaultExpenseCategoryId)`, and pick between them by the sign the bank gave the row. A statement runs
 both ways, and `createUpdateTransaction` forces the sign from the category, so one category for the
 whole file would invert half of it; two categories keep every row on the side it arrived on. Pass `0`
-for either to leave those rows uncategorised.
+for either to leave those rows uncategorised, and then the caller has to categorise them before saving:
+`CreateUpdateTransaction` refuses `CategoryId == 0`.
 Imported rows are `Status = Paid`, `Type = Simple`, both dates set to the posted date; OFX keeps `FitId`
 in `ExternalIdentifier`. Nothing deduplicates on `ExternalIdentifier` — callers must.
 

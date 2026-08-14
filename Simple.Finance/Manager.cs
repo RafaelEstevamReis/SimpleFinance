@@ -290,6 +290,8 @@ GROUP BY WalletId", new
 
     public long CreateUpdateTransaction(Tables.Transac tx)
     {
+        if (tx.CategoryId == 0) throw new InvalidOperationException("Simple transactions must have a category");
+
         using var cnn = db.GetConnection();
         return createUpdateTransaction(cnn, tx, generateLog: true, generateNotification: true);
     }
@@ -300,6 +302,8 @@ GROUP BY WalletId", new
         {
             foreach (var tx in txs)
             {
+                if (tx.CategoryId == 0) throw new InvalidOperationException("Simple transactions must have a category");
+
                 var id = createUpdateTransaction(cnn, tx, generateLog: true, generateNotification: false);
                 lst.Add(id);
             }
@@ -549,7 +553,7 @@ GROUP BY WalletId", new
     /// </summary>
     public void SetScenarioActive(IEnumerable<long> ids, bool activeState)
         => setFlagByIds<Tables.Scenario>(ids, nameof(Tables.Scenario.IsActive), activeState);
-   
+
     public IEnumerable<Tables.ScenarioItem> GetScenarioItems(long scenarioId)
     {
         using var cnn = db.GetConnection();
@@ -628,7 +632,7 @@ GROUP BY WalletId", new
     /// </summary>
     public void SetScenarioItemEnabled(IEnumerable<long> ids, bool enabledState)
         => setFlagByIds<Tables.ScenarioItem>(ids, nameof(Tables.ScenarioItem.IsEnabled), enabledState);
-    
+
     /// <summary>
     /// Gets the enabled items of every active scenario for a wallet, oldest first.
     /// Active scenarios are composed, so items of all of them are returned together

@@ -55,7 +55,9 @@ The library validates by throwing, and the API turns that into `400` carrying th
 Do not work around these — they are the guardrails that keep the data sane.
 
 - **Send positive amounts.** The sign is forced from the category (`isExpense`). Sending `150` or
-  `-150` on an expense category both store `-150`. With `categoryId: 0` your sign is kept as-is.
+  `-150` on an expense category both store `-150`.
+- **`categoryId` must not be zero.** A movement with no category is a transfer, and transfers have
+  their own endpoint.
 - **`dueValue` must not be zero.**
 - **`paymentCurrency` must equal the wallet's `baseCurrency`** (send it empty to inherit).
 - **Balances never cross currencies.** Each wallet reports in its own currency and the API never
@@ -295,7 +297,8 @@ import never reaches the database, so it checks them itself rather than letting 
 later.
 
 Send `0` for both and every row arrives uncategorised, which is the honest default when the person is
-going to classify them anyway: show the rows, let them assign, then post. The pair is for the other
+going to classify them anyway: show the rows, let them assign, then post — `POST /api/transactions`
+refuses `categoryId: 0`, so assigning is a step, not a nicety. The pair is for the other
 case — a "To classify (out)" / "To classify (in)" pair, or a card whose whole statement is one kind of
 spending — where a sane starting category saves the person fifty clicks. Either way the category is a
 per-row decision the client owns; the import only offers a starting point.
@@ -540,9 +543,6 @@ amount + description is the second layer.
 **Dedupe inside the file too** — two statements with overlapping ranges carry the same rows twice.
 
 **A review queue** — three piles before anything is written: matched, new, duplicate.
-
-**Categorise before storing an imported row** — with no category the row keeps the file's sign and
-disappears from every per-category report.
 
 **Reconcile against the statement's closing balance** — type the bank's figure, tick row by row,
 close when the difference reaches zero.

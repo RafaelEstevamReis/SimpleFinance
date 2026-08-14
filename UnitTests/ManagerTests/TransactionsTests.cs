@@ -67,6 +67,15 @@ public class TransactionsTests : ManagerTestBase
     }
 
     [Fact]
+    public void Create_WithoutCategory_Throws()
+    {
+        var walletId = newWallet();
+
+        Assert.Throws<InvalidOperationException>(() => newTx(walletId, categoryId: 0, 10m, past));
+        Assert.Empty(mgr.GetTransactions(Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1)));
+    }
+
+    [Fact]
     public void Create_WithUnknownCounterparty_Throws()
     {
         var walletId = newWallet();
@@ -133,18 +142,6 @@ public class TransactionsTests : ManagerTestBase
         var stored = mgr.GetTransactionById(id)!;
         Assert.Equal(100m, stored.DueValue);
         Assert.Equal(100m, stored.PaidValue);
-    }
-
-    [Theory]
-    [InlineData(100)]
-    [InlineData(-100)]
-    public void Create_WithoutCategory_KeepsCallerSign(decimal inputValue)
-    {
-        var walletId = newWallet();
-
-        var id = newTx(walletId, categoryId: 0, inputValue, past);
-
-        Assert.Equal(inputValue, mgr.GetTransactionById(id)!.DueValue);
     }
 
     /* Currency */

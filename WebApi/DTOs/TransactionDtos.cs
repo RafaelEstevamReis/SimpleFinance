@@ -19,7 +19,7 @@ public record TransactionRequest
 {
     public long WalletId { get; set; }
     /// <summary>
-    /// Category, 0 for none. When set, it forces the sign of the values
+    /// Category, must not be zero. It forces the sign of the values
     /// </summary>
     public long CategoryId { get; set; }
     /// <summary>
