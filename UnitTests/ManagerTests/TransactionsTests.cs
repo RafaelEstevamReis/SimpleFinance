@@ -76,6 +76,20 @@ public class TransactionsTests : ManagerTestBase
     }
 
     [Fact]
+    public void CreateBulk_WithoutCategory_Throws()
+    {
+        // the rule is checked on the bulk entry too, not only on the single one
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: true);
+
+        Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateBulkTransaction([
+            tx(walletId, categoryId: 0, 10m, past),
+            tx(walletId, categoryId, 20m, past),
+        ]));
+        Assert.Empty(mgr.GetTransactions(Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1)));
+    }
+
+    [Fact]
     public void Create_WithUnknownCounterparty_Throws()
     {
         var walletId = newWallet();
