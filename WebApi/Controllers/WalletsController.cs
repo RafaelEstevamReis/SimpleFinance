@@ -11,10 +11,8 @@ using System.Linq;
 /// <summary>
 /// Wallets: where the money is. Every balance is in the wallet's own currency
 /// </summary>
-public class WalletsController : AccountControllerBase
+public class WalletsController(ManagerCache managers) : AccountControllerBase(managers)
 {
-    public WalletsController(ManagerCache managers) : base(managers) { }
-
     /// <summary>
     /// Every wallet, including the ones flagged as deleted
     /// </summary>

@@ -11,10 +11,8 @@ using System.Linq;
 /// Scenarios: named sets of hypothetical movements used to compare futures.
 /// Nothing here reaches the real transactions, and nothing here is logged on the change log
 /// </summary>
-public class ScenariosController : AccountControllerBase
+public class ScenariosController(ManagerCache managers) : AccountControllerBase(managers)
 {
-    public ScenariosController(ManagerCache managers) : base(managers) { }
-
     /// <summary>
     /// Every scenario, active or not
     /// </summary>

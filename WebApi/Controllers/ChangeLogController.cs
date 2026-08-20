@@ -11,10 +11,8 @@ using System.Collections.Generic;
 /// Audit trail: every write the Manager made, field by field.
 /// It is written automatically, there is no way to add or remove entries
 /// </summary>
-public class ChangeLogController : AccountControllerBase
+public class ChangeLogController(ManagerCache managers) : AccountControllerBase(managers)
 {
-    public ChangeLogController(ManagerCache managers) : base(managers) { }
-
     /// <summary>
     /// Every change event in a period, oldest first
     /// </summary>

@@ -12,15 +12,9 @@ using System;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public abstract class AccountControllerBase : ControllerBase
+public abstract class AccountControllerBase(ManagerCache managers) : ControllerBase
 {
-    private readonly ManagerCache managers;
     private Manager? manager;
-
-    protected AccountControllerBase(ManagerCache managers)
-    {
-        this.managers = managers;
-    }
 
     /// <summary>
     /// Key of the authenticated account

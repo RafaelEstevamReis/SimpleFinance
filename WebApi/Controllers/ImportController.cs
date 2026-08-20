@@ -18,14 +18,12 @@ using System.Text;
 /// Nothing is written to the database and nothing is deduplicated — the parsed rows come
 /// back in the very shape /api/transactions accepts, and what to keep is the client's call
 /// </summary>
-public class ImportController : AccountControllerBase
+public class ImportController(ManagerCache managers) : AccountControllerBase(managers)
 {
     /// <summary>
     /// Largest statement accepted. Statements are text and small; this only stops abuse
     /// </summary>
     private const long maxFileSize = 512 * 1024;
-
-    public ImportController(ManagerCache managers) : base(managers) { }
 
     /// <summary>
     /// Parses an OFX statement (bank or credit card, XML or the older SGML form).

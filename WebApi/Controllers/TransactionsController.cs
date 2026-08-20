@@ -10,10 +10,8 @@ using System.Linq;
 /// <summary>
 /// Transactions: the actual money movements
 /// </summary>
-public class TransactionsController : AccountControllerBase
+public class TransactionsController(ManagerCache managers) : AccountControllerBase(managers)
 {
-    public TransactionsController(ManagerCache managers) : base(managers) { }
-
     /// <summary>
     /// Searches transactions in a period.
     /// 'dateType' picks which date rules the search: DueDate for what is owed,

@@ -5,7 +5,7 @@ using System.Reflection;
 /// <summary>
 /// Identity of this service, reported by the OpenAPI document and by /api/hello
 /// </summary>
-public static class ApiInfo
+internal static class ApiInfo
 {
     public const string Title = "Simple.Finance API";
 

@@ -4,29 +4,22 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Threading;
 
 /// <summary>
 /// Keeps one live <see cref="Manager"/> per account.
 /// Entering the cache is what initializes (and backs up) that account's database
 /// </summary>
-public class ManagerCache
+public class ManagerCache(IMemoryCache cache, ILogger<ManagerCache> logger)
 {
     /// <summary>
     /// How long an idle account keeps its Manager alive
     /// </summary>
     public static readonly TimeSpan IdleExpiration = TimeSpan.FromMinutes(30);
 
-    private readonly IMemoryCache cache;
-    private readonly ILogger<ManagerCache> logger;
     // Only guards creation: two requests of the same account must not both
     // initialize and back up the same file. Usage itself is not serialized
-    private readonly object createLock = new();
-
-    public ManagerCache(IMemoryCache cache, ILogger<ManagerCache> logger)
-    {
-        this.cache = cache;
-        this.logger = logger;
-    }
+    private readonly Lock createLock = new();
 
     /// <summary>
     /// The Manager of an account, creating and initializing it on first use

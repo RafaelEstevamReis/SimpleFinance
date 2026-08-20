@@ -9,10 +9,8 @@ using Simple.Finance.WebApi.DTOs;
 /// Transfers between wallets. They are a linked pair of transactions and must
 /// never be created or edited through /api/transactions
 /// </summary>
-public class TransfersController : AccountControllerBase
+public class TransfersController(ManagerCache managers) : AccountControllerBase(managers)
 {
-    public TransfersController(ManagerCache managers) : base(managers) { }
-
     /// <summary>
     /// Both legs of a transfer, found by the id of either one of them
     /// </summary>

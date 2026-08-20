@@ -9,10 +9,8 @@ using System.Linq;
 /// <summary>
 /// Counterparties: who the money came from or went to
 /// </summary>
-public class PersonsController : AccountControllerBase
+public class PersonsController(ManagerCache managers) : AccountControllerBase(managers)
 {
-    public PersonsController(ManagerCache managers) : base(managers) { }
-
     /// <summary>
     /// Every counterparty, including the ones flagged as deleted
     /// </summary>

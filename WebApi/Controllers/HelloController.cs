@@ -14,15 +14,8 @@ using System;
 [AllowAnonymous]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class HelloController : ControllerBase
+public class HelloController(ILogger<HelloController> logger) : ControllerBase
 {
-    private readonly ILogger<HelloController> logger;
-
-    public HelloController(ILogger<HelloController> logger)
-    {
-        this.logger = logger;
-    }
-
     /// <summary>
     /// Liveness check, also reports the running version
     /// </summary>

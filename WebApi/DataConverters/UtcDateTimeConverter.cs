@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 /// <see cref="DateTimeKind.Unspecified"/>. This forces the wire format to be
 /// explicit UTC ('Z'), so clients never read a UTC value as local time
 /// </summary>
-public class UtcDateTimeConverter : JsonConverter<DateTime>
+internal class UtcDateTimeConverter : JsonConverter<DateTime>
 {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         => toUtc(reader.GetDateTime());
@@ -23,19 +23,4 @@ public class UtcDateTimeConverter : JsonConverter<DateTime>
         DateTimeKind.Local => value.ToUniversalTime(),
         _ => DateTime.SpecifyKind(value, DateTimeKind.Utc),
     };
-}
-
-/// <summary>
-/// Nullable counterpart of <see cref="UtcDateTimeConverter"/>
-/// </summary>
-public class NullableUtcDateTimeConverter : JsonConverter<DateTime?>
-{
-    public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        => reader.TokenType == JsonTokenType.Null ? null : UtcDateTimeConverter.toUtc(reader.GetDateTime());
-
-    public override void Write(Utf8JsonWriter writer, DateTime? value, JsonSerializerOptions options)
-    {
-        if (value is null) writer.WriteNullValue();
-        else writer.WriteStringValue(UtcDateTimeConverter.toUtc(value.Value));
-    }
 }

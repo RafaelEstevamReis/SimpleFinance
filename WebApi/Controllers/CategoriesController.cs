@@ -9,10 +9,8 @@ using System.Linq;
 /// <summary>
 /// Categories: what the money is for. IsExpense decides the sign of every transaction
 /// </summary>
-public class CategoriesController : AccountControllerBase
+public class CategoriesController(ManagerCache managers) : AccountControllerBase(managers)
 {
-    public CategoriesController(ManagerCache managers) : base(managers) { }
-
     /// <summary>
     /// Every category, including the ones flagged as deleted
     /// </summary>

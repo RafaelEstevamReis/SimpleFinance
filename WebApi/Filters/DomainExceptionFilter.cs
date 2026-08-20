@@ -10,14 +10,9 @@ using System;
 /// Turns the validation exceptions of the Manager into HTTP answers.
 /// The library rejects invalid data by throwing, and those are client errors, not server faults
 /// </summary>
-public class DomainExceptionFilter : IExceptionFilter
+internal class DomainExceptionFilter(ILogger<DomainExceptionFilter> logger) : IExceptionFilter
 {
-    private readonly ILogger<DomainExceptionFilter> logger;
-
-    public DomainExceptionFilter(ILogger<DomainExceptionFilter> logger)
-    {
-        this.logger = logger;
-    }
+    private readonly ILogger<DomainExceptionFilter> logger = logger;
 
     public void OnException(ExceptionContext context)
     {

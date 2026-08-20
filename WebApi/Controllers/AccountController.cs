@@ -4,26 +4,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Simple.Finance.WebApi.Auth;
 using Simple.Finance.WebApi.AccountManagement;
+using Simple.Finance.WebApi.DTOs;
 using System.IO;
 using System.Linq;
-using Simple.Finance.WebApi.DTOs;
 
 /// <summary>
 /// Accounts. Creating one is creating a new Key, and the Key is the only credential
 /// </summary>
-public class AccountController : AccountControllerBase
+public class AccountController(ManagementDb management, ManagerCache managers, ILogger<AccountController> logger) : AccountControllerBase(managers)
 {
-    private readonly ManagementDb management;
-    private readonly ILogger<AccountController> logger;
-
-    public AccountController(ManagementDb management, ManagerCache managers, ILogger<AccountController> logger)
-        : base(managers)
-    {
-        this.management = management;
-        this.logger = logger;
-    }
 
     /// <summary>
     /// Creates a new account and returns its Key.

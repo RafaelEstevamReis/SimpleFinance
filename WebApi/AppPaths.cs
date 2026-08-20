@@ -7,7 +7,7 @@ using System.IO;
 /// Every path the application uses, all rooted at the application folder.
 /// Nothing is written outside of it
 /// </summary>
-public static class AppPaths
+internal static class AppPaths
 {
     /// <summary>
     /// Application folder, where the assemblies live
