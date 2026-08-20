@@ -18,7 +18,8 @@ public class TransactionsController : AccountControllerBase
     /// Searches transactions in a period.
     /// 'dateType' picks which date rules the search: DueDate for what is owed,
     /// PaymentDate for cash actually moved, EffectiveDate for the mixed timeline.
-    /// 'kind' and 'kindId' narrow it to one wallet, category or counterparty.
+    /// 'kind' and 'kindId' narrow it to one wallet, category or counterparty;
+    /// to cut by more than one of them at a time use /api/transactions/by.
     /// 'order' sorts by that same date, 'limit' keeps only the first rows of that order
     /// </summary>
     [HttpGet]
@@ -33,34 +34,41 @@ public class TransactionsController : AccountControllerBase
                                                       [FromQuery] int? limit)
     {
         if (kind.HasValue != kindId.HasValue) return BadRequest("'kind' and 'kindId' must be used together");
-        if (limit.HasValue && limit.Value < 1) return BadRequest("'limit' must be at least 1");
-        // without an order the rows kept would be whatever the database happened to return first
-        if (limit.HasValue && !order.HasValue) return BadRequest("'limit' must be used with an 'order'");
+
+        // order and limit mean the same thing on both searches, so they are decided in one place
+        var shaping = new TransactionSearchRequest { DateType = dateType, Order = order, Limit = limit };
+        var rejection = shaping.Rejection();
+        if (rejection is not null) return BadRequest(rejection);
 
         var found = kind.HasValue
             ? Manager.GetTransactionsBy(kind.Value, kindId!.Value, dateType, start, end)
             : Manager.GetTransactions(dateType, start, end);
 
-        if (order.HasValue)
-        {
-            // same date the search filtered by; Id breaks ties so a 'limit' is reproducible
-            Func<Tables.Transac, DateTime> date = dateType switch
-            {
-                Manager.SearchTransactionsDate.DueDate => o => o.DueDate,
-                Manager.SearchTransactionsDate.PaymentDate => o => o.PaymentDate,
-                Manager.SearchTransactionsDate.Created => o => o.Created,
-                Manager.SearchTransactionsDate.Changed => o => o.Changed,
-                Manager.SearchTransactionsDate.EffectiveDate => o => o.EffectiveDate,
-                _ => throw new InvalidOperationException("Invalid date type"),
-            };
+        return shaping.Shape(found).Select(TransactionResponse.From).ToArray();
+    }
 
-            found = order.Value == SearchOrder.Desc
-                ? found.OrderByDescending(date).ThenByDescending(o => o.Id)
-                : found.OrderBy(date).ThenBy(o => o.Id);
-        }
-        if (limit.HasValue) found = found.Take(limit.Value);
+    /// <summary>
+    /// Searches transactions in a period, narrowed by any combination of ids.
+    /// 'walletId', 'categoryId' and 'counterpartyId' are optional and they compose:
+    /// every one sent must match, so sending two answers the intersection, never the union.
+    /// Leave one out to not filter by it; send 0 to select the rows that carry none of it
+    /// </summary>
+    [HttpGet("by")]
+    [ProducesResponseType(typeof(TransactionResponse[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult<TransactionResponse[]> SearchBy([FromQuery] TransactionSearchRequest request)
+    {
+        var rejection = request.Rejection();
+        if (rejection is not null) return BadRequest(rejection);
 
-        return found.Select(TransactionResponse.From).ToArray();
+        var found = Manager.GetTransactionsBy(request.WalletId,
+                                              request.CategoryId,
+                                              request.CounterpartyId,
+                                              request.DateType,
+                                              request.Start,
+                                              request.End);
+
+        return request.Shape(found).Select(TransactionResponse.From).ToArray();
     }
 
     /// <summary>

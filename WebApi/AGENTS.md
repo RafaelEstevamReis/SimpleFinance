@@ -106,6 +106,26 @@ window holds, in database order". `limit` without `order` is a `400`: the rows k
 ones the database happened to return first. Ties on the date fall back to `id`, so the same `limit`
 always answers the same rows.
 
+### Narrowing it: `GET /api/transactions/by`
+
+Same rows, same `dateType`/`start`/`end`/`order`/`limit`, plus the ids that cut them:
+`walletId`, `categoryId` and `counterpartyId`. They are optional and they **compose with AND** —
+every one you send must match, so `walletId=3&categoryId=7` is "groceries **on that account**", the
+intersection and never the union. Send none and the window is the only filter, which is what
+`GET /api/transactions` already answers.
+
+So: **one cut or none, `/api/transactions`; two or more, `/api/transactions/by`.** The older
+`kind` + `kindId` pair on `/api/transactions` still expresses a single cut
+(`kind=Wallet|Category|Counterparty`) and is not going away, but it cannot express a combination —
+that is the whole reason `/by` exists.
+
+`0` is a value, not "unset": it selects **the rows that carry none**. `categoryId=0` are the transfer
+legs (a transfer has no category), `counterpartyId=0` the rows with nobody on the other side. To not
+filter by something, leave the parameter out entirely.
+
+An id that does not exist is not an error — it matches nothing and you get an empty list. If you need
+to know the id is real, read it from its own endpoint.
+
 ## Balances: exactly what counts
 
 Three endpoints, three different questions. They are **allowed to disagree**, and which one is right
@@ -236,7 +256,7 @@ A card only reaches zero when no future installment is left. That is correct, no
 is debt already contracted.
 
 **Reading one invoice**: search the card wallet over the period the invoice covers (its closing
-window, not its due date) — `GET /api/transactions?dateType=PaymentDate&start=…&end=…&kind=Wallet&kindId=<cardWalletId>`
+window, not its due date) — `GET /api/transactions/by?dateType=PaymentDate&start=…&end=…&walletId=<cardWalletId>`
 — and sum `paidValue`. That total is what the transfer should carry.
 
 ## Recipes
@@ -338,9 +358,9 @@ never happen, while the person may well decide to pay them.
 
 ### "How much did I spend on groceries this month?"
 
-`GET /api/transactions?dateType=EffectiveDate&start=…&end=…&kind=Category&kindId=<categoryId>`, summing
-`effectiveValue`. Use `kind=Wallet` or `kind=Counterparty` for the other two cuts. `kind` and `kindId`
-must always travel together.
+`GET /api/transactions/by?dateType=EffectiveDate&start=…&end=…&categoryId=<categoryId>`, summing
+`effectiveValue`. `walletId` and `counterpartyId` are the other two cuts, and they compose: add
+`walletId` to get groceries paid from one account only.
 
 ### Move money between wallets
 
@@ -407,6 +427,11 @@ day, in the middle of someone's evening.
 - Send dates in **UTC** (`...Z`). Everything stored and returned is UTC, so "today" for a balance is
   the UTC day, which can differ from the person's local day near midnight.
 - No pagination: a wide date range returns everything at once.
+- Two searches, one rule: `/api/transactions` for the plain window or a single `kind` cut,
+  `/api/transactions/by` when you need `walletId`/`categoryId`/`counterpartyId` to compose. Those
+  three **AND** together, and `0` means "the rows that carry none" (`categoryId=0` are transfer legs).
+  Sending them to `/api/transactions` does nothing: unknown query parameters are ignored, so you get
+  the whole window back and no error.
 - A preference write replaces the whole value of that name. One setting per name — a serialized blob
   turns every edit into read-modify-write, and concurrent edits of unrelated settings clobber each other.
 - Creating an account is cheap and irreversible — there is no way to list or delete accounts.
@@ -481,9 +506,9 @@ with no extra column and no join. Two forms, picked by intent:
 just like this, now". Both earn their place.
 
 **"Show similar" — pivot off a row and drop the date window.** From one transaction, offer to open
-everything like it: same category, matched by name (`kind=Category`), or everything with the same
-counterparty (`kind=Counterparty`). January's rent becomes every rent; one payment to a contractor
-becomes everything ever paid to them.
+everything like it: same category, matched by name (`/api/transactions/by?categoryId=<id>`), or
+everything with the same counterparty (`&counterpartyId=<id>`). January's rent becomes every rent;
+one payment to a contractor becomes everything ever paid to them.
 
 The whole point is the **period is discarded**. A date range is how you browse; the moment the person
 asks "and the others?", the range is exactly what stands in the way — they want the history of the
@@ -492,9 +517,10 @@ thing, not of the month. Search wide (`start` far back, `end` far ahead) and let
 
 Two cuts, two questions. Category plus name answers *"how has this bill behaved?"* — the same expense
 across months, where a trend is visible. Counterparty answers *"what has this person or company cost
-me?"* — different categories, different wallets, one relationship. Both are one call, because
-`kind`/`kindId` cut server-side; the name match is yours to do on the result, since the search takes no
-text filter.
+me?"* — different categories, different wallets, one relationship. Both are one call, because the
+filters cut server-side; the name match is yours to do on the result, since the search takes no
+text filter. Narrowing a pivot further — that counterparty *on one wallet* — is the same call with
+one more id, which is what the search endpoint is for.
 
 Matching by name has one catch, and it comes from the item above: **strip the series label before
 comparing**. `Rent (3/12)` and `Rent (Mar/2026)` are the same bill wearing a counter. The suffix that
@@ -599,7 +625,8 @@ An empty history or an empty search is `200` with an empty list, never `404`.
 | `GET /api/wallets/{id}/balance` | what has actually cleared, for reconciliation |
 | `GET`/`POST /api/categories`, `GET`/`PUT /api/categories/{id}` | categories |
 | `GET`/`POST /api/persons`, `GET`/`PUT /api/persons/{id}` | counterparties |
-| `GET /api/transactions?dateType=&start=&end=[&kind=&kindId=&order=&limit=]` | search |
+| `GET /api/transactions?dateType=&start=&end=[&kind=&kindId=&order=&limit=]` | search: the window, or one cut |
+| `GET /api/transactions/by?dateType=&start=&end=[&walletId=&categoryId=&counterpartyId=&order=&limit=]` | search: ids that compose |
 | `GET`/`POST /api/transactions`, `PUT /api/transactions/{id}` | transactions |
 | `POST /api/transfers`, `GET`/`PUT /api/transfers/{id}` | transfers, always as a pair |
 | `GET /api/changelog?start=&end=[&externalId=]` | audit trail for a period |

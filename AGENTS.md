@@ -225,6 +225,13 @@ Everything it writes lives under the application folder, composed by `AppPaths`:
 - **Controllers** — everything account-scoped derives from `AccountControllerBase`, which turns the Key
   into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, ChangeLog, Import, plus account
   preferences.
+- **Two transaction searches, one shaping** — `TransactionsController.Search` (`GET /api/transactions`)
+  keeps the window and the single `kind`/`kindId` cut; `SearchBy` (`GET /api/transactions/by`, a
+  literal segment that cannot collide with the `{id:long}` read) binds `TransactionSearchRequest`
+  from the query and passes the three optional ids to the `Manager` overload that composes them —
+  `AND`, and `0` selects the rows carrying none. `order`/`limit` mean the same thing on both, so both
+  call `TransactionSearchRequest.Rejection`/`Shape`: the sort is by the very date `dateType` chose,
+  with `Id` breaking ties so a `limit` is reproducible.
 - **Import** (`ImportController`) — `TransactionImporter` over an upload: `POST /api/import/{ofx|mt940}`
   takes `multipart/form-data` (512 KB cap) and answers `TransactionRequest[]`, the same shape
   `POST /api/transactions` accepts, so a parsed row goes back untouched. Nothing is persisted and nothing
