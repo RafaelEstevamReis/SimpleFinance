@@ -211,50 +211,19 @@ GROUP BY WalletId", new
         return cnn.Get<Tables.Transac>(id);
     }
     public IEnumerable<Tables.Transac> GetTransactions(SearchTransactionsDate dateType, DateTime start, DateTime end)
-    {
-        string add = "";
-        string dateColumn = dateType switch
-        {
-            SearchTransactionsDate.EffectiveDate => "[INV]",
-            SearchTransactionsDate.DueDate => "DueDate",
-            SearchTransactionsDate.PaymentDate => "PaymentDate",
-            SearchTransactionsDate.Created => "Created",
-            SearchTransactionsDate.Changed => "Changed",
-            _ => throw new InvalidOperationException("Invalid date type"),
-        };
-
-        if (dateType == SearchTransactionsDate.PaymentDate)
-        {
-            add = "AND Status = @statusPaid";
-        }
-        string query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE ({dateColumn} BETWEEN @start AND @end ) {add} ";
-
-        if (dateType == SearchTransactionsDate.EffectiveDate)
-        {
-            string paidOnes = $"( {nameof(Tables.Transac.Status)} = @statusPaid AND {nameof(Tables.Transac.PaymentDate)} BETWEEN @start AND @end )";
-            string unpaidOnes = $"( {nameof(Tables.Transac.Status)} <> @statusPaid AND {nameof(Tables.Transac.DueDate)} BETWEEN @start AND @end )";
-
-            query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE ( {paidOnes} OR {unpaidOnes} )";
-        }
-
-        using var cnn = db.GetConnection();
-        return cnn.Query<Tables.Transac>(query, new
-        {
-            start,
-            end,
-            statusPaid = Tables.Transac.PaymentStatus.Paid,
-        });
-    }
+        => GetTransactionsBy(walletId: null, categoryId: null, counterpartyId: null, dateType, start, end);
     public IEnumerable<Tables.Transac> GetTransactionsBy(SearchTransactionsByKind kind, long id, SearchTransactionsDate dateType, DateTime start, DateTime end)
-    {
-        string add = "";
-        string kindColumn = kind switch
+        // kind is validated before dateType, as it always was
+        => kind switch
         {
-            SearchTransactionsByKind.Wallet => "WalletId",
-            SearchTransactionsByKind.Category => "CategoryId",
-            SearchTransactionsByKind.Counterparty => "CounterpartyId",
+            SearchTransactionsByKind.Wallet => GetTransactionsBy(id, null, null, dateType, start, end),
+            SearchTransactionsByKind.Category => GetTransactionsBy(null, id, null, dateType, start, end),
+            SearchTransactionsByKind.Counterparty => GetTransactionsBy(null, null, id, dateType, start, end),
             _ => throw new InvalidOperationException("Invalid kind type"),
         };
+
+    public IEnumerable<Tables.Transac> GetTransactionsBy(long? walletId, long? categoryId, long? counterpartyId, SearchTransactionsDate dateType, DateTime start, DateTime end)
+    {
         string dateColumn = dateType switch
         {
             SearchTransactionsDate.EffectiveDate => "[INV]",
@@ -264,24 +233,32 @@ GROUP BY WalletId", new
             SearchTransactionsDate.Changed => "Changed",
             _ => throw new InvalidOperationException("Invalid date type"),
         };
-        if (dateType == SearchTransactionsDate.PaymentDate)
-        {
-            add = $"AND {nameof(Tables.Transac.Status)} = @statusPaid";
-        }
-        string query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE {kindColumn} = @id AND ({dateColumn} BETWEEN @start AND @end ) {add} ";
 
+        string datePart = $" ({dateColumn} BETWEEN @start AND @end )";
         if (dateType == SearchTransactionsDate.EffectiveDate)
         {
             string paidOnes = $"( {nameof(Tables.Transac.Status)} = @statusPaid AND {nameof(Tables.Transac.PaymentDate)} BETWEEN @start AND @end )";
             string unpaidOnes = $"( {nameof(Tables.Transac.Status)} <> @statusPaid AND {nameof(Tables.Transac.DueDate)} BETWEEN @start AND @end )";
 
-            query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE {kindColumn} = @id AND ( {paidOnes} OR {unpaidOnes} )";
+            datePart = $" ( {paidOnes} OR {unpaidOnes} )";
         }
+        if (dateType == SearchTransactionsDate.PaymentDate)
+        {
+            datePart += $" AND {nameof(Tables.Transac.Status)} = @statusPaid ";
+        }
+
+        string query = $"SELECT * FROM {nameof(Tables.Transac)} WHERE {datePart} ";
+
+        if (walletId.HasValue) query += $" AND {nameof(Tables.Transac.WalletId)} = @walletId ";
+        if (categoryId.HasValue) query += $" AND {nameof(Tables.Transac.CategoryId)} = @categoryId ";
+        if (counterpartyId.HasValue) query += $" AND {nameof(Tables.Transac.CounterpartyId)} = @counterpartyId ";
 
         using var cnn = db.GetConnection();
         return cnn.Query<Tables.Transac>(query, new
         {
-            id,
+            walletId,
+            categoryId,
+            counterpartyId,
             start,
             end,
             statusPaid = Tables.Transac.PaymentStatus.Paid,

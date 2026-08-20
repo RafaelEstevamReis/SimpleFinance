@@ -407,6 +407,232 @@ public class TransactionsTests : ManagerTestBase
         Assert.Throws<InvalidOperationException>(() => mgr.GetTransactionsBy((Manager.SearchTransactionsByKind)42, 1, Manager.SearchTransactionsDate.DueDate, past, past.AddDays(1)));
     }
 
+    /* Searching by optional filters */
+
+    [Fact]
+    public void GetTransactionsByFilters_WithoutFilters_ReturnsEveryRowInTheWindow()
+    {
+        var walletA = newWallet("A");
+        var walletB = newWallet("B");
+        var categoryId = newCategory(isExpense: false);
+        var first = newTx(walletA, categoryId, 10m, past);
+        var second = newTx(walletB, categoryId, 20m, past);
+        newTx(walletA, categoryId, 30m, past.AddYears(1));
+
+        var found = mgr.GetTransactionsBy(walletId: null, categoryId: null, counterpartyId: null,
+                                          Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1))
+                       .Select(o => o.Id)
+                       .OrderBy(o => o)
+                       .ToArray();
+
+        Assert.Equal([first, second], found);
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_ByWallet_IgnoresOtherWallets()
+    {
+        var walletA = newWallet("A");
+        var walletB = newWallet("B");
+        var categoryId = newCategory(isExpense: false);
+        var target = newTx(walletA, categoryId, 10m, past);
+        newTx(walletB, categoryId, 20m, past);
+
+        var found = mgr.GetTransactionsBy(walletId: walletA, categoryId: null, counterpartyId: null,
+                                          Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1));
+
+        Assert.Equal(target, found.Single().Id);
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_ByCategory_IgnoresOtherCategories()
+    {
+        var walletId = newWallet();
+        var categoryA = newCategory(isExpense: false, "A");
+        var categoryB = newCategory(isExpense: false, "B");
+        var target = newTx(walletId, categoryA, 10m, past);
+        newTx(walletId, categoryB, 20m, past);
+
+        var found = mgr.GetTransactionsBy(walletId: null, categoryId: categoryA, counterpartyId: null,
+                                          Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1));
+
+        Assert.Equal(target, found.Single().Id);
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_ByCounterparty_IgnoresOtherCounterparties()
+    {
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: false);
+        var personA = newPerson("A");
+        var personB = newPerson("B");
+        var target = newTxFor(walletId, categoryId, personA, 10m, past);
+        newTxFor(walletId, categoryId, personB, 20m, past);
+
+        var found = mgr.GetTransactionsBy(walletId: null, categoryId: null, counterpartyId: personA,
+                                          Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1));
+
+        Assert.Equal(target, found.Single().Id);
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_WithZeroCounterparty_MatchesRowsWithoutOne()
+    {
+        // 0 is a value, not 'unset': it selects the rows that carry no counterparty
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: false);
+        var person = newPerson();
+        var orphan = newTx(walletId, categoryId, 10m, past);
+        newTxFor(walletId, categoryId, person, 20m, past);
+
+        var found = mgr.GetTransactionsBy(walletId: null, categoryId: null, counterpartyId: 0,
+                                          Manager.SearchTransactionsDate.DueDate, past.AddDays(-1), past.AddDays(1));
+
+        Assert.Equal(orphan, found.Single().Id);
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_CombinesEveryFilterWithAnd()
+    {
+        var walletA = newWallet("A");
+        var walletB = newWallet("B");
+        var categoryA = newCategory(isExpense: false, "A");
+        var categoryB = newCategory(isExpense: false, "B");
+        var personA = newPerson("A");
+        var personB = newPerson("B");
+
+        var target = newTxFor(walletA, categoryA, personA, 10m, past);
+        // each of these matches two of the three filters, so none of them may come back
+        newTxFor(walletB, categoryA, personA, 20m, past);
+        newTxFor(walletA, categoryB, personA, 30m, past);
+        newTxFor(walletA, categoryA, personB, 40m, past);
+
+        var start = past.AddDays(-1);
+        var end = past.AddDays(1);
+
+        var found = mgr.GetTransactionsBy(walletA, categoryA, personA, Manager.SearchTransactionsDate.DueDate, start, end);
+        Assert.Equal(target, found.Single().Id);
+
+        // a combination nothing satisfies answers empty, it does not fall back to a looser filter
+        Assert.Empty(mgr.GetTransactionsBy(walletB, categoryB, personB, Manager.SearchTransactionsDate.DueDate, start, end));
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_ByDueDate_HonoursTheWindow()
+    {
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: false);
+        var inside = newTx(walletId, categoryId, 10m, new DateTime(2020, 6, 15, 0, 0, 0, DateTimeKind.Utc));
+        newTx(walletId, categoryId, 20m, new DateTime(2021, 6, 15, 0, 0, 0, DateTimeKind.Utc));
+
+        var found = mgr.GetTransactionsBy(walletId: walletId, categoryId: null, counterpartyId: null,
+                                          Manager.SearchTransactionsDate.DueDate,
+                                          new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                                          new DateTime(2020, 12, 31, 0, 0, 0, DateTimeKind.Utc));
+
+        Assert.Equal(inside, found.Single().Id);
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_ByPaymentDate_ExcludesUnpaid()
+    {
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: false);
+        var paid = newTx(walletId, categoryId, 10m, past);
+        newTx(walletId, categoryId, 20m, past, Transac.PaymentStatus.Unpaid);
+
+        var found = mgr.GetTransactionsBy(walletId: walletId, categoryId: null, counterpartyId: null,
+                                          Manager.SearchTransactionsDate.PaymentDate, past.AddDays(-1), past.AddDays(1));
+
+        Assert.Equal(paid, found.Single().Id);
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_ByEffectiveDate_UsesPaymentDateForPaidAndDueDateForUnpaid()
+    {
+        var walletId = newWallet();
+        var otherWallet = newWallet("Other");
+        var categoryId = newCategory(isExpense: false);
+        var inRange = new DateTime(2020, 6, 15, 0, 0, 0, DateTimeKind.Utc);
+        var outOfRange = new DateTime(2022, 6, 15, 0, 0, 0, DateTimeKind.Utc);
+
+        var paidInRange = mgr.CreateUpdateTransaction(new Transac
+        {
+            Id = 0,
+            WalletId = walletId,
+            CategoryId = categoryId,
+            Description = "paid inside the window",
+            DueDate = outOfRange,
+            PaymentDate = inRange,
+            DueValue = 10m,
+            PaidValue = 10m,
+            Status = Transac.PaymentStatus.Paid,
+        });
+        var unpaidInRange = mgr.CreateUpdateTransaction(new Transac
+        {
+            Id = 0,
+            WalletId = walletId,
+            CategoryId = categoryId,
+            Description = "unpaid inside the window",
+            DueDate = inRange,
+            PaymentDate = outOfRange,
+            DueValue = 20m,
+            PaidValue = 0m,
+            Status = Transac.PaymentStatus.Unpaid,
+        });
+        // paid, but settled outside the window
+        mgr.CreateUpdateTransaction(new Transac
+        {
+            Id = 0,
+            WalletId = walletId,
+            CategoryId = categoryId,
+            Description = "paid outside the window",
+            DueDate = inRange,
+            PaymentDate = outOfRange,
+            DueValue = 30m,
+            PaidValue = 30m,
+            Status = Transac.PaymentStatus.Paid,
+        });
+        // inside the window, but on another wallet: the filter must survive the OR of the two date rules
+        newTx(otherWallet, categoryId, 40m, inRange);
+
+        var found = mgr.GetTransactionsBy(walletId: walletId, categoryId: null, counterpartyId: null,
+                                          Manager.SearchTransactionsDate.EffectiveDate,
+                                          new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                                          new DateTime(2020, 12, 31, 0, 0, 0, DateTimeKind.Utc))
+                       .Select(o => o.Id)
+                       .OrderBy(o => o)
+                       .ToArray();
+
+        Assert.Equal([paidInRange, unpaidInRange], found);
+    }
+
+    [Theory]
+    [InlineData(Manager.SearchTransactionsDate.Created)]
+    [InlineData(Manager.SearchTransactionsDate.Changed)]
+    public void GetTransactionsByFilters_ByAuditDates_UsesTheWriteTimeNotTheTransactionDate(Manager.SearchTransactionsDate dateType)
+    {
+        // the row is dated in the past, but it was written now
+        var walletId = newWallet();
+        var categoryId = newCategory(isExpense: false);
+        var id = newTx(walletId, categoryId, 10m, past);
+
+        var now = DateTime.UtcNow;
+        var found = mgr.GetTransactionsBy(walletId: walletId, categoryId: null, counterpartyId: null,
+                                          dateType, now.AddHours(-1), now.AddHours(1));
+        Assert.Equal(id, found.Single().Id);
+
+        Assert.Empty(mgr.GetTransactionsBy(walletId: walletId, categoryId: null, counterpartyId: null,
+                                           dateType, past.AddDays(-1), past.AddDays(1)));
+    }
+
+    [Fact]
+    public void GetTransactionsByFilters_WithUnknownDateType_Throws()
+    {
+        Assert.Throws<InvalidOperationException>(()
+            => mgr.GetTransactionsBy(walletId: null, categoryId: null, counterpartyId: null,
+                                     (Manager.SearchTransactionsDate)42, past, past.AddDays(1)));
+    }
+
     /* Transfers */
 
     [Fact]
@@ -555,5 +781,12 @@ public class TransactionsTests : ManagerTestBase
     {
         var one = mgr.GetTransactionsBy(Manager.SearchTransactionsByKind.Wallet, sourceWallet, Manager.SearchTransactionsDate.DueDate, new DateTime(2000, 1, 1), new DateTime(2100, 1, 1)).Single();
         return mgr.GetTransferPair(one);
+    }
+
+    private long newTxFor(long walletId, long categoryId, long counterpartyId, decimal value, DateTime date)
+    {
+        var t = tx(walletId, categoryId, value, date);
+        t.CounterpartyId = counterpartyId;
+        return mgr.CreateUpdateTransaction(t);
     }
 }
