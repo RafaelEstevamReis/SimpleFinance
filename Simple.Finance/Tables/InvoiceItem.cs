@@ -2,11 +2,6 @@ namespace Simple.Finance.Tables;
 
 using Simple.DatabaseWrapper.Attributes;
 
-/// <summary>
-/// Descriptive detail of an <see cref="Invoice"/>. It has no relation to anything else:
-/// no category, no wallet and no transaction of its own - the payment is of the document,
-/// not of the line. Its sum is informative, the money is the linked transactions
-/// </summary>
 public record InvoiceItem
 {
     [PrimaryKey]
