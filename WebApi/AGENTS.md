@@ -17,6 +17,8 @@ graph LR
   T --> B["Balance<br/> settled and projected"]
   T --> X["Transfer<br/> a linked pair"]
   T --> L["ChangeLog<br/> what changed"]
+  P --> I["Invoice<br/> the document"]
+  I -.->|settled by| T
 ```
 
 - **Wallet** — a place money sits: checking account, savings, cash, a card, a broker.
@@ -36,6 +38,8 @@ graph LR
 - **Person** — the counterparty: employer, landlord, market, a friend. Optional.
 - **Transaction** — one movement, carrying two dates and two values (see *The three dates*).
 - **Transfer** — money moving between two wallets. It is **two linked transactions**, never one.
+- **Invoice** — a commercial **document**: what was billed, line by line. It moves no money by itself;
+  the transactions that settle it are linked back to it. See *Invoices: documents, not money*.
 
 ## Getting in
 
@@ -66,12 +70,20 @@ Do not work around these — they are the guardrails that keep the data sane.
 - **A category's `isExpense` can never change** after creation. Create a new category instead.
 - **No money record is ever deleted.** `isDeleted` is a flag on wallets, categories and people; no endpoint
   filters by it, so *you* decide whether to show them. Transactions cannot even be flagged — to
-  undo one, see *Cancelling something*. Scenarios are the one exception: they are planning drafts, not
-  money, so `DELETE /api/scenarios/{id}` really removes them, items included, with no way back.
+  undo one, see *Cancelling something*. Two things are not money and behave differently: scenarios are
+  planning drafts, so `DELETE /api/scenarios/{id}` really removes them, items included, with no way back;
+  an invoice **header** cannot be deleted at all (it is hidden with `isCancelled`), while an invoice
+  **item** can, because a line is edited rather than audited.
 - **Nothing is deduplicated.** Posting the same expense twice creates two expenses.
-- **Every `name` is required** — wallets, categories, people, scenarios, scenario items — and so is a
-  transaction's `description`. Empty or missing is `400`; `description` elsewhere may be left empty.
+- **Every `name` is required** — wallets, categories, people, scenarios, scenario items, invoices,
+  invoice items — and so is a transaction's `description`. Empty or missing is `400`; `description`
+  elsewhere may be left empty. An invoice's `number` is the exception: it is optional, because a
+  `Draft` has no number yet.
 - **`monthlyBudget` must not be negative.** `0` means none.
+- **An invoice's `totalValue` must not be zero, and you send its sign yourself** — negative to pay,
+  positive to receive. It is **frozen after creation**: a `PUT` that flips it is `400`.
+- **An invoice item's `totalValue` is computed, not sent.** `unitValue` must not be zero, and a
+  `discount` larger than `quantity * unitValue` is `400`.
 
 ## The three dates — this is the whole model
 
@@ -259,6 +271,102 @@ is debt already contracted.
 window, not its due date) — `GET /api/transactions/by?dateType=PaymentDate&start=…&end=…&walletId=<cardWalletId>`
 — and sum `paidValue`. That total is what the transfer should carry.
 
+## Invoices: documents, not money
+
+An invoice is the **paper**, not the payment. Registering one moves **no balance**: nothing under
+*Balances* can see an invoice, and no report is built from one. The money is still, only and always the
+transactions. An invoice exists to answer *"what was this for, and what did the other side actually
+bill?"* — the lines, the document number, the terms — and to gather the transactions that settle it.
+
+> If you register an invoice and stop, you have recorded nothing financial. The person's balance is
+> unchanged and their reports will not mention it. Create the transactions too, and link them.
+
+### The sign is the direction — and here *you* send it
+
+This is the one place where the rule you learned for transactions is **reversed**:
+
+| | How the sign is set |
+|---|---|
+| Transaction | send it **positive**; `isExpense` on the category decides |
+| Invoice | **you** send it signed: `totalValue` negative = a document **to pay**, positive = **to receive** |
+
+There is no `isPayable` flag to look for — the sign of `totalValue` *is* the direction and the only
+place that carries it. `totalValue: 0` is `400`: a document with no side means nothing.
+
+**The sign is frozen after creation.** A `PUT` that flips it is `400` — a document does not change
+sides once it exists. If the direction was wrong, the record was wrong; create the right one.
+
+An invoice has **no wallet and no category**. Those belong to the transactions settling it, and that is
+deliberate: one document may be paid from any account, and its lines may span any number of categories.
+
+### Items: the library does the arithmetic
+
+`POST /api/invoices/{id}/items` carries `quantity`, `unit`, `unitValue` and `discount`. It does **not**
+carry `totalValue`, and that is not an omission: the library computes it as
+`quantity * unitValue - discount`, signs it from the document, and a value you sent would be
+overwritten without a word. Read it back from the response.
+
+- `unitValue` must not be zero. The line total **may** be zero — a discount equal to the gross is a
+  legitimate free line.
+- `discount` is over the **line**, not over the unit, and one **larger** than `quantity * unitValue`
+  is `400`: the line would go negative and contradict the document's sign.
+- `quantity: 0` is legal and means **a line removed or reversed**. It totals zero and stays on the
+  document — strike it through rather than hiding it.
+
+### Three totals, and they are allowed to disagree
+
+| Number | Who owns it |
+|---|---|
+| `invoice.totalValue` | **you**. Typed, never calculated, never checked against anything |
+| sum of the items' `totalValue` | the library computes each line, never the sum |
+| sum of the linked transactions | **the money** — the only one any balance ever sees |
+
+Nothing reconciles them, on purpose: a document can be registered before its lines are typed, and what
+was paid legitimately differs from what was billed — interest, a discount, a partial settlement. If a
+client wants to warn that the three disagree, that comparison is yours: the API will never make it, and
+will never refuse a write because of it.
+
+### Linking the money
+
+Put the document's id on the transaction: `invoiceId` on `POST`/`PUT /api/transactions`. `0` means
+none, and a transaction never belongs to two invoices. An invoice paid in **N installments is N
+transactions** carrying the same `invoiceId` — the same materialisation this document preaches
+everywhere else. `GET /api/invoices/{id}/transactions` reads them back.
+
+Because `PUT` is a full replacement, sending `invoiceId: 0` on an update **unlinks** the transaction.
+Send the id back when you meant to keep it.
+
+One payment settling **two** invoices cannot be expressed. Split it into one transaction per document,
+or leave the second unlinked.
+
+### Cancelling, and the absence of delete
+
+There is **no** `DELETE /api/invoices/{id}`. A document is hidden, never removed:
+`PUT /api/invoices/cancelled` with `{ ids, state }` writes only `isCancelled` and **preserves the
+`status` the document was on** — which is exactly why cancellation is a flag and not a status value.
+Hiding them from a list is yours to do, or send `isCancelled=false` to the search.
+
+### Status, and why `number` may be empty
+
+`status` walks `Draft` → `Sent` → `Negotiation` → `Active` → `Finalized`, with `Rejected` as the exit
+when the negotiation dies. Nothing in the API enforces the walk or reads the value — it is yours to set
+and yours to mean.
+
+`Draft` is why **`number` is not required**: numbering is assigned when a document is issued, not when
+it is drafted. `name` **is** required, like everywhere else. `fiscalDocument` is a separate free-text
+slot for whatever identifier a tax authority hands out, in any country; nothing parses it.
+
+### Two things that will surprise you
+
+**Invoices are not on the change log.** `GET /api/changelog` covers wallets, categories, people and
+transactions, and `{table}` is a closed set — `GET /api/changelog/Invoice/{id}` is a **`400`**, not an
+empty list. An invoice's edits leave no trail beyond its own `created` and `changed`. If the person
+needs to know who changed a document, record that yourself.
+
+**The invoice's `currency` is a label.** It is stored, upper-cased and returned, and **nothing converts
+it**. A USD invoice settled from a BRL wallet is accepted and the two numbers will not agree — there
+are no exchange rates anywhere in this API, the same refusal as *"balances never cross currencies"*.
+
 ## Recipes
 
 ### First-time setup
@@ -288,6 +396,19 @@ those matter.
 
 **`PUT` replaces the whole record** — send every field you want to keep. `GET` it first, change what
 moved, send it back.
+
+### Register an invoice and settle it
+
+1. `POST /api/invoices` with `name`, `issueDate`, `dueDate`, `currency` and a **signed** `totalValue`
+   (negative to pay, positive to receive). `counterpartyId` is optional — `0` is fine for a shop the
+   person will never track. `status: "Draft"` if it is still being typed; `number` may be empty.
+2. `POST /api/invoices/{id}/items` per line, or `POST /api/invoices/{id}/items/bulk` for all of them.
+   Do not send `totalValue`: read the computed one back.
+3. `POST /api/transactions` for the money — real wallet, real category, real dates — with
+   `invoiceId: <id>`. One call per installment, each dated on the month it belongs to.
+4. Read it back with `GET /api/invoices/{id}/transactions`.
+
+Steps 1 and 3 are both needed. Step 1 alone records a document and moves nothing.
 
 ### Import a bank statement
 
@@ -441,6 +562,22 @@ day, in the middle of someone's evening.
 - The import takes **two** default categories, picked by the sign of each row, and each must sit on its
   own side of `isExpense` — one category for a whole statement would invert half of it. `0`/`0` is a
   fine answer; categorising row by row is the client's job either way.
+- An invoice is **not money**. Registering one changes no balance and appears in no report; only the
+  linked transactions do. Never tell the person a bill is recorded because the invoice exists.
+- The invoice sign is **sent by you**, unlike everywhere else where the category decides it. Negative
+  is to pay, positive is to receive, and it cannot be flipped later.
+- Never send `totalValue` on an invoice **item** — it is computed from `quantity`, `unitValue` and
+  `discount`, and yours would be discarded silently. The invoice **header**'s total is the opposite:
+  typed by you and never verified against anything.
+- The header total, the sum of the items and the sum of the transactions are three numbers that may
+  disagree. Nothing reconciles them; if that matters to the person, compare them yourself.
+- `PUT /api/transactions/{id}` with `invoiceId: 0` unlinks the movement from its document. A full
+  replacement means sending the id back.
+- An invoice header has no `DELETE`; `isCancelled` hides it and keeps its `status`. Invoice items do
+  have a real `DELETE`.
+- Invoices are absent from `/api/changelog`, and asking for one is a `400` rather than an empty list —
+  `{table}` accepts only `Wallet`, `Category`, `Person` and `Transaction`. Their only trace is
+  `created`/`changed`.
 
 ## Nice to have, if you are building a UI
 
@@ -640,6 +777,13 @@ An empty history or an empty search is `200` with an empty list, never `404`.
 | `PUT /api/scenarios/items/enabled` | mass toggle: `{ ids, state }`, writes only `isEnabled` |
 | `GET /api/scenarios/projection?start=&end=[&isActive=]` | scenario items of every wallet on a window |
 | `GET /api/scenarios/projection/{walletId}` | active scenario items of one wallet |
+| `GET /api/invoices?start=&end=[&counterpartyId=&status=&isCancelled=]` | documents by issue-date window, cuts compose |
+| `GET`/`POST /api/invoices`, `GET`/`PUT /api/invoices/{id}` | invoices — no `DELETE`, ever |
+| `PUT /api/invoices/cancelled` | mass toggle: `{ ids, state }`, writes only `isCancelled`, keeps `status` |
+| `GET /api/invoices/{id}/transactions` | the transactions settling one document |
+| `GET`/`POST /api/invoices/{id}/items` | lines of a document, `totalValue` computed |
+| `GET`/`PUT`/`DELETE /api/invoices/{id}/items/{itemId}` | one line, `DELETE` is real |
+| `POST /api/invoices/{id}/items/bulk` | upserts many lines at once, `id: 0` creates |
 
 Not exposed on purpose: currency conversion, statement export, CSV and CNAB import, and change
 notifications. If the person needs those, they live in the `Simple.Finance` library itself, not here.

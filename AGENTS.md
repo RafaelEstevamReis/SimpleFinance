@@ -281,8 +281,8 @@ Everything it writes lives under the application folder, composed by `AppPaths`:
   what runs `Initialize`, and it takes the daily backup — first session of the day wins, later ones skip so
   a damaged database cannot overwrite the good copy. A lock guards **creation only**, never usage.
 - **Controllers** — everything account-scoped derives from `AccountControllerBase`, which turns the Key
-  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, ChangeLog, Import, plus account
-  preferences.
+  into `Manager`. Wallets, Categories, Persons, Transactions, Transfers, Invoices, ChangeLog, Import,
+  plus account preferences.
 - **Two transaction searches, one shaping** — `TransactionsController.Search` (`GET /api/transactions`)
   keeps the window and the single `kind`/`kindId` cut; `SearchBy` (`GET /api/transactions/by`, a
   literal segment that cannot collide with the `{id:long}` read) binds `TransactionSearchRequest`
@@ -302,6 +302,16 @@ Everything it writes lives under the application folder, composed by `AppPaths`:
   no temp file — and decodes the upload as UTF-8 falling back to `Latin1`, since bank files are commonly
   Windows-1252. CSV is deliberately absent: `TransactionImporter.FromCSV` needs a
   `Func<string[], Transac>` per layout, which is a client concern.
+- **Invoices** (`InvoicesController`) — the header lives under `/api/invoices` and the lines are nested
+  under `/api/invoices/{id}/items`, so a line is only ever addressable through its own document;
+  `GET /api/invoices/{id}/transactions` is the bridge out to the transactions that settle it. There is
+  deliberately **no** `DELETE /api/invoices/{id}`, because the library has no `DeleteInvoice`:
+  `PUT /api/invoices/cancelled` is a mass toggle writing only `IsCancelled`, which hides the document and
+  preserves the `Status` it was on, while `DELETE /api/invoices/{id}/items/{itemId}` is a real delete,
+  since a line is edited and not audited. `InvoiceItemRequest` omits `TotalValue` on purpose — the library
+  computes it (`Quantity * UnitValue - Discount`) and a sent value would be silently overwritten, so
+  exposing it would only invite a lie. `Transac.InvoiceId` travels as `invoiceId` on both the transaction
+  request and response, where `0` means no invoice.
 - **ChangeLog** — read only, it is written by the library itself. The flat join `TableLogRegistry` is folded
   into one entry per event, and `OldValue`/`NewValue` are served exactly as stored, sentinel `[NL]` included:
   rewriting an audit trail on the way out would make the API disagree with the database.
