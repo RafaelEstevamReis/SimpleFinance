@@ -174,8 +174,12 @@ public partial class Manager
         requireNotNegative(item.Discount, nameof(Tables.InvoiceItem), nameof(Tables.InvoiceItem.Discount));
 
         var sign = Math.Sign(invoice.TotalValue);
+        var gross = Math.Abs(item.UnitValue) * item.Quantity;
+        // A discount past the gross would flip the line against the document's sign
+        if (item.Discount > gross) throw new InvalidOperationException($"'{nameof(Tables.InvoiceItem)}.{nameof(Tables.InvoiceItem.Discount)}' must not exceed {nameof(Tables.InvoiceItem.Quantity)} * {nameof(Tables.InvoiceItem.UnitValue)}");
+
         item.UnitValue = Math.Abs(item.UnitValue) * sign;
-        item.TotalValue = Math.Abs(item.TotalValue) * sign;
+        item.TotalValue = (gross - item.Discount) * sign;
     }
 
     #endregion

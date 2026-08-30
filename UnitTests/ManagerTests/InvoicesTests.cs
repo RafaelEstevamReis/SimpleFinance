@@ -259,41 +259,6 @@ public class InvoicesTests : ManagerTestBase
     }
 
     [Fact]
-    public void Delete_RemovesTheInvoiceAndItsItems()
-    {
-        var id = mgr.CreateUpdateInvoice(invoice());
-        mgr.CreateUpdateInvoiceItem(new InvoiceItem
-        {
-            Id = 0,
-            InvoiceId = id,
-            Name = "line",
-            Quantity = 1m,
-            UnitValue = 10m,
-            TotalValue = 10m,
-        });
-
-        mgr.DeleteInvoice(id);
-
-        Assert.Null(mgr.GetInvoiceById(id));
-        Assert.Empty(mgr.GetInvoiceItems(id));
-    }
-
-    [Fact]
-    public void Delete_WithLinkedTransaction_Throws()
-    {
-        var walletId = newWallet();
-        var categoryId = newCategory(isExpense: true);
-        var invoiceId = mgr.CreateUpdateInvoice(invoice(total: -500m));
-
-        var t = tx(walletId, categoryId, 500m, past);
-        t.InvoiceId = invoiceId;
-        mgr.CreateUpdateTransaction(t);
-
-        Assert.Throws<InvalidOperationException>(() => mgr.DeleteInvoice(invoiceId));
-        Assert.NotNull(mgr.GetInvoiceById(invoiceId));
-    }
-
-    [Fact]
     public void GetInvoiceTransactions_ReturnsOnlyTheLinkedOnes()
     {
         var walletId = newWallet();

@@ -43,6 +43,8 @@ graph TD
   A[Manager] --> B[ConnectionFactory / Simple.Sqlite]
   A --> C[ChangeLog + ChangeLogItem]
   A --> D[EventNotifier event]
+  A --> N[Invoice + InvoiceItem]
+  N -.->|Transac.InvoiceId| O[Transac]
   E[ManagerExtensions] --> A
   F[TransactionImporter] --> G[OFX / MT940 / CSV]
   H[ExchangeRateConverter] --> I[ExchangeGraph BFS]
@@ -65,10 +67,14 @@ Schema is created/migrated by `Manager.Initialize()` via `cnn.CreateTables().Add
 - `Transac` — the transaction record.
 - `ChangeLog` / `ChangeLogItem` — audit trail; `TableLogRegistry` is the flattened join projection.
 - `Scenario` / `ScenarioItem` — planning drafts, never money. See *Scenarios*.
+- `Invoice` / `InvoiceItem` — commercial documents, never money themselves. See *Invoices*.
 
 ### Manager
 
-One class, region-separated: Wallets / Categories / Persons / Transactions / Scenarios / ChangeLog / Notification / Search Enums.
+Region-separated across two files: `Manager.cs` carries Wallets / Categories / Persons / Transactions /
+Scenarios / ChangeLog / Notification / Search Enums; `ManagerInvoices.cs` is a `partial class Manager`
+carrying Invoices and Invoice Items. The split is the only one — it happened because the file was already
+long enough that a ninth region in it was the worse of the two evils.
 
 - Connection-per-call: every method does `using var cnn = db.GetConnection();`. No shared connection, no transactions
   spanning methods. `CreateUpdateBulkTransaction` is the only batching path (one connection, notifications fired
@@ -95,14 +101,18 @@ One class, region-separated: Wallets / Categories / Persons / Transactions / Sce
    writes both legs through this function. `TransactionImporter.FromOFX` already falls back to `"[?]"`,
    but `FromMT940` passes `ReferenceForOwner` straight through, so a statement without that field
    throws on save rather than on parse.
+9. `InvoiceId` must resolve when non-zero — same shape as `CounterpartyId`, so the bridge to a document
+   cannot point at an `Invoice` that does not exist.
 
 ### Required text
 
-`requireText` rejects `NullOrEmpty` on `Name` for `Wallet`, `Category`, `Person`, `Scenario` and
-`ScenarioItem`, on create and update; whitespace-only passes. `Description` on those records stays free
-text — `Transac.Description` is required by invariant 8 instead, since a transaction has no `Name`.
-Messages are qualified (`'Wallet.Name'`) because five tables carry a `Name`.
-`Category.MonthlyBudget` is validated in the same place and must not be negative.
+`requireText` rejects `NullOrEmpty` on `Name` for `Wallet`, `Category`, `Person`, `Scenario`,
+`ScenarioItem`, `Invoice` and `InvoiceItem`, on create and update; whitespace-only passes. `Description` on
+those records stays free text — `Transac.Description` is required by invariant 8 instead, since a transaction
+has no `Name`, and `Invoice.Number` is deliberately *not* required (a `Draft` has no number yet).
+Messages are qualified (`'Wallet.Name'`) because seven tables carry a `Name`.
+`Category.MonthlyBudget` is validated in the same place and must not be negative; so are
+`Invoice.Taxes`/`Fees`/`Freight`/`Discount` and `InvoiceItem.Quantity`/`Discount`.
 
 ### Transfers
 
@@ -136,9 +146,10 @@ One event has one author, so `ChangeLogItem` does not repeat it; queries filter 
 wallet, one date, one value. There is no recurrence type — a parcelling is N items, the same materialisation
 doctrine used for transactions.
 
-- **Drafts, not money.** They are the only records with a real `DELETE` (`DeleteScenario` also drops its items,
-  `DeleteScenarioItem` drops one), and the only writes that produce **no `ChangeLog` and no notification**:
-  an audit trail of what-ifs would bury the trail of what happened.
+- **Drafts, not money.** `DeleteScenario` really deletes, dropping its items too, and `DeleteScenarioItem`
+  drops one. Their writes produce **no `ChangeLog` and no notification**: an audit trail of what-ifs would
+  bury the trail of what happened. Invoices share that silence (see *Invoices*) — scenarios are no longer
+  alone in either trait, but they are still the only *header* that can be deleted outright.
 - **Same invariants as a transaction**, because they will be compared against real rows: wallet must resolve,
   category must resolve when non-zero, `Value != 0`, `Name` must not be empty, and the **category forces
   the sign** (`CategoryId == 0` keeps the caller's — a draft may stay uncategorised, a transaction may
@@ -152,6 +163,53 @@ doctrine used for transactions.
 - `ProjectScenariosItems(start, end, isActive)` reads every wallet on a window, `ProjectScenariosItemsFor(walletId)`
   reads one wallet with no window. Both are ordered by `Date` then `Id`, so equal dates never reshuffle.
   "Active" means scenario active **and** item enabled; `false` is the exact complement, `null` takes everything.
+
+### Invoices (commercial documents)
+
+`Invoice` plus `InvoiceItem`, in `ManagerInvoices.cs`. An invoice is a **commercial** object, not a financial
+one: it touches the rest of the model on exactly two points, `Person` as counterparty and `Transac.InvoiceId`
+as the bridge. It has **no wallet and no category** — those belong to the transaction that settles it.
+
+- **Cardinalities.** One invoice has N transactions; a transaction has at most one invoice (`InvoiceId == 0`
+  is none). `InvoiceItem` belongs to its invoice and relates to **nothing else** — no category, no wallet, no
+  transaction of its own: the payment is of the document, not of the line. So a single payment cannot settle
+  two invoices; that would need a join table, and it was declined on purpose.
+- **The sign is the direction, and it lives in the value.** Negative `TotalValue` is payable, positive is
+  receivable. There is deliberately **no boolean**: `Category` needs `IsExpense` because it carries no value,
+  an invoice carries one, and a second encoding of the same fact can disagree with the first. Hence
+  `TotalValue != 0`, and its **sign is frozen after creation** (like `Category.IsExpense`) — which is also what
+  keeps the items valid, since they inherit it.
+- **The invoice groups transactions, it does not govern them.** Item signs are inherited from the document, but
+  a linked `Transac` still takes its sign from its own category. A receivable invoice holding a negative
+  transaction (a reversal) is valid, not an error.
+- **Three totals, and only one is computed.** `Invoice.TotalValue` is **typed** — the library never calculates
+  it and never reconciles it against anything, that belongs to whoever uses the library. `InvoiceItem.TotalValue`
+  **is** calculated, `Quantity * UnitValue - Discount`, signed by the document. The asymmetry is not an
+  oversight: the header has no formula (`Taxes`/`Fees`/`Freight`/`Discount` are magnitudes *contained* in the
+  total, not terms of a sum), the line has one. The sum of the linked transactions is the third, and it is
+  the only one that is money.
+- **Zero is refused where the sign means something and allowed where it is inherited.** `Invoice.TotalValue`
+  cannot be zero — a document with no side; an `InvoiceItem` line total can, when `Discount` equals the gross.
+  So the non-zero rule sits on `UnitValue`, not on the line total. `Discount` **past** the gross throws, because
+  a negative line would flip against the document's sign. `Quantity == 0` is legal and means a line removed or
+  reversed — presentation strikes it through.
+- **No `ChangeLog` and no notification**, same posture as `Scenario` even though an invoice is not a draft.
+  `Created`/`Changed` on the header are the whole trace, and `notificationItems` is untouched.
+- **Hidden, never deleted.** There is no `DeleteInvoice`: `IsCancelled` hides the document and preserves the
+  `Status` it was on — which is exactly why cancellation is a flag while `Rejected` is an enum value.
+  `DeleteInvoiceItem` is a real delete, because a line is edited and not audited.
+- **`InvoiceStatus`** `Draft(0) / Sent(1) / Negotiation(2) / Active(5) / Rejected(8) / Finalized(9)`, gaps
+  reserved and the terminals at the top, following `Transac.PaymentStatus`.
+- **Universal on purpose.** No fiscal fields, no jurisdiction, no document taxonomy: `FiscalDocument` is one
+  free-text column and `Number` swallows any series. Exchange rates are not the invoice's business — it stores a
+  `Currency` code and nothing converts it. A `DocumentType` enum (credit note, debit note) was considered and
+  dropped: for whoever issues a document everything they emit is theirs, and a negative total is an adjustment,
+  not a different species of document.
+- `CreateUpdateBulkInvoiceItem` loads the referenced invoices **once** into a dictionary and then applies the
+  rules per item — the `CreateUpdateBulkScenarioItem` pattern, and not transactional either.
+- `GetInvoicesBy(counterpartyId, status, isCancelled, start, end)` composes the optional cuts with `AND` over the
+  `IssueDate` window, ordered by `IssueDate` then `Id`. `IssueDate` is the **accrual** anchor and
+  `Transac.PaymentDate` is the **cash** one, so the two reporting regimes read from different tables by design.
 
 ### Exchange rates (`ExchangeRate/`)
 
@@ -291,8 +349,8 @@ These are choices, not defects. Work with them; changing any of them is a produc
 
 ## Testing expectations
 
-- Folders mirror the subject: `ManagerTests/` (core CRUD, validation, transfers, change log, notifications),
-  `ExchangeTableTests/`, `HelperTests/`. xUnit v3, `[Fact]`/`[Theory]` + `[InlineData]`.
+- Folders mirror the subject: `ManagerTests/` (core CRUD, validation, transfers, change log, notifications,
+  invoices), `ExchangeTableTests/`, `HelperTests/`. xUnit v3, `[Fact]`/`[Theory]` + `[InlineData]`.
 - **Test classes must be `public`** — xUnit does not discover `internal` ones.
 - `ManagerTests/ManagerTestBase.cs` gives each test its own temp SQLite file plus `newWallet`/`newCategory`/
   `newPerson`/`tx`/`newTx` builders and a `past` date constant. Inherit it instead of hand-rolling a database.

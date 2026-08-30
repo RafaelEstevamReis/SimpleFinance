@@ -25,7 +25,8 @@ public class InvoiceItemsTests : ManagerTestBase
             TotalValue = total,
         });
 
-    static InvoiceItem item(long invoiceId, decimal unitValue = 10m, decimal total = 20m)
+    /// <summary>Two units of ten: gross of twenty, no discount</summary>
+    static InvoiceItem item(long invoiceId, decimal unitValue = 10m)
         => new()
         {
             Id = 0,
@@ -34,7 +35,6 @@ public class InvoiceItemsTests : ManagerTestBase
             Quantity = 2m,
             Unit = "pc",
             UnitValue = unitValue,
-            TotalValue = total,
         };
 
     [Fact]
@@ -50,7 +50,6 @@ public class InvoiceItemsTests : ManagerTestBase
             Unit = "kg",
             UnitValue = 40m,
             Discount = 5m,
-            TotalValue = 55m,
             Code = "SKU-7",
             ExternalIdentifier = "ext-9",
         });
@@ -65,9 +64,60 @@ public class InvoiceItemsTests : ManagerTestBase
         Assert.Equal("kg", stored.Unit);
         Assert.Equal(40m, stored.UnitValue);
         Assert.Equal(5m, stored.Discount);
-        Assert.Equal(55m, stored.TotalValue);
+        Assert.Equal(55m, stored.TotalValue); // 1.5 * 40 - 5
         Assert.Equal("SKU-7", stored.Code);
         Assert.Equal("ext-9", stored.ExternalIdentifier);
+    }
+
+    [Fact]
+    public void Create_CalculatesTheTotalAndOverwritesTheTypedOne()
+    {
+        var line = item(invoiceId);
+        line.Discount = 5m;
+        line.TotalValue = 999m;
+
+        var id = mgr.CreateUpdateInvoiceItem(line);
+
+        Assert.Equal(15m, mgr.GetInvoiceItemById(id)!.TotalValue); // 2 * 10 - 5
+    }
+
+    [Theory]
+    [InlineData(1, 10, 0, 10)]
+    [InlineData(3, 7.5, 0, 22.5)]
+    [InlineData(2, 10, 5, 15)]
+    [InlineData(1.5, 40, 5, 55)]
+    [InlineData(0, 10, 0, 0)]
+    public void Create_TotalsQuantityTimesUnitMinusDiscount(decimal quantity, decimal unitValue, decimal discount, decimal expected)
+    {
+        var line = item(invoiceId, unitValue);
+        line.Quantity = quantity;
+        line.Discount = discount;
+
+        var id = mgr.CreateUpdateInvoiceItem(line);
+
+        Assert.Equal(expected, mgr.GetInvoiceItemById(id)!.TotalValue);
+    }
+
+    [Fact]
+    public void Create_WithFullDiscount_TotalsZero()
+    {
+        var line = item(invoiceId);
+        line.Discount = 20m; // the whole gross
+
+        var id = mgr.CreateUpdateInvoiceItem(line);
+
+        Assert.Equal(0m, mgr.GetInvoiceItemById(id)!.TotalValue);
+    }
+
+    [Fact]
+    public void Create_WithDiscountPastTheGross_Throws()
+    {
+        // It would total negative and flip the line against the document's sign
+        var line = item(invoiceId);
+        line.Discount = 20.01m;
+
+        var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateInvoiceItem(line));
+        Assert.Contains(nameof(InvoiceItem.Discount), ex.Message);
     }
 
     [Fact]
@@ -87,19 +137,6 @@ public class InvoiceItemsTests : ManagerTestBase
 
         var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateInvoiceItem(line));
         Assert.Contains(nameof(InvoiceItem.UnitValue), ex.Message);
-    }
-
-    [Fact]
-    public void Create_WithZeroTotal_IsAccepted()
-    {
-        // A line fully taken by its own discount is a fact, not an invalid state.
-        // The sign here is inherited, so zero carries no ambiguity
-        var line = item(invoiceId, unitValue: 10m, total: 0m);
-        line.Discount = 20m;
-
-        var id = mgr.CreateUpdateInvoiceItem(line);
-
-        Assert.Equal(0m, mgr.GetInvoiceItemById(id)!.TotalValue);
     }
 
     [Fact]
@@ -129,9 +166,8 @@ public class InvoiceItemsTests : ManagerTestBase
     {
         var ownInvoice = newInvoice(documentTotal);
 
-        // Both signs offered, so the result is the document's and not the caller's
-        var line = item(ownInvoice, unitValue: -10m, total: 20m);
-        var id = mgr.CreateUpdateInvoiceItem(line);
+        // A negative unit is offered, so the result is the document's sign and not the caller's
+        var id = mgr.CreateUpdateInvoiceItem(item(ownInvoice, unitValue: -10m));
 
         var stored = mgr.GetInvoiceItemById(id)!;
         Assert.Equal(10m * expectedSign, stored.UnitValue);
@@ -143,20 +179,6 @@ public class InvoiceItemsTests : ManagerTestBase
     {
         var ex = Assert.Throws<InvalidOperationException>(() => mgr.CreateUpdateInvoiceItem(item(999)));
         Assert.Contains("Invoice", ex.Message);
-    }
-
-    [Fact]
-    public void Create_DoesNotRecalculateTheTotal()
-    {
-        // Quantity * UnitValue - Discount is 15, and the typed total wins:
-        // keeping them consistent belongs to whoever uses the library
-        var line = item(invoiceId, unitValue: 10m, total: 999m);
-        line.Quantity = 2m;
-        line.Discount = 5m;
-
-        var id = mgr.CreateUpdateInvoiceItem(line);
-
-        Assert.Equal(999m, mgr.GetInvoiceItemById(id)!.TotalValue);
     }
 
     [Fact]
@@ -174,13 +196,25 @@ public class InvoiceItemsTests : ManagerTestBase
     }
 
     [Fact]
+    public void Update_RecalculatesTheTotal()
+    {
+        var id = mgr.CreateUpdateInvoiceItem(item(invoiceId));
+
+        var stored = mgr.GetInvoiceItemById(id)!;
+        stored.Quantity = 5m;
+        mgr.CreateUpdateInvoiceItem(stored);
+
+        Assert.Equal(50m, mgr.GetInvoiceItemById(id)!.TotalValue);
+    }
+
+    [Fact]
     public void Bulk_CreatesEveryLine()
     {
         var ids = mgr.CreateUpdateBulkInvoiceItem([item(invoiceId), item(invoiceId), item(invoiceId)]).ToArray();
 
         Assert.Equal(3, ids.Length);
-        Assert.Equal(3, mgr.GetInvoiceItems(invoiceId).Count());
         Assert.Equal(3, ids.Distinct().Count());
+        Assert.Equal(3, mgr.GetInvoiceItems(invoiceId).Count());
     }
 
     [Fact]

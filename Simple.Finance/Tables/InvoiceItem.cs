@@ -26,9 +26,8 @@ public record InvoiceItem
     /// </summary>
     public decimal Discount { get; set; }
     /// <summary>
-    /// Total of the line. Its sign is inherited from the document, so it may be zero
-    /// when the line was fully discounted.
-    /// Nothing checks it against <see cref="Quantity"/> and <see cref="UnitValue"/>
+    /// Total of the line, calculated as <see cref="Quantity"/> * <see cref="UnitValue"/> - <see cref="Discount"/>
+    /// and signed by the document. Zero when the discount takes the whole line
     /// </summary>
     public decimal TotalValue { get; set; }
 
