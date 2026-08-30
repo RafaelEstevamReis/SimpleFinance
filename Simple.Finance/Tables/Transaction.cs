@@ -35,6 +35,12 @@ public record Transac
     public long WalletId { get; set; }
     [Index("ixTransaction_CounterpartyId")]
     public long CounterpartyId { get; set; }
+    /// <summary>
+    /// Document this transaction settles, when there is one. Zero means none,
+    /// and a transaction never belongs to two invoices
+    /// </summary>
+    [Index("ixTransaction_InvoiceId")]
+    public long InvoiceId { get; set; }
     public TransactionType Type { get; set; }
     public long TypeOtherId { get; set; }
 
