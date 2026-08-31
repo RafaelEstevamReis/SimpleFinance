@@ -35,6 +35,8 @@ public record Transac
     public long WalletId { get; set; }
     [Index("ixTransaction_CounterpartyId")]
     public long CounterpartyId { get; set; }
+    [Index("ixTransaction_InvoiceId")]
+    public long InvoiceId { get; set; }
     public TransactionType Type { get; set; }
     public long TypeOtherId { get; set; }
 

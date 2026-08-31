@@ -9,7 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
-public class Manager
+public partial class Manager
 {
     /// <summary>
     /// Internal Sqlite factory
@@ -63,6 +63,8 @@ public class Manager
            .Add<Tables.Transac>()
            .Add<Tables.Scenario>()
            .Add<Tables.ScenarioItem>()
+           .Add<Tables.Invoice>()
+           .Add<Tables.InvoiceItem>()
            .Commit();
 
         InternalInitialize(cnn);
@@ -336,6 +338,11 @@ GROUP BY WalletId", new
         if (tx.CounterpartyId != 0)
         {
             _ = cnn.Get<Tables.Person>(tx.CounterpartyId) ?? throw new InvalidOperationException($"Invalid Counterparty Id: {tx.CounterpartyId}");
+        }
+
+        if (tx.InvoiceId != 0)
+        {
+            _ = cnn.Get<Tables.Invoice>(tx.InvoiceId) ?? throw new InvalidOperationException($"Invalid Invoice Id: {tx.InvoiceId}");
         }
 
         switch (tx.Type)

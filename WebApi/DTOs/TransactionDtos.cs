@@ -26,6 +26,11 @@ public record TransactionRequest
     /// Counterparty, 0 for none
     /// </summary>
     public long CounterpartyId { get; set; }
+    /// <summary>
+    /// Document this movement settles, 0 for none.
+    /// A transaction never belongs to two invoices
+    /// </summary>
+    public long InvoiceId { get; set; }
 
     public DateTime DueDate { get; set; }
     public DateTime PaymentDate { get; set; }
@@ -67,6 +72,7 @@ public record TransactionRequest
         tx.WalletId = WalletId;
         tx.CategoryId = CategoryId;
         tx.CounterpartyId = CounterpartyId;
+        tx.InvoiceId = InvoiceId;
         tx.DueDate = DueDate;
         tx.PaymentDate = PaymentDate;
         tx.Description = Description;
@@ -88,6 +94,7 @@ public record TransactionRequest
         WalletId = tx.WalletId,
         CategoryId = tx.CategoryId,
         CounterpartyId = tx.CounterpartyId,
+        InvoiceId = tx.InvoiceId,
         DueDate = tx.DueDate,
         PaymentDate = tx.PaymentDate,
         Description = tx.Description,
@@ -106,6 +113,10 @@ public record TransactionResponse
     public long WalletId { get; set; }
     public long CategoryId { get; set; }
     public long CounterpartyId { get; set; }
+    /// <summary>
+    /// Document this movement settles, 0 when there is none
+    /// </summary>
+    public long InvoiceId { get; set; }
 
     public Tables.Transac.TransactionType Type { get; set; }
     /// <summary>
@@ -144,6 +155,7 @@ public record TransactionResponse
         WalletId = tx.WalletId,
         CategoryId = tx.CategoryId,
         CounterpartyId = tx.CounterpartyId,
+        InvoiceId = tx.InvoiceId,
         Type = tx.Type,
         TypeOtherId = tx.TypeOtherId,
         Status = tx.Status,
