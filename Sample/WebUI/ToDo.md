@@ -129,10 +129,22 @@ First money screen, inside the shell.
 
 ## M5 — Categories
 
-- [ ] Categories screen: demo5 budget tracks (name, progress bar, spent
+- [x] Categories screen: demo5 budget tracks (name, progress bar, spent
       "of budget" below the value), create/edit form, `monthlyBudget` field.
-- [ ] `isExpense` locked after creation — UI shows it read-only on edit.
-- [ ] Empty state designed; API errors with the server message.
+      The month spend is one search over the effective timeline grouped
+      client-side (`sumSpentByCategory`), not one request per category.
+      Smoke: Groceries 62% of 1,000, Transport over-budget (547.80 of 500 —
+      full bar, `over` fill, red value), income category shows the earned
+      month value with no track, budget 0 shows no "of" note and no track.
+- [x] `isExpense` locked after creation — UI shows it read-only on edit.
+      Smoke: edit opens with "Expense — locked after creation" instead of
+      the pills; creation offers the Expense/Income choice.
+- [x] Empty state designed; API errors with the server message. Smoke:
+      negative budget blocked client-side with the field's message; the
+      form surfaces the server's message on wire errors (same
+      `errorMessage` path proven in M3/M4). Home's categories section
+      shows the same tracks and its "manage →" now points here (it
+      pointed at settings since M3).
 
 ## M6 — Transaction book — the transactions screen
 
@@ -248,3 +260,12 @@ ledger a sum speaks for must be the living one. `liveBalances` now owns that
 call as pure logic, pinned by vitest before the smoke re-run. Also: the
 balances endpoint returns every wallet including hidden ones, so the
 screens — not the server — decide what counts.
+
+2026-11-08 M5 — the budget doctrine found its home in pure logic:
+`MonthlyBudget` is a limit and never money, so it stays positive while the
+expenses it measures are negative — `sumSpentByCategory` counts only
+negative effective values, and a positive row under an expense category is
+a reversal, not a purchase. One search feeds every track (grouping is
+client-side), and an over-budget track is full, with the color — never
+the width — saying how far past it went. The smoke also caught a routing
+slip from M3: Home's categories "manage →" pointed at settings all along.

@@ -7,12 +7,15 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { activeClient, errorMessage, session } from '../state/session'
-import type { WalletBalanceResponse, WalletResponse } from '../api/types'
+import type { CategoryResponse, WalletBalanceResponse, WalletResponse } from '../api/types'
+import { budgetNote, budgetTrack, sumSpentByCategory } from '../api/categories'
 import { formatMoney, liveBalances, netWorthLabel, sumByCurrency } from '../api/wallets'
 
 const router = useRouter()
 const wallets = ref<WalletResponse[]>([])
 const balances = ref<WalletBalanceResponse[]>([])
+const categories = ref<CategoryResponse[]>([])
+const spent = ref<Map<number, number>>(new Map())
 const loaded = ref(false)
 
 async function load(): Promise<void> {
@@ -22,6 +25,12 @@ async function load(): Promise<void> {
     const [w, b] = await Promise.all([client.wallets(), client.walletBalances()])
     wallets.value = w
     balances.value = liveBalances(w, b)
+    const [cats, txs] = await Promise.all([
+      client.categories(),
+      client.searchTransactions({ ...monthWindow(), dateType: 'EffectiveDate', order: 'Asc' }),
+    ])
+    categories.value = cats
+    spent.value = sumSpentByCategory(txs)
   } catch (e) {
     session.error.value = errorMessage(e)
   } finally {
@@ -42,6 +51,23 @@ const netNote = computed<string>(() => {
 
 function balanceOf(walletId: number): number | null {
   return balances.value.find(b => b.walletId === walletId)?.balance ?? null
+}
+
+/// month window for the spend, as UTC ISO — same helper the Categories
+/// screen uses; duplicated there on purpose, screens own their windows
+function monthWindow(now = new Date()): { start: string; end: string } {
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
+  return { start: start.toISOString(), end: end.toISOString() }
+}
+
+function trackOf(category: CategoryResponse): { pct: number; over: boolean } | null {
+  if (!category.isExpense || category.monthlyBudget <= 0) return null
+  return budgetTrack(spent.value.get(category.id) ?? 0, category.monthlyBudget)
+}
+
+function spentOf(category: CategoryResponse): number {
+  return spent.value.get(category.id) ?? 0
 }
 </script>
 
@@ -70,9 +96,27 @@ function balanceOf(walletId: number): number | null {
       <p>No wallets yet — create the first one from the Wallets screen.</p>
     </div>
 
-    <div class="sec"><h2>Categories</h2><a @click="router.push({ name: 'settings' })">manage →</a></div>
-    <div class="ledger empty">
-      <p>Budget tracks arrive with M5 — each category shows the month's spend against its budget.</p>
+    <div class="sec"><h2>Categories</h2><a @click="router.push({ name: 'categories' })">manage →</a></div>
+    <div v-if="categories.length > 0" class="ledger">
+      <div
+        v-for="c in categories"
+        :key="c.id"
+        class="walletline"
+        :class="{ del: c.isDeleted }"
+        @click="router.push({ name: 'categories' })"
+      >
+        <span class="name">{{ c.name }}</span>
+        <div v-if="trackOf(c)" class="track">
+          <div class="fill" :class="{ over: trackOf(c)?.over }" :style="{ width: `${trackOf(c)?.pct}%` }"></div>
+        </div>
+        <div v-else class="track none"></div>
+        <b :class="{ neg: trackOf(c)?.over }">
+          {{ formatMoney(spentOf(c)) }}<span v-if="budgetNote(c.monthlyBudget)" class="of">{{ budgetNote(c.monthlyBudget) }}</span>
+        </b>
+      </div>
+    </div>
+    <div v-else class="ledger empty">
+      <p>No categories yet — create the first one from the Categories screen.</p>
     </div>
 
     <div class="sec"><h2>Activity</h2><a @click="router.push({ name: 'book' })">all →</a></div>
@@ -109,4 +153,15 @@ tr:last-child td { border-bottom: none; }
 td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.82rem; }
 td.neg { color: var(--error); }
 tr.del td { opacity: 0.5; }
+.walletline { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.8rem; font-size: 0.85rem; cursor: pointer; }
+.walletline + .walletline { border-top: 1px solid var(--border); }
+.walletline .name { width: 6em; color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.walletline .track { flex: 1; height: 0.5rem; border-radius: 99px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
+.walletline .track.none { visibility: hidden; }
+.walletline .fill { height: 100%; background: var(--accent); border-radius: 99px; }
+.walletline .fill.over { background: var(--error); }
+.walletline b { display: block; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.82rem; text-align: right; }
+.walletline b.neg { color: var(--error); }
+.walletline .of { display: block; font-size: 0.6rem; color: var(--muted); font-family: var(--mono); }
+.walletline.del { opacity: 0.5; }
 </style>

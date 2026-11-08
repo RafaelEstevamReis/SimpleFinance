@@ -77,3 +77,46 @@ export interface WalletBalanceResponse {
   baseCurrency: string
   balance: number
 }
+
+/// GET /api/categories — one category row
+export interface CategoryResponse {
+  id: number
+  isExpense: boolean
+  name: string
+  description: string
+  monthlyBudget: number
+  isDeleted: boolean
+}
+
+/// POST /api/categories + PUT /api/categories/{id} — request body
+export interface CategoryRequest {
+  isExpense: boolean
+  name: string
+  description: string
+  monthlyBudget: number
+  isDeleted: boolean
+}
+
+/// GET /api/transactions — one transaction row. Enums travel as names
+export interface TransactionResponse {
+  id: number
+  walletId: number
+  categoryId: number
+  counterpartyId: number
+  invoiceId: number
+  type: string
+  typeOtherId: number
+  status: string
+  dueDate: string
+  paymentDate: string
+  effectiveDate: string
+  description: string
+  paymentCurrency: string
+  dueValue: number
+  paidValue: number
+  effectiveValue: number
+  paymentDetails: string | null
+  externalIdentifier: string | null
+  created: string
+  changed: string
+}

@@ -4,10 +4,13 @@
 import type {
   AccountDatabaseResponse,
   AccountResponse,
+  CategoryRequest,
+  CategoryResponse,
   CreateAccountResponse,
   HelloResponse,
   PreferenceRequest,
   PreferenceResponse,
+  TransactionResponse,
   WalletBalanceResponse,
   WalletRequest,
   WalletResponse,
@@ -168,5 +171,50 @@ export class ApiClient {
   /// each in its own currency; the list screen uses this, not N+1 calls
   async walletBalances(): Promise<WalletBalanceResponse[]> {
     return this.request<WalletBalanceResponse[]>('/api/wallets/balances')
+  }
+
+  // -- categories ------------------------------------------------------------
+
+  /// GET /api/categories — every category, including soft-deleted ones
+  async categories(): Promise<CategoryResponse[]> {
+    return this.request<CategoryResponse[]>('/api/categories')
+  }
+
+  /// GET /api/categories/{id} — a single category
+  async category(id: number): Promise<CategoryResponse> {
+    return this.request<CategoryResponse>(`/api/categories/${id}`)
+  }
+
+  /// POST /api/categories — creates a category (201)
+  async createCategory(request: CategoryRequest): Promise<CategoryResponse> {
+    return this.request<CategoryResponse>('/api/categories', { method: 'POST', body: JSON.stringify(request) })
+  }
+
+  /// PUT /api/categories/{id} — updates a category. isExpense never changes
+  /// after creation — the server refuses it, the UI keeps it read-only
+  async updateCategory(id: number, request: CategoryRequest): Promise<CategoryResponse> {
+    return this.request<CategoryResponse>(`/api/categories/${id}`, { method: 'PUT', body: JSON.stringify(request) })
+  }
+
+  // -- transactions ----------------------------------------------------------
+
+  /// GET /api/transactions — search by window. dateType picks the ruling
+  /// date, kind narrows it, order sorts by that same date, limit truncates
+  async searchTransactions(params: {
+    start: string
+    end: string
+    dateType?: 'DueDate' | 'PaymentDate' | 'EffectiveDate'
+    kind?: 'Wallet' | 'Category' | 'Counterparty'
+    kindId?: number
+    order?: 'Asc' | 'Desc'
+    limit?: number
+  }): Promise<TransactionResponse[]> {
+    const query = new URLSearchParams({ start: params.start, end: params.end })
+    if (params.dateType) query.set('dateType', params.dateType)
+    if (params.kind) query.set('kind', params.kind)
+    if (params.kindId !== undefined) query.set('kindId', String(params.kindId))
+    if (params.order) query.set('order', params.order)
+    if (params.limit !== undefined) query.set('limit', String(params.limit))
+    return this.request<TransactionResponse[]>(`/api/transactions?${query.toString()}`)
   }
 }
