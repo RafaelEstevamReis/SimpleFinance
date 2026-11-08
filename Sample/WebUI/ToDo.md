@@ -197,10 +197,19 @@ can have; how the screen *designs around* that shape is open.
 
 ## M8 — Dashboard
 
-- [ ] Recent transactions + upcoming due lists, designed for glanceability
-      (not two raw grids).
-- [ ] Monthly chart, hand-rolled `<svg>`, series colors from `--c1..c4`.
-- [ ] Wallet totals grouped by currency (labeled, never summed across).
+- [x] Recent transactions + upcoming due lists, designed for glanceability
+      (not two raw grids). Home's dead "Activity" placeholder became
+      "Recent" (top 5, one line per movement — transfers paired first)
+      and a new "Upcoming" section: unpaid rows, overdue first in red,
+      then future by date. One wide search feeds both plus the chart.
+- [x] Monthly chart, hand-rolled `<svg>`, series colors from `--c1..c4`.
+      Bar pairs from a shared baseline — `--c2` income above, `--c3`
+      expense below; geometry is pure (`chartBars`, vitest-pinned), the
+      view only injects. Per-currency tabs when more than one wallet
+      currency exists — the chart never sums across currencies.
+- [x] Wallet totals grouped by currency (labeled, never summed across).
+      Delivered with M4 (Wallets table + `netWorthLabel`/`sumByCurrency`)
+      — M8 confirms it standing on the dashboard.
 
 ## M9 — Quick actions (due list)
 
@@ -316,3 +325,14 @@ only, destination income only), because the server would reject a swapped
 pair one POST later. And the pair's value is a magnitude on the wire —
 positive, always, the server re-signs each leg — the same "sign is the
 category's business" doctrine the movement form already carried.
+
+2026-11-08 M8 — the dashboard borrows every doctrine the earlier
+milestones paid for: Recent pairs transfers first (M6's rule), Upcoming
+owes the overdue first in red (never a date-only list), and the chart
+inherits the net-worth rule — it never sums across currencies, so with
+two wallet currencies it is one chart per tab. The smoke caught the
+month label doing `income − expense` on a negative expense — 10.8k for
+a 9000 month with 1793 spent — the net of a ledger where expense walks
+below zero is a SUM, and that is the second time the sign doctrine paid
+a test. Geometry lives in `chartBars`, pure and pinned; a month with no
+money keeps its slot — a quiet month is a fact, not a gap.

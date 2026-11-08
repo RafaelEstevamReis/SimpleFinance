@@ -7,17 +7,23 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { activeClient, errorMessage, session } from '../state/session'
-import type { CategoryResponse, WalletBalanceResponse, WalletResponse } from '../api/types'
+import type { CategoryResponse, TransactionResponse, WalletBalanceResponse, WalletResponse } from '../api/types'
 import { budgetNote, budgetTrack, sumSpentByCategory } from '../api/categories'
-import { monthWindow } from '../api/months'
+import { monthWindow, monthWindowOffset } from '../api/months'
 import { formatMoney, liveBalances, netWorthLabel, sumByCurrency } from '../api/wallets'
+import { chartBars, monthSeries, recentRows, upcomingDue } from '../api/dashboard'
+import { rowDate } from '../api/book'
 
 const router = useRouter()
 const wallets = ref<WalletResponse[]>([])
 const balances = ref<WalletBalanceResponse[]>([])
 const categories = ref<CategoryResponse[]>([])
 const spent = ref<Map<number, number>>(new Map())
+const transactions = ref<TransactionResponse[]>([])
 const loaded = ref(false)
+
+/// Months the chart spans — the current one plus the two before it
+const CHART_MONTHS = 3
 
 async function load(): Promise<void> {
   const client = activeClient()
@@ -26,11 +32,16 @@ async function load(): Promise<void> {
     const [w, b] = await Promise.all([client.wallets(), client.walletBalances()])
     wallets.value = w
     balances.value = liveBalances(w, b)
+    // one wide search feeds everything: month spend, recent, due, chart.
+    // From the first day of the oldest chart month to the end of this one
+    const from = monthWindowOffset(new Date(), -CHART_MONTHS + 1)
+    const now = monthWindow()
     const [cats, txs] = await Promise.all([
       client.categories(),
-      client.searchTransactions({ ...monthWindow(), dateType: 'EffectiveDate', order: 'Asc' }),
+      client.searchTransactions({ start: from.start, end: now.end, dateType: 'EffectiveDate', order: 'Asc' }),
     ])
     categories.value = cats
+    transactions.value = txs
     spent.value = sumSpentByCategory(txs)
   } catch (e) {
     session.error.value = errorMessage(e)
@@ -62,6 +73,59 @@ function trackOf(category: CategoryResponse): { pct: number; over: boolean } | n
 function spentOf(category: CategoryResponse): number {
   return spent.value.get(category.id) ?? 0
 }
+
+// -- dashboard: chart, upcoming, recent ------------------------------------
+
+/// The chart never sums across currencies — one tab per currency, the
+/// first wallet's by default
+const chartCurrencies = computed<string[]>(() => {
+  const set = new Set<string>()
+  for (const w of wallets.value) set.add(w.baseCurrency)
+  return [...set]
+})
+const chartCurrency = ref<string | null>(null)
+const activeChartCurrency = computed<string>(() => {
+  if (chartCurrency.value && chartCurrencies.value.includes(chartCurrency.value)) return chartCurrency.value
+  return chartCurrencies.value[0] ?? ''
+})
+
+function walletCurrency(id: number): string | null {
+  return wallets.value.find(w => w.id === id)?.baseCurrency ?? null
+}
+
+/// Transactions the charted currency owns — the wallet's base currency
+/// is the money a transaction speaks, since PaymentCurrency must equal it
+const chartTxs = computed<TransactionResponse[]>(() => {
+  const cur = activeChartCurrency.value
+  if (!cur) return []
+  return transactions.value.filter((t) => walletCurrency(t.walletId) === cur)
+})
+
+const series = computed(() => {
+  const first = monthWindowOffset(new Date(), -CHART_MONTHS + 1)
+  const firstDay = new Date(first.start)
+  return monthSeries(chartTxs.value, firstDay, CHART_MONTHS)
+})
+const geometry = computed(() => chartBars(series.value, 320, 150))
+
+/// One line per movement — transfers paired first, the M6 rule
+const recent = computed(() => recentRows(transactions.value, 5, rowDate))
+const upcoming = computed(() => upcomingDue(transactions.value, new Date(), 5, rowDate))
+
+function walletName(id: number): string {
+  return wallets.value.find(w => w.id === id)?.name ?? '…'
+}
+
+function rowTitle(tx: TransactionResponse, other?: TransactionResponse): string {
+  if (tx.type === 'WalletTransfer' && other) return `Transfer → ${walletName(other.walletId)}`
+  if (tx.categoryId > 0) return categories.value.find(c => c.id === tx.categoryId)?.name ?? '…'
+  return tx.description
+}
+
+function rowAmount(tx: TransactionResponse): { text: string; cls: string } {
+  const text = `${tx.effectiveValue < 0 ? '−' : '+'}${formatMoney(Math.abs(tx.effectiveValue))}`
+  return { text, cls: tx.effectiveValue < 0 ? 'neg' : 'pos' }
+}
 </script>
 
 <template>
@@ -71,6 +135,29 @@ function spentOf(category: CategoryResponse): number {
       <div class="val" :class="{ muted: net === '—' }">{{ net }}</div>
       <div class="delta muted">{{ netNote }}</div>
     </div>
+
+    <div class="chartcard">
+      <div class="sec chartsec">
+        <h2>Monthly</h2>
+        <div v-if="chartCurrencies.length > 1" class="curtabs">
+          <button
+            v-for="c in chartCurrencies" :key="c"
+            :class="{ on: c === activeChartCurrency }"
+            @click="chartCurrency = c"
+          >{{ c }}</button>
+        </div>
+      </div>
+      <svg v-if="geometry.bars.length > 0" class="chart" viewBox="0 0 320 150" role="img" aria-label="Income and expense by month">
+        <line x1="0" :y1="geometry.baseY" x2="320" :y2="geometry.baseY" class="baseline" />
+        <template v-for="(bar, i) in geometry.bars" :key="i">
+          <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height" :class="bar.side" rx="1.5" />
+          <text v-if="bar.topLabel !== null" class="toplabel" :x="bar.x + 0.6" :y="bar.y - 4">{{ bar.topLabel }}</text>
+        </template>
+        <text v-for="(p, i) in series" :key="p.label + i" class="axis" :x="(i + 0.5) * (320 / series.length)" y="147">{{ p.label }}</text>
+      </svg>
+      <div v-else class="chart empty">No movement this quarter yet</div>
+    </div>
+
 
     <div class="sec"><h2>Wallets</h2><a @click="router.push({ name: 'wallets' })">manage →</a></div>
     <table v-if="wallets.length > 0">
@@ -112,9 +199,34 @@ function spentOf(category: CategoryResponse): number {
       <p>No categories yet — create the first one from the Categories screen.</p>
     </div>
 
-    <div class="sec"><h2>Activity</h2><a @click="router.push({ name: 'book' })">all →</a></div>
-    <div class="ledger empty">
-      <p>The book opens with M6 — one wallet, one month.</p>
+    <div class="sec"><h2>Upcoming</h2><a @click="router.push({ name: 'book' })">book →</a></div>
+    <div v-if="upcoming.length > 0" class="ledger">
+      <div v-for="r in upcoming" :key="r.tx.id" class="tx" @click="router.push({ name: 'book' })">
+        <div class="ic">{{ r.kind === 'transfer' ? '⇄' : '↓' }}</div>
+        <div class="who">
+          <b :class="{ overdue: r.overdueBy > 0 }">{{ rowTitle(r.tx) }}</b>
+          <span>{{ r.date }} · {{ walletName(r.tx.walletId) }}</span>
+        </div>
+        <div class="amt" :class="rowAmount(r.tx).cls">{{ rowAmount(r.tx).text }}</div>
+      </div>
+    </div>
+    <div v-else class="ledger empty">
+      <p>Nothing due — the book keeps every unpaid row here.</p>
+    </div>
+
+    <div class="sec"><h2>Recent</h2><a @click="router.push({ name: 'book' })">all →</a></div>
+    <div v-if="recent.length > 0" class="ledger">
+      <div v-for="r in recent" :key="r.ids[0]" class="tx" @click="router.push({ name: 'book' })">
+        <div class="ic">{{ r.kind === 'transfer' ? '⇄' : (r.tx.effectiveValue < 0 ? '↓' : '↑') }}</div>
+        <div class="who">
+          <b>{{ rowTitle(r.tx, r.other) }}</b>
+          <span>{{ r.date }} · {{ walletName(r.tx.walletId) }}</span>
+        </div>
+        <div class="amt" :class="rowAmount(r.tx).cls">{{ rowAmount(r.tx).text }}</div>
+      </div>
+    </div>
+    <div v-else class="ledger empty">
+      <p>No movement yet — the book opens with the first transaction.</p>
     </div>
   </section>
 </template>
@@ -157,4 +269,29 @@ tr.del td { opacity: 0.5; }
 .walletline b.neg { color: var(--error); }
 .walletline .of { display: block; font-size: 0.6rem; color: var(--muted); font-family: var(--mono); }
 .walletline.del { opacity: 0.5; }
+.chartcard { background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 0.4rem 0.9rem 0.5rem; margin: 0.9rem 0; }
+.chartcard .chartsec { margin: 0.4rem 0 0.3rem; }
+.curtabs { display: flex; gap: 0.4rem; }
+.curtabs button { border: 1px solid var(--border); border-radius: 999px; background: transparent;
+  color: var(--muted); font: inherit; font-size: 0.72rem; padding: 0.15rem 0.7rem; cursor: pointer; }
+.curtabs button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.chart { width: 100%; height: auto; display: block; }
+.chart rect.income { fill: var(--c2); }
+.chart rect.expense { fill: var(--c3); }
+.chart .baseline { stroke: var(--border); stroke-width: 1; }
+.chart .toplabel { fill: var(--muted); font-size: 9px; font-family: var(--mono); }
+.chart .axis { fill: var(--muted); font-size: 9px; text-anchor: middle; }
+.chart.empty { padding: 1.4rem 0; text-align: center; font-size: 0.85rem; color: var(--muted); }
+.tx { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.8rem; font-size: 0.85rem; cursor: pointer; }
+.tx + .tx { border-top: 1px solid var(--border); }
+.tx .ic { width: 1.4rem; height: 1.4rem; border-radius: 999px; background: var(--accent-soft);
+  color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+.tx .who { flex: 1; min-width: 0; }
+.tx .who b { display: block; font-weight: 600; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tx .who b.overdue { color: var(--error); }
+.tx .who span { font-size: 0.7rem; color: var(--muted); }
+.tx .amt { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.82rem; flex-shrink: 0; }
+.tx .amt.pos { color: var(--success); }
+.tx .amt.neg { color: var(--fg); }
 </style>
