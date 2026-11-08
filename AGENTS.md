@@ -17,6 +17,7 @@ There is no service layer, no DI container, no async data access.
 | `tests/UnitTests/` | `net9.0` | xUnit v3 automated tests. The real test suite. |
 | `tests/Tests/` | `net9.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
 | `Sample/DemoProject/` | `net9.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
+| `Sample/WebUI/` | — (Vue 3 + Vite, static) | Browser SPA sample over the WebApi. |
 | `src/WebApi/` | `net9.0`, ASP.NET Core | Web API over the library (`AssemblyName` = `Simple.Finance.WebApi`). Serilog + Swashbuckle, everything local under `[app]/data`. |
 | `Assets/` | — | `TemporalSeries_*.json` rate series, served over HTTP from `main` and consumed by `ExternalRepoSeries`. |
 | `SampleFiles/` | — | Sample bank/fiscal files (OFX, OFC, CNAB, MT940, SPED, NFe, IFF, PDF statements). |
@@ -351,6 +352,13 @@ These are choices, not defects. Work with them; changing any of them is a produc
   removed long after that. Don't call them from new code and don't accelerate the ladder.
 - **`tests/Tests/Ignore.cs` is a sandbox** for new ideas and one-off data scraping. Don't lint it, refactor it, test it, or take its warnings seriously.
 - **`IsDeleted` is a soft flag with no delete API.** Nothing in `Manager` filters on it; presentation decides.
+- **`Sample/WebUI` npm packages are human-curated.** Agents never search for or invent package
+  names; they install only exact `name@version` pairs from `Sample/WebUI/Packages.md`, and anything
+  not listed there goes through a reviewed Proposal first. Read that file before touching
+  `package.json`.
+- **`Sample/WebUI/LOCAL.md` is an unversioned notes space.** It is gitignored
+  (see `Sample/WebUI/LOCAL.example.md`), exists for whatever the owner wants
+  to keep locally, and is not part of the repository.
 
 ## Landmines
 
