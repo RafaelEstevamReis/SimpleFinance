@@ -49,3 +49,31 @@ export interface PreferenceResponse {
 export interface PreferenceRequest {
   value: string
 }
+
+/// GET /api/wallets — one wallet row
+export interface WalletResponse {
+  id: number
+  externallType: number
+  name: string
+  description: string
+  baseCurrency: string
+  isDeleted: boolean
+}
+
+/// POST /api/wallets + PUT /api/wallets/{id} — request body
+export interface WalletRequest {
+  externallType: number
+  name: string
+  description: string
+  baseCurrency: string
+  isDeleted: boolean
+}
+
+/// GET /api/wallets/{id}/balance + /api/wallets/balances — always in the
+/// wallet's own BaseCurrency; different currencies are never summed
+export interface WalletBalanceResponse {
+  walletId: number
+  name: string
+  baseCurrency: string
+  balance: number
+}

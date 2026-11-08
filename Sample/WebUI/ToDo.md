@@ -112,10 +112,20 @@ The frame every later screen hangs on.
 
 First money screen, inside the shell.
 
-- [ ] Wallets screen: demo5 table (Wallet / Currency / Balance), create/edit
-      form, balance per wallet (`GET /api/wallets/{id}/balance`), no
-      cross-currency sums.
-- [ ] Empty state designed; API errors with the server message.
+- [x] Wallets screen: demo5 table (Wallet / Currency / Balance), create/edit
+      form, balance per wallet, no cross-currency sums. The list loads in
+      two calls (`GET /api/wallets` + `GET /api/wallets/balances`, the bulk
+      endpoint — one balance per wallet without N+1 requests; the client
+      also carries `walletBalance(id)` for the single-wallet question).
+      Smoke: create "Main" (currency `brl` normalized to `BRL` on the
+      border), row-click edit prefills and PUT renames it (verified on the
+      wire), empty-name blocked client-side with the field's message.
+- [x] Empty state designed; API errors with the server message. Smoke: the
+      soft-deleted wallet stays in the list dimmed (`del` class — soft
+      delete is presentation's call) and is out of every sum: Home showed
+      "Balances in 2 currencies" with a dead USD wallet, `liveBalances`
+      fixed it to the single-currency total. Net worth invents no number
+      across currencies — placeholder plus the reason.
 
 ## M5 — Categories
 
@@ -229,3 +239,12 @@ now flips in `AppShell.onMounted`, where the load actually happens. Second
 lesson: `width:100%` + side padding inside a max-width column overflows
 without `box-sizing:border-box` — the demo's global `*{box-sizing}` reset
 hid it there; the app sets it per rule.
+
+2026-11-08 M4 — smoke caught a doctrine bug the specs alone would have
+blessed: a soft-deleted wallet kept its currency in the net-worth answer,
+and "Balances in 2 currencies" was shown with one dead wallet and one live.
+Lesson: "balances never cross currencies" is only half the rule — the
+ledger a sum speaks for must be the living one. `liveBalances` now owns that
+call as pure logic, pinned by vitest before the smoke re-run. Also: the
+balances endpoint returns every wallet including hidden ones, so the
+screens — not the server — decide what counts.

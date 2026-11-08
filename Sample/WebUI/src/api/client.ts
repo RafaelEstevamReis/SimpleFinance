@@ -8,6 +8,9 @@ import type {
   HelloResponse,
   PreferenceRequest,
   PreferenceResponse,
+  WalletBalanceResponse,
+  WalletRequest,
+  WalletResponse,
 } from './types'
 
 export type ApiErrorKind =
@@ -132,5 +135,38 @@ export class ApiClient {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
     })
+  }
+
+  // -- wallets -------------------------------------------------------------
+
+  /// GET /api/wallets — every wallet, including soft-deleted ones
+  async wallets(): Promise<WalletResponse[]> {
+    return this.request<WalletResponse[]>('/api/wallets')
+  }
+
+  /// GET /api/wallets/{id} — a single wallet
+  async wallet(id: number): Promise<WalletResponse> {
+    return this.request<WalletResponse>(`/api/wallets/${id}`)
+  }
+
+  /// POST /api/wallets — creates a wallet (201)
+  async createWallet(request: WalletRequest): Promise<WalletResponse> {
+    return this.request<WalletResponse>('/api/wallets', { method: 'POST', body: JSON.stringify(request) })
+  }
+
+  /// PUT /api/wallets/{id} — updates a wallet
+  async updateWallet(id: number, request: WalletRequest): Promise<WalletResponse> {
+    return this.request<WalletResponse>(`/api/wallets/${id}`, { method: 'PUT', body: JSON.stringify(request) })
+  }
+
+  /// GET /api/wallets/{id}/balance — settled balance of one wallet
+  async walletBalance(id: number): Promise<WalletBalanceResponse> {
+    return this.request<WalletBalanceResponse>(`/api/wallets/${id}/balance`)
+  }
+
+  /// GET /api/wallets/balances — every wallet's balance in one call,
+  /// each in its own currency; the list screen uses this, not N+1 calls
+  async walletBalances(): Promise<WalletBalanceResponse[]> {
+    return this.request<WalletBalanceResponse[]>('/api/wallets/balances')
   }
 }

@@ -1,46 +1,73 @@
-// Home — the demo5 dashboard shape, wired with real data where the M3 scope
-// has it (nothing money-shaped is live yet: that is M4 wallets, M6 book,
-// M8 dashboard). Every section shows its designed empty state for now.
+// Home — the demo5 dashboard shape. Wallets and net worth are real (M4);
+// categories and activity keep their designed empty states until M5/M6.
+// Net worth follows the cross-currency rule: one currency sums, two or
+// more show no number rather than a made-up one.
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { activeClient, errorMessage, session } from '../state/session'
-import type { AccountDatabaseResponse } from '../api/types'
+import type { WalletBalanceResponse, WalletResponse } from '../api/types'
+import { formatMoney, liveBalances, netWorthLabel, sumByCurrency } from '../api/wallets'
 
 const router = useRouter()
-const database = ref<AccountDatabaseResponse | null>(null)
+const wallets = ref<WalletResponse[]>([])
+const balances = ref<WalletBalanceResponse[]>([])
+const loaded = ref(false)
 
-async function loadDb(): Promise<void> {
+async function load(): Promise<void> {
   const client = activeClient()
   if (!client) return
   try {
-    database.value = await client.accountDatabase()
+    const [w, b] = await Promise.all([client.wallets(), client.walletBalances()])
+    wallets.value = w
+    balances.value = liveBalances(w, b)
   } catch (e) {
     session.error.value = errorMessage(e)
+  } finally {
+    loaded.value = true
   }
 }
-loadDb()
+
+onMounted(() => void load())
+
+const net = computed<string>(() => netWorthLabel(balances.value))
+const netNote = computed<string>(() => {
+  const currencies = sumByCurrency(balances.value).size
+  if (!loaded.value) return 'Loading…'
+  if (currencies === 0) return 'No wallets yet'
+  if (currencies === 1) return 'Sum of every wallet, one currency'
+  return `Balances in ${currencies} currencies — no single total`
+})
+
+function balanceOf(walletId: number): number | null {
+  return balances.value.find(b => b.walletId === walletId)?.balance ?? null
+}
 </script>
 
 <template>
   <section>
     <div class="balance">
       <div class="lbl">Net worth</div>
-      <div class="val muted">—</div>
-      <div class="delta muted">
-        <template v-if="database">Balances arrive with the Wallets screen (M4)</template>
-        <template v-else>Not connected to a database yet</template>
-      </div>
+      <div class="val" :class="{ muted: net === '—' }">{{ net }}</div>
+      <div class="delta muted">{{ netNote }}</div>
     </div>
 
     <div class="sec"><h2>Wallets</h2><a @click="router.push({ name: 'wallets' })">manage →</a></div>
-    <div class="ledger empty">
-      <p v-if="database && database.walletCount > 0">
-        {{ database.walletCount }} wallet{{ database.walletCount === 1 ? '' : 's' }} on this account —
-        the list arrives with M4.
-      </p>
-      <p v-else>No wallets yet — create the first one from the Wallets screen.</p>
+    <table v-if="wallets.length > 0">
+      <tr><th>Wallet</th><th>Currency</th><th class="num">Balance</th></tr>
+      <tbody>
+        <tr v-for="w in wallets" :key="w.id" :class="{ del: w.isDeleted }">
+          <td>{{ w.name }}</td>
+          <td>{{ w.baseCurrency }}</td>
+          <td class="num" :class="{ neg: (balanceOf(w.id) ?? 0) < 0 }">
+            {{ balanceOf(w.id) === null ? '…' : formatMoney(balanceOf(w.id) as number) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-else class="ledger empty">
+      <p>No wallets yet — create the first one from the Wallets screen.</p>
     </div>
 
     <div class="sec"><h2>Categories</h2><a @click="router.push({ name: 'settings' })">manage →</a></div>
@@ -73,4 +100,13 @@ loadDb()
   border-radius: 12px; padding: 0.4rem 0;
 }
 .ledger.empty { padding: 1rem 0.9rem; font-size: 0.85rem; color: var(--muted); }
+table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 0.85rem; }
+th { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  text-align: left; padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border); font-weight: 500; }
+td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.82rem; }
+td.neg { color: var(--error); }
+tr.del td { opacity: 0.5; }
 </style>
