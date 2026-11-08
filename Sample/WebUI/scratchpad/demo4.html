@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo 4 — Creative / ledger cards</title>
+<style>
+:root{
+  --accent:#b0435c; --accent-soft:#fadde3;
+  --fg:#252024; --muted:#8a7f86; --border:#e6dee2; --surface:#fff; --bg:#f4eff1;
+  --success:#3f7d5c; --error:#b3372f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 'Avenir Next','Segoe UI',system-ui,sans-serif}
+.wrap{max-width:420px;margin:0 auto;padding:0 1rem 5rem;position:relative}
+header{padding:1rem 0;display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:1rem;font-weight:800;letter-spacing:-.01em}
+.stamp{font-size:.62rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);border:1.5px solid var(--accent);border-radius:4px;padding:.2rem .55rem;transform:rotate(2deg)}
+.sheet{background:var(--surface);border-radius:2px 2px 14px 14px;padding:1.2rem 1.1rem calc(1.2rem + 14px);box-shadow:0 12px 30px rgba(176,67,92,.12),0 2px 0 var(--accent) inset,0 -14px var(--accent-soft) inset,0 -14px 0 var(--border);margin:.4rem 0 1rem}
+.sheet .lbl{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.sheet .big{font-size:2.2rem;font-weight:800;margin:.2rem 0;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sheet .meta{display:flex;justify-content:space-between;font-size:.74rem;color:var(--muted);border-top:1.5px dashed var(--border);padding-top:.6rem;margin-top:.7rem}
+.tear{height:14px;margin:-14px 0 1.2rem;background:
+  radial-gradient(circle at 7px -5px, transparent 10px, var(--bg) 11px) repeat-x;
+  background-size:14px 14px}
+h2{display:flex;align-items:center;gap:.6rem;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:1.3rem 0 .5rem}
+h2::after{content:'';flex:1;border-top:1.5px dashed var(--border)}
+h2 b{color:var(--accent);font-size:.75rem}
+.ledger{background:var(--surface);border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.tx{display:grid;grid-template-columns:2.2rem 1fr auto auto;gap:.6rem;align-items:center;padding:.6rem .8rem;border-bottom:1px solid var(--border)}
+.tx:last-child{border-bottom:0}
+.tx:nth-child(even){background:var(--bg)}
+.tx .no{width:2.2rem;height:2.2rem;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.tx .who b{display:block;font-size:.9rem}
+.tx .who span{font-size:.72rem;color:var(--muted)}
+.tx .cat{font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);border-radius:4px;padding:.12rem .4rem;color:var(--muted)}
+.tx .amt{font-weight:800;font-variant-numeric:tabular-nums;font-size:.92rem}
+.amt.pos{color:var(--success)} .amt.neg{color:var(--error)}
+.walletline{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;font-size:.85rem}
+.walletline:first-child{padding-top:.7rem} .walletline:last-child{padding-bottom:.7rem}
+.walletline .track{flex:1;height:.5rem;border-radius:99px;background:var(--bg);border:1px solid var(--border);overflow:hidden}
+.walletline .fill{height:100%;background:var(--accent);border-radius:99px}
+.walletline b{font-variant-numeric:tabular-nums;font-size:.82rem}
+.stampbtn{position:fixed;bottom:5.6rem;right:50%;transform:translateX(205px) rotate(-3deg);width:3.6rem;height:3.6rem;border-radius:50%;background:var(--accent);color:#fff;font-size:1.6rem;border:3px double #fff;outline:3px double var(--accent);cursor:pointer;box-shadow:0 8px 18px rgba(176,67,92,.35)}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border)}
+nav ul{display:flex;list-style:none;margin:0 auto;padding:0;max-width:420px}
+nav a{flex:1;text-align:center;padding:.65rem 0 .8rem;color:var(--muted);text-decoration:none;font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+nav a div{font-size:1.1rem;margin-bottom:.15rem}
+nav a.on{color:var(--accent)}
+.themes{display:flex;gap:.45rem;margin:1.3rem 0 0}
+.themes button{width:1.35rem;height:1.35rem;border-radius:50%;border:2px double #fff;outline:1px solid var(--border);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>My Personal Finances</h1>
+    <span class="stamp">Statement</span>
+  </header>
+
+  <div class="sheet">
+    <div class="lbl">Net worth · October</div>
+    <div class="big">R$ 15,341.30</div>
+    <div class="meta"><span>3 wallets · BRL</span><span>No. 0042</span></div>
+  </div>
+  <div class="tear"></div>
+
+  <h2><b>✦</b> Wallets</h2>
+  <div class="ledger">
+    <div class="walletline"><span style="width:5.5em">Main</span><div class="track"><div class="fill" style="width:62%"></div></div><b>4,231.50</b></div>
+    <div class="walletline"><span style="width:5.5em">Savings</span><div class="track"><div class="fill" style="width:78%"></div></div><b>12,000.00</b></div>
+    <div class="walletline"><span style="width:5.5em">Credit</span><div class="track"><div class="fill" style="width:5%"></div></div><b style="color:var(--error)">−890.20</b></div>
+  </div>
+
+  <h2><b>✦</b> Ledger</h2>
+  <div class="ledger">
+    <div class="tx"><div class="no">42</div><div class="who"><b>Salary</b><span>Oct 05 · Main</span></div><span class="cat">Income</span><div class="amt pos">+8,500.00</div></div>
+    <div class="tx"><div class="no">43</div><div class="who"><b>Groceries</b><span>Oct 05 · Main</span></div><span class="cat">Food</span><div class="amt neg">−182.40</div></div>
+    <div class="tx"><div class="no">44</div><div class="who"><b>Fuel</b><span>Oct 04 · Main</span></div><span class="cat">Transport</span><div class="amt neg">−95.00</div></div>
+    <div class="tx"><div class="no">45</div><div class="who"><b>To Savings</b><span>transfer · linked</span></div><span class="cat">Move</span><div class="amt neg">−1,000.00</div></div>
+  </div>
+
+  <div class="themes" title="M2 accent themes">
+    <button style="background:#3b4b63" onclick="setAccent('#3b4b63','#e3e8f0')"></button>
+    <button style="background:#1f6fd0" onclick="setAccent('#1f6fd0','#d9e8fa')"></button>
+    <button style="background:#1e7f4f" onclick="setAccent('#1e7f4f','#d9f0e3')"></button>
+    <button style="background:#6b4bb5" onclick="setAccent('#6b4bb5','#e7defa')"></button>
+    <button style="background:#a06a00" onclick="setAccent('#a06a00','#f8ecd4')"></button>
+    <button style="background:#b0435c" onclick="setAccent('#b0435c','#fadde3')"></button>
+  </div>
+</div>
+<button class="stampbtn" title="New entry">＋</button>
+<nav>
+  <ul>
+    <li><a class="on" href="#"><div>▤</div>Home</a></li>
+    <li><a href="#"><div>◈</div>Wallets</a></li>
+    <li><a href="#"><div>≡</div>Book</a></li>
+    <li><a href="#"><div>✦</div>Settings</a></li>
+  </ul>
+</nav>
+<script>
+function setAccent(a,s){document.documentElement.style.setProperty('--accent',a);document.documentElement.style.setProperty('--accent-soft',s)}
+</script>
+</body>
+</html>

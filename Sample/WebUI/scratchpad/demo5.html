@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo 5 — Merged proposal</title>
+<style>
+/* Tokens as light-dark() pairs — same mechanic as the real tokens.css (M2).
+   The accent set below flips with color-scheme; setMode() in Settings flips it. */
+:root{
+  color-scheme:dark; /* default: dark, the merged design's native look */
+  --fg:light-dark(#1c2128,#e7ebee);
+  --muted:light-dark(#5a6270,#8b94a3);
+  --border:light-dark(#d7dbe2,#232a35);
+  --surface:light-dark(#ffffff,#161b23);
+  --bg:light-dark(#f6f7f9,#0e1218);
+  --success:light-dark(#1e7f4f,#4cbb87);
+  --error:light-dark(#b3372f,#e2726b);
+  --mono:'SF Mono',ui-monospace,Consolas,monospace;
+  --serif:Georgia,'Times New Roman',serif;
+  /* accent identity — both modes; defaults: azure */
+  --accent:light-dark(var(--ac-l),var(--ac-d));
+  --accent-soft:light-dark(var(--acs-l),var(--acs-d));
+  --accent-dim:light-dark(var(--acd-l),var(--ac-d));
+  --ac-l:#1f6fd0; --acs-l:#d9e8fa; --acd-l:#175bb5;
+  --ac-d:#6aa5e8; --acs-d:#16233a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,sans-serif;transition:background .25s,color .25s}
+.wrap{max-width:420px;margin:0 auto;padding:0 1rem 5rem}
+
+/* header — demo 1 name; profile avatar on the right */
+header{display:flex;justify-content:space-between;align-items:center;padding:.9rem 0 .7rem;border-bottom:2px solid var(--accent)}
+header .left h1{margin:0;font-family:var(--serif);font-size:1.15rem;letter-spacing:.02em}
+header .left .who{color:var(--muted);font-style:italic;font-size:.8rem;font-family:var(--serif)}
+.avatar{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--accent-soft);color:var(--accent-dim);
+  display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:1.1rem;
+  border:1px solid var(--border);cursor:pointer;flex:none}
+.avatar:hover{border-color:var(--accent-dim)}
+
+/* profile panel */
+.profile{position:relative;display:flex;justify-content:flex-end;margin-top:.15rem}
+.sheet{position:absolute;right:0;top:.4rem;width:16rem;background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.28);padding:.5rem;z-index:20}
+.sheet h3{margin:.2rem .5rem .4rem;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.acct{display:flex;align-items:center;gap:.6rem;width:100%;padding:.5rem;border:0;border-radius:9px;
+  background:transparent;color:var(--fg);font:inherit;font-size:.85rem;text-align:left;cursor:pointer}
+.acct:hover{background:var(--bg)}
+.acct.on{background:var(--accent-soft)}
+.acct .mini{width:1.7rem;height:1.7rem;border-radius:50%;background:var(--accent-soft);border:1px solid var(--border);
+  display:grid;place-items:center;font-size:.75rem;font-weight:700;flex:none}
+.acct .t{flex:1}
+.acct .t span{display:block;font-size:.68rem;color:var(--muted)}
+.acct .here{color:var(--accent-dim);font-family:var(--mono);font-size:.7rem}
+.acct.addnew{border-top:1px solid var(--border);border-radius:0;margin-top:.25rem;padding-top:.6rem;color:var(--accent-dim)}
+.acct.addnew .mini{color:var(--accent-dim)}
+
+/* net worth — demo 2 */
+.balance{background:linear-gradient(135deg,var(--surface),var(--accent-soft));border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.1rem;margin:.9rem 0}
+.balance .lbl{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.balance .val{font-family:var(--mono);font-size:2.1rem;margin:.25rem 0;font-variant-numeric:tabular-nums}
+.balance .delta{font-family:var(--mono);font-size:.78rem;color:var(--success)}
+
+/* section headers — demo 2 */
+.sec{display:flex;justify-content:space-between;align-items:center;margin:1.1rem 0 .5rem}
+.sec h2{margin:0;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sec a{color:var(--accent-dim);font-size:.75rem;text-decoration:none}
+
+/* wallets — demo 4 */
+.ledger{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.4rem 0}
+.walletline{display:flex;align-items:center;gap:.6rem;padding:.55rem .8rem;font-size:.85rem}
+.walletline + .walletline{border-top:1px solid var(--border)}
+.walletline .name{width:6em;color:var(--fg)}
+.walletline .track{flex:1;height:.5rem;border-radius:99px;background:var(--bg);border:1px solid var(--border);overflow:hidden}
+.walletline .fill{height:100%;background:var(--accent);border-radius:99px}
+.walletline b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem}
+.walletline b.neg{color:var(--error)}
+
+/* activity — demo 2 */
+.tx{display:flex;align-items:center;gap:.7rem;padding:.65rem .5rem;border-bottom:1px solid var(--border)}
+.tx:last-child{border-bottom:0}
+.tx .ic{width:2rem;height:2rem;border-radius:9px;background:var(--accent-soft);display:grid;place-items:center;font-family:var(--mono);font-size:.7rem;color:var(--accent-dim);flex:none}
+.tx .who{flex:1;min-width:0}
+.tx .who b{display:block;font-size:.88rem;font-weight:500}
+.tx .who span{font-size:.72rem;color:var(--muted);font-family:var(--mono)}
+.tx .amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.9rem}
+.amt.pos{color:var(--success)} .amt.neg{color:var(--fg)}
+
+/* footer — demo 2, spread within the content width */
+nav{position:fixed;bottom:0;left:0;right:0;background:light-dark(rgba(246,247,249,.92),rgba(14,18,24,.92));backdrop-filter:blur(10px);border-top:1px solid var(--border)}
+nav ul{display:flex;list-style:none;margin:0 auto;padding:.55rem .35rem .75rem;max-width:420px}
+nav li{flex:1}
+nav a{display:flex;flex-direction:column;align-items:center;gap:.18rem;color:var(--muted);text-decoration:none;
+  font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
+nav a div{font-size:1.2rem;line-height:1}
+nav a.on{color:var(--accent-dim)}
+
+/* Settings screen mock */
+.mark{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-align:center;margin:2.2rem 0 1rem;border-top:1px dashed var(--border);padding-top:1.6rem}
+.settings{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem}
+.settings h2{margin:0 0 .2rem;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.settings p{margin:0 0 .8rem;font-size:.78rem;color:var(--muted)}
+.themes{display:flex;gap:.5rem}
+.themes button{width:1.5rem;height:1.5rem;border-radius:50%;border:2px solid var(--surface);outline:1px solid var(--border);cursor:pointer}
+.themes button.on{outline:2px solid var(--accent-dim)}
+.gap{height:1.2rem}
+.types{display:flex;gap:.5rem;flex-wrap:wrap}
+.types button{border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--fg);
+  font:inherit;font-size:.8rem;padding:.4rem .85rem;cursor:pointer}
+.types button.on{background:var(--accent-soft);border-color:var(--accent-dim);color:var(--accent-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="left">
+      <h1>My Personal Finances</h1>
+      <span class="who" id="acctType">Personal Account</span>
+    </div>
+    <button class="avatar" title="Switch profile" onclick="toggleSheet()">R</button>
+  </header>
+
+  <!-- profile switcher -->
+  <div class="profile" id="profileSheet" hidden>
+    <div class="sheet">
+      <h3>Profiles on this server</h3>
+      <button class="acct on" onclick="pickAcct(this)">
+        <span class="mini">R</span><span class="t">Rafael <span id="sheetType1">Personal Account</span></span><span class="here">here</span>
+      </button>
+      <button class="acct" onclick="pickAcct(this)">
+        <span class="mini">Z</span><span class="t">Zotech <span>Business Account</span></span>
+      </button>
+      <button class="acct" onclick="pickAcct(this)">
+        <span class="mini">S</span><span class="t">Shed studio <span>Project Account</span></span>
+      </button>
+      <button class="acct addnew" onclick="goConnect()">
+        <span class="mini">＋</span><span class="t">Add or create<span>back to login / selection</span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="balance">
+    <div class="lbl">Net worth</div>
+    <div class="val">R$ 15,341.30</div>
+    <div class="delta">▲ R$ 7,222.60 this month (+88.9%)</div>
+  </div>
+
+  <div class="sec"><h2>Wallets</h2><a href="#">manage →</a></div>
+  <div class="ledger">
+    <div class="walletline"><span class="name">Main</span><div class="track"><div class="fill" style="width:62%"></div></div><b>4,231.50</b></div>
+    <div class="walletline"><span class="name">Savings</span><div class="track"><div class="fill" style="width:78%"></div></div><b>12,000.00</b></div>
+    <div class="walletline"><span class="name">Credit card</span><div class="track"><div class="fill" style="width:5%"></div></div><b class="neg">−890.20</b></div>
+  </div>
+
+  <div class="sec"><h2>Activity</h2><a href="#">all →</a></div>
+  <div class="ledger">
+    <div class="tx"><div class="ic">↑</div><div class="who"><b>Salary</b><span>Oct 05 · Main</span></div><div class="amt pos">+8,500.00</div></div>
+    <div class="tx"><div class="ic">↓</div><div class="who"><b>Groceries</b><span>Oct 05 · Main</span></div><div class="amt neg">−182.40</div></div>
+    <div class="tx"><div class="ic">↓</div><div class="who"><b>Fuel</b><span>Oct 04 · Main</span></div><div class="amt neg">−95.00</div></div>
+    <div class="tx"><div class="ic">⇄</div><div class="who"><b>To Savings</b><span>transfer · linked</span></div><div class="amt neg">−1,000.00</div></div>
+  </div>
+
+  <div class="mark">— Settings screen (preferences live here) —</div>
+  <div class="settings">
+    <h2>Appearance</h2>
+    <p>Light or dark — both carry the account's identity tint.</p>
+    <div class="types" id="modeTypes">
+      <button onclick="setMode('dark',this)">Dark</button>
+      <button class="on" onclick="setMode('light',this)">Light</button>
+    </div>
+
+    <div class="gap"></div>
+    <h2>Theme</h2>
+    <p>Identity tint — travels with the account on the server.</p>
+    <div class="themes">
+      <button style="background:#3b4b63" title="slate" onclick="setAccent('#3b4b63','#e3e8f0','#2e3c52','#8fa3bf','#232a35',this)"></button>
+      <button style="background:#1f6fd0" title="azure" class="on" onclick="setAccent('#1f6fd0','#d9e8fa','#175bb5','#6aa5e8','#16233a',this)"></button>
+      <button style="background:#1e7f4f" title="emerald" onclick="setAccent('#1e7f4f','#d9f0e3','#176a41','#4cbb87','#12271d',this)"></button>
+      <button style="background:#6b4bb5" title="violet" onclick="setAccent('#6b4bb5','#e7defa','#583d9a','#a58cd9','#231a35',this)"></button>
+      <button style="background:#a06a00" title="amber" onclick="setAccent('#a06a00','#f8ecd4','#865600','#d9a441','#2e2310',this)"></button>
+      <button style="background:#b0435c" title="rose" onclick="setAccent('#b0435c','#fadde3','#93374c','#d97c8f','#331820',this)"></button>
+    </div>
+
+    <div class="gap"></div>
+    <h2>Account type</h2>
+    <p>Display only — a label on the profile, it changes no mechanics.</p>
+    <div class="types">
+      <button class="on" onclick="setType('Personal Account',this)">Personal Account</button>
+      <button onclick="setType('Business Account',this)">Business Account</button>
+      <button onclick="setType('Project Account',this)">Project Account</button>
+    </div>
+  </div>
+
+  <!-- Connect screen mock — "Add or create" from the profile sheet lands HERE -->
+  <div class="mark">— Connect screen (Add or create lands here) —</div>
+  <div class="settings" id="connectMock">
+    <h2>1 · Account</h2>
+    <p>Paste an existing Key or create an account on this server.</p>
+    <div class="ledger">
+      <div class="tx"><div class="ic">K</div><div class="who"><b>Paste Key</b><span>open an existing account</span></div></div>
+      <div class="tx"><div class="ic">＋</div><div class="who"><b>Create new</b><span>POST /api/account — Key shown once</span></div></div>
+    </div>
+  </div>
+</div>
+<nav>
+  <ul>
+    <li><a class="on" href="#"><div>▤</div>Home</a></li>
+    <li><a href="#"><div>◈</div>Wallets</a></li>
+    <li><a href="#"><div>≡</div>Book</a></li>
+    <li><a href="#"><div>⚙</div>Settings</a></li>
+  </ul>
+</nav>
+<script>
+// setAccent(light accent, light soft, light dim, dark accent, dark soft, button)
+function setAccent(al,sl,dl,ad,sd,btn){
+  const r=document.documentElement.style
+  r.setProperty('--ac-l',al); r.setProperty('--acs-l',sl); r.setProperty('--acd-l',dl)
+  r.setProperty('--ac-d',ad); r.setProperty('--acs-d',sd)
+  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'))
+  btn.classList.add('on')
+}
+// setMode flips color-scheme — every light-dark() token follows at once
+function setMode(mode,btn){
+  document.documentElement.style.setProperty('color-scheme',mode)
+  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'))
+  btn.classList.add('on')
+}
+// account type — a preference, same channel as theme; display only
+function setType(label,btn){
+  document.getElementById('acctType').textContent = label
+  document.getElementById('sheetType1').textContent = label
+  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'))
+  btn.classList.add('on')
+}
+// profile switcher sheet
+function toggleSheet(){
+  const s=document.getElementById('profileSheet')
+  s.hidden = !s.hidden
+}
+function pickAcct(btn){
+  btn.parentElement.querySelectorAll('.acct').forEach(b=>b.classList.remove('on'))
+  btn.classList.add('on')
+  document.querySelector('.avatar').textContent = btn.querySelector('.mini').textContent
+  document.getElementById('profileSheet').hidden = true
+}
+// "Add or create" — back to the Connect screen (route 'connect' in the real app)
+function goConnect(){
+  document.getElementById('profileSheet').hidden = true
+  document.getElementById('connectMock').scrollIntoView({behavior:'smooth'})
+}
+document.addEventListener('click',e=>{
+  const sheet=document.getElementById('profileSheet')
+  if(!sheet.hidden && !sheet.contains(e.target) && !e.target.closest('.avatar')) sheet.hidden=true
+})
+</script>
+</body>
+</html>

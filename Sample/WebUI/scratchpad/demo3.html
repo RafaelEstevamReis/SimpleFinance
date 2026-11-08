@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo 3 — Startup / friendly</title>
+<style>
+:root{
+  --accent:#1e7f4f; --accent-soft:#d9f0e3;
+  --fg:#21262d; --muted:#71798a; --border:#e4e8ee; --surface:#fff; --bg:#fafbfd;
+  --success:#1e7f4f; --error:#d64545;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 'Inter',system-ui,-apple-system,sans-serif}
+.wrap{max-width:420px;margin:0 auto;padding:0 1.1rem 5.5rem}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem 0}
+header h1{margin:0;font-size:1rem;font-weight:700}
+.chip{background:var(--accent-soft);color:var(--accent);font-size:.72rem;font-weight:600;border-radius:999px;padding:.25rem .7rem}
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.4rem 1.2rem;margin:.4rem 0;box-shadow:0 2px 10px rgba(33,38,45,.04)}
+.hero .hi{font-size:.85rem;color:var(--muted);margin:0}
+.hero .big{font-size:2rem;font-weight:800;margin:.3rem 0 0;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hero .row{display:flex;gap:.5rem;margin-top:.9rem}
+.pill{flex:1;text-align:center;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:.45rem 0;font-size:.8rem}
+.pill b{display:block;font-size:.95rem;font-variant-numeric:tabular-nums}
+h2{font-size:.85rem;font-weight:700;margin:1.4rem 0 .6rem;display:flex;align-items:center;gap:.45rem}
+h2 .dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--accent)}
+.wallet{display:flex;align-items:center;gap:.8rem;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:.85rem 1rem;margin-bottom:.55rem}
+.wallet .av{width:2.4rem;height:2.4rem;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center;font-size:1.05rem;flex:none}
+.wallet .w{flex:1}
+.wallet .w b{font-size:.95rem;display:block}
+.wallet .w span{font-size:.76rem;color:var(--muted)}
+.wallet .amt{font-weight:700;font-variant-numeric:tabular-nums}
+.wallet .amt.neg{color:var(--error)}
+.tx{display:flex;align-items:center;gap:.8rem;padding:.55rem .2rem;border-bottom:1px solid var(--border)}
+.tx:last-child{border-bottom:0}
+.tx .emoji{width:2.1rem;height:2.1rem;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;font-size:1rem;flex:none}
+.tx .who{flex:1;font-size:.9rem}
+.tx .who span{display:block;font-size:.74rem;color:var(--muted)}
+.tx .amt{font-weight:700;font-variant-numeric:tabular-nums;font-size:.9rem}
+.amt.pos{color:var(--success)} .amt.neg{color:var(--fg)}
+.cta{position:fixed;bottom:5.8rem;right:50%;transform:translateX(210px);display:flex;flex-direction:column;gap:.45rem;align-items:flex-end}
+.cta button{border:0;border-radius:14px;padding:.55rem .95rem;font-weight:700;font-size:.85rem;cursor:pointer;color:#fff;box-shadow:0 4px 14px rgba(30,127,79,.35)}
+.cta .b1{background:var(--accent)} .cta .b2{background:#21262d}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border)}
+nav ul{display:flex;list-style:none;margin:0 auto;padding:0;max-width:420px}
+nav a{flex:1;text-align:center;padding:.6rem 0 .8rem;color:var(--muted);text-decoration:none;font-size:.68rem;font-weight:600}
+nav a div{font-size:1.15rem;margin-bottom:.15rem}
+nav a.on{color:var(--accent)}
+.themes{display:flex;gap:.45rem;margin:1.3rem 0 0}
+.themes button{width:1.35rem;height:1.35rem;border-radius:50%;border:2px solid #fff;outline:1px solid var(--border);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>My Finances</h1>
+    <span class="chip">● Personal</span>
+  </header>
+
+  <div class="hero">
+    <p class="hi">Hi Rafael — you're up</p>
+    <p class="big">R$ 15,341.30</p>
+    <div class="row">
+      <div class="pill"><b style="color:var(--success)">+8,500</b>in</div>
+      <div class="pill"><b>−1,277</b>out</div>
+      <div class="pill"><b>3</b>wallets</div>
+    </div>
+  </div>
+
+  <h2><span class="dot"></span>Your wallets</h2>
+  <div class="wallet"><div class="av">💰</div><div class="w"><b>Main</b><span>everyday spending</span></div><div class="amt">R$ 4,231.50</div></div>
+  <div class="wallet"><div class="av">🏦</div><div class="w"><b>Savings</b><span>the safe one</span></div><div class="amt">R$ 12,000.00</div></div>
+  <div class="wallet"><div class="av">💳</div><div class="w"><b>Credit card</b><span>due Nov 10</span></div><div class="amt neg">−R$ 890.20</div></div>
+
+  <h2><span class="dot"></span>Latest moves</h2>
+  <div class="tx"><div class="emoji">💼</div><div class="who">Salary<span>Oct 05 · Main</span></div><div class="amt pos">+8,500.00</div></div>
+  <div class="tx"><div class="emoji">🛒</div><div class="who">Groceries<span>Oct 05 · Main</span></div><div class="amt neg">−182.40</div></div>
+  <div class="tx"><div class="emoji">⛽</div><div class="who">Fuel<span>Oct 04 · Main</span></div><div class="amt neg">−95.00</div></div>
+  <div class="tx"><div class="emoji">🔁</div><div class="who">To Savings<span>transfer</span></div><div class="amt neg">−1,000.00</div></div>
+
+  <div class="themes" title="M2 accent themes">
+    <button style="background:#3b4b63" onclick="setAccent('#3b4b63','#e3e8f0')"></button>
+    <button style="background:#1f6fd0" onclick="setAccent('#1f6fd0','#d9e8fa')"></button>
+    <button style="background:#1e7f4f" onclick="setAccent('#1e7f4f','#d9f0e3')"></button>
+    <button style="background:#6b4bb5" onclick="setAccent('#6b4bb5','#e7defa')"></button>
+    <button style="background:#a06a00" onclick="setAccent('#a06a00','#f8ecd4')"></button>
+    <button style="background:#b0435c" onclick="setAccent('#b0435c','#fadde3')"></button>
+  </div>
+</div>
+<div class="cta">
+  <button class="b1">＋ New transaction</button>
+  <button class="b2">⇄ Transfer</button>
+</div>
+<nav>
+  <ul>
+    <li><a class="on" href="#"><div>🏠</div>Home</a></li>
+    <li><a href="#"><div>💰</div>Wallets</a></li>
+    <li><a href="#"><div>📒</div>Book</a></li>
+    <li><a href="#"><div>⚙️</div>Settings</a></li>
+  </ul>
+</nav>
+<script>
+function setAccent(a,s){document.documentElement.style.setProperty('--accent',a);document.documentElement.style.setProperty('--accent-soft',s)}
+</script>
+</body>
+</html>

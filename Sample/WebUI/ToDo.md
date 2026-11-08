@@ -73,14 +73,17 @@ The WebUi becomes a real client.
 
 Identity comes before content: tint the shell so M3+ screens inherit it.
 
-- [ ] `src/styles/themes.ts` — registry `satisfies Record<string, Theme>`,
+- [x] `src/styles/themes.ts` — registry `satisfies Record<string, Theme>`,
       ship set: `slate` (default), `azure`, `emerald`, `violet`, `amber`, `rose`.
-- [ ] `applyTheme(name)` sets CSS custom properties on `<html>`.
-- [ ] Read the account's theme from `GET /api/account/preferences` on connect;
+- [x] `applyTheme(name)` sets CSS custom properties on `<html>` (clearTheme
+      for neutral — disconnect drops another account's tint).
+- [x] Read the account's theme from `GET /api/account/preferences` on connect;
       write with `PUT` from a picker; cache per-account for login preview.
-- [ ] Connect screen cards tinted by each account's accent (preview cache).
-- [ ] *Subtle by design* respected (see `Architecture.md` — accent only,
-      never text/background/semantic colors).
+- [x] Connect screen cards tinted by each account's accent (preview cache).
+- [x] *Subtle by design* respected (see `Architecture.md` — accent only,
+      never text/background/semantic colors). Smoke: pick emerald → server
+      preference `theme=emerald` verified over the wire; reconnect applies it
+      from the server; connect card tinted from preview cache; 390px clean.
 
 ## M3 — App shell + Wallets + Categories
 
@@ -184,3 +187,9 @@ single-server by design (no name, no list, button is Select). Storage lost
 enforce the order server → account → home. Lesson: `saveServerUrl` once wrote
 the raw URL while `getServerUrl` parsed it as JSON — asymmetric save/read
 broke round-trip; a vitest round-trip case caught it before the smoke did.
+
+2026-11-08 M2 — registry-as-data makes theme logic fully testable without a
+browser (fake doc + mem storage), and that suite earned its keep before the
+smoke: `isThemeName` used `in`, which walks the prototype chain —
+`'__proto__'` counted as a theme. `Object.hasOwn` is the only correct lookup
+for a string-keyed registry; the vitest case pins it.

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo 2 — Tech / fintech</title>
+<style>
+:root{
+  --accent:#1f6fd0; --accent-soft:#16233a; --accent-dim:#5b8fc4;
+  --fg:#e7ebee; --muted:#8b94a3; --border:#232a35; --surface:#161b23; --bg:#0e1218;
+  --success:#4cbb87; --error:#e2726b;
+  --mono:'SF Mono',ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,sans-serif}
+.wrap{max-width:420px;margin:0 auto;padding:0 1rem 5rem}
+header{display:flex;justify-content:space-between;align-items:center;padding:.85rem 0}
+header h1{margin:0;font-size:.95rem;letter-spacing:.01em}
+header h1 b{color:var(--accent-dim)}
+.status{font-family:var(--mono);font-size:.68rem;color:var(--success);border:1px solid var(--success);border-radius:999px;padding:.15rem .6rem}
+.balance{background:linear-gradient(135deg,var(--surface),var(--accent-soft));border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.1rem;margin:.5rem 0}
+.balance .lbl{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.balance .val{font-family:var(--mono);font-size:2.1rem;margin:.25rem 0;font-variant-numeric:tabular-nums}
+.balance .val small{font-size:1rem;color:var(--muted)}
+.balance .delta{font-family:var(--mono);font-size:.78rem;color:var(--success)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.8rem 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.75rem .8rem}
+.card .lbl{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card .val{font-family:var(--mono);font-size:1.05rem;margin-top:.3rem;font-variant-numeric:tabular-nums}
+.card .val.neg{color:var(--error)}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:1.1rem 0 .5rem}
+.sec h2{margin:0;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sec a{color:var(--accent-dim);font-size:.75rem;text-decoration:none}
+.tx{display:flex;align-items:center;gap:.7rem;padding:.65rem .5rem;border-bottom:1px solid var(--border)}
+.tx .ic{width:2rem;height:2rem;border-radius:9px;background:var(--accent-soft);display:grid;place-items:center;font-family:var(--mono);font-size:.7rem;color:var(--accent-dim);flex:none}
+.tx .who{flex:1;min-width:0}
+.tx .who b{display:block;font-size:.88rem;font-weight:500}
+.tx .who span{font-size:.72rem;color:var(--muted);font-family:var(--mono)}
+.tx .amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.9rem}
+.amt.pos{color:var(--success)} .amt.neg{color:var(--fg)}
+.fab{position:fixed;bottom:5.2rem;right:50%;transform:translateX(210px);width:3.2rem;height:3.2rem;border-radius:50%;background:var(--accent);border:0;color:#fff;font-size:1.4rem;cursor:pointer;box-shadow:0 6px 20px rgba(31,111,208,.45)}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(14,18,24,.92);backdrop-filter:blur(10px);border-top:1px solid var(--border)}
+nav ul{display:flex;list-style:none;margin:0 auto;padding:0;max-width:420px}
+nav a{flex:1;text-align:center;padding:.55rem 0 .7rem;color:var(--muted);text-decoration:none;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
+nav a div{font-size:1.1rem;margin-bottom:.1rem}
+nav a.on{color:var(--accent-dim)}
+.themes{display:flex;gap:.45rem;margin:1.2rem 0 0}
+.themes button{width:1.3rem;height:1.3rem;border-radius:4px;border:1px solid var(--border);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>finance<b>.app</b></h1>
+    <span class="status">● synced</span>
+  </header>
+
+  <div class="balance">
+    <div class="lbl">Net worth</div>
+    <div class="val">R$ 15,341.30</div>
+    <div class="delta">▲ R$ 7,222.60 this month (+88.9%)</div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="lbl">In · Oct</div><div class="val">+8,500.00</div></div>
+    <div class="card"><div class="lbl">Out · Oct</div><div class="val neg">−1,277.40</div></div>
+  </div>
+
+  <div class="sec"><h2>Wallets</h2><a href="#">manage →</a></div>
+  <div class="tx"><div class="ic">M</div><div class="who"><b>Main</b><span>BRL · 4,231.50</span></div><div class="amt">62%</div></div>
+  <div class="tx"><div class="ic">S</div><div class="who"><b>Savings</b><span>BRL · 12,000.00</span></div><div class="amt">78%</div></div>
+  <div class="tx"><div class="ic">C</div><div class="who"><b>Credit card</b><span>BRL · −890.20</span></div><div class="amt neg">−5.8%</div></div>
+
+  <div class="sec"><h2>Activity</h2><a href="#">all →</a></div>
+  <div class="tx"><div class="ic">↑</div><div class="who"><b>Salary</b><span>Oct 05 · Main</span></div><div class="amt pos">+8,500.00</div></div>
+  <div class="tx"><div class="ic">↓</div><div class="who"><b>Groceries</b><span>Oct 05 · Main</span></div><div class="amt neg">−182.40</div></div>
+  <div class="tx"><div class="ic">↓</div><div class="who"><b>Fuel</b><span>Oct 04 · Main</span></div><div class="amt neg">−95.00</div></div>
+
+  <div class="themes" title="M2 accent themes">
+    <button style="background:#8fa3bf" onclick="setAccent('#8fa3bf','#232a35')"></button>
+    <button style="background:#1f6fd0" onclick="setAccent('#1f6fd0','#16233a')"></button>
+    <button style="background:#4cbb87" onclick="setAccent('#4cbb87','#12271d')"></button>
+    <button style="background:#a58cd9" onclick="setAccent('#a58cd9','#231a35')"></button>
+    <button style="background:#d9a441" onclick="setAccent('#d9a441','#2e2310')"></button>
+    <button style="background:#d97c8f" onclick="setAccent('#d97c8f','#331820')"></button>
+  </div>
+</div>
+<button class="fab">+</button>
+<nav>
+  <ul>
+    <li><a class="on" href="#"><div>▤</div>Home</a></li>
+    <li><a href="#"><div>◈</div>Wallets</a></li>
+    <li><a href="#"><div>≡</div>Book</a></li>
+    <li><a href="#"><div>⚙</div>Settings</a></li>
+  </ul>
+</nav>
+<script>
+function setAccent(a,s){document.documentElement.style.setProperty('--accent',a);document.documentElement.style.setProperty('--accent-soft',s)}
+</script>
+</body>
+</html>

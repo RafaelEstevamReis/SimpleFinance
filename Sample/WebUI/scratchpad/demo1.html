@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo 1 — Traditional ledger</title>
+<style>
+:root{
+  --accent:#3b4b63; --accent-soft:#e3e8f0;
+  --fg:#1c2128; --muted:#5a6270; --border:#d7dbe2; --surface:#fff; --bg:#f6f7f9;
+  --success:#1e7f4f; --error:#b3372f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 Georgia,'Times New Roman',serif}
+.wrap{max-width:420px;margin:0 auto;padding:0 1rem 4.5rem}
+header{display:flex;justify-content:space-between;align-items:baseline;padding:.9rem 0;border-bottom:2px solid var(--accent)}
+header h1{margin:0;font-size:1.05rem;letter-spacing:.02em}
+header .who{color:var(--muted);font-style:italic;font-size:.85rem}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:1.4rem 0 .4rem;font-family:system-ui,sans-serif}
+.total{font-size:2rem;margin:0;font-variant-numeric:tabular-nums}
+.total small{font-size:.9rem;color:var(--muted)}
+.tint{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:.9rem 1rem;margin:.5rem 0 0;border-top:3px solid var(--accent)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;font-variant-numeric:tabular-nums}
+th{font-family:system-ui,sans-serif;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.5rem .8rem;border-bottom:1px solid var(--border)}
+td{padding:.55rem .8rem;border-bottom:1px solid var(--border);font-size:.92rem}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.pos{color:var(--success)} .neg{color:var(--error)}
+td .cat{display:inline-block;width:.55rem;height:.55rem;border-radius:2px;margin-right:.45rem;vertical-align:1px}
+.row-total{font-weight:bold;background:var(--accent-soft)}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border)}
+nav ul{display:flex;list-style:none;margin:0;padding:0;max-width:420px;margin:0 auto}
+nav a{flex:1;text-align:center;padding:.7rem 0;font-family:system-ui,sans-serif;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+nav a.on{color:var(--accent);border-top:2px solid var(--accent);margin-top:-1px}
+.themes{display:flex;gap:.4rem;margin:1.2rem 0 0}
+.themes button{width:1.4rem;height:1.4rem;border-radius:50%;border:2px solid var(--surface);outline:1px solid var(--border);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>My Personal Finances</h1>
+    <span class="who">Personal account</span>
+  </header>
+
+  <p class="eyebrow">Total balance</p>
+  <p class="total tint">R$ 15,341.30 <small>across 3 wallets</small></p>
+
+  <p class="eyebrow">Wallets</p>
+  <table>
+    <tr><th>Wallet</th><th>Currency</th><th class="num" style="text-align:right">Balance</th></tr>
+    <tr><td>Main</td><td>BRL</td><td class="num">R$ 4,231.50</td></tr>
+    <tr><td>Savings</td><td>BRL</td><td class="num">R$ 12,000.00</td></tr>
+    <tr class="row-total"><td>Credit card</td><td>BRL</td><td class="num neg">−R$ 890.20</td></tr>
+  </table>
+
+  <p class="eyebrow">Recent activity</p>
+  <table>
+    <tr><th colspan="2">Today</th><th class="num" style="text-align:right">Amount</th></tr>
+    <tr><td><span class="cat" style="background:#1f6fd0"></span>Groceries</td><td>Market on 5th</td><td class="num neg">−R$ 182.40</td></tr>
+    <tr><td><span class="cat" style="background:#1e7f4f"></span>Salary</td><td>October payment</td><td class="num pos">+R$ 8,500.00</td></tr>
+    <tr><td><span class="cat" style="background:#a06a00"></span>Transport</td><td>Fuel</td><td class="num neg">−R$ 95.00</td></tr>
+    <tr><td><span class="cat" style="background:#6b4bb5"></span>Transfer</td><td>To Savings</td><td class="num neg">−R$ 1,000.00</td></tr>
+  </table>
+
+  <div class="themes" title="M2 accent themes">
+    <button style="background:#3b4b63" onclick="setAccent('#3b4b63','#e3e8f0')"></button>
+    <button style="background:#1f6fd0" onclick="setAccent('#1f6fd0','#d9e8fa')"></button>
+    <button style="background:#1e7f4f" onclick="setAccent('#1e7f4f','#d9f0e3')"></button>
+    <button style="background:#6b4bb5" onclick="setAccent('#6b4bb5','#e7defa')"></button>
+    <button style="background:#a06a00" onclick="setAccent('#a06a00','#f8ecd4')"></button>
+    <button style="background:#b0435c" onclick="setAccent('#b0435c','#fadde3')"></button>
+  </div>
+</div>
+<nav>
+  <ul>
+    <li><a class="on" href="#">Home</a></li>
+    <li><a href="#">Wallets</a></li>
+    <li><a href="#">Book</a></li>
+    <li><a href="#">Settings</a></li>
+  </ul>
+</nav>
+<script>
+function setAccent(a,s){document.documentElement.style.setProperty('--accent',a);document.documentElement.style.setProperty('--accent-soft',s)}
+</script>
+</body>
+</html>
