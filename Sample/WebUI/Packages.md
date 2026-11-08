@@ -85,7 +85,7 @@ waits or pins the previous stable — the checklist above checks the
 | `vue` | `3.5.45` | vuejs | The framework; frozen public API since 2020; SLSA provenance | `svelte` — runes API young in agent training |
 | `vite` | `8.3.6` | vitejs | De-facto standard dev server/build; provenance | raw `esbuild` — loses HMR/plugins |
 | `@vitejs/plugin-vue` | `6.0.10` | vitejs | Official Vue-SFC plugin for Vite | — |
-| `typescript` | `7.0.2` | Microsoft | Type checking; dev-only, not shipped | JSDoc — loses compile-time checks |
+| `typescript` | `5.9.3` | Microsoft | Type checking; dev-only, not shipped | JSDoc — loses compile-time checks |
 | `vue-router` | `5.4.0` | vuejs | Official router; guards account connection | `vue-router@4` — fallback if 5.x proves unfamiliar |
 | `vue-tsc` | `3.3.14` | vuejs/language-tools | Type-checks `.vue` SFCs — `vite build` alone does not; provenance | — |
 | `@types/node` | `26.6.6` | DefinitelyTyped (Microsoft) | Node types for `vite.config.ts`; dev-only | — |

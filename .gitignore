@@ -410,3 +410,5 @@ Sample/WebUI/node_modules/
 Sample/WebUI/dist/
 # WebUI — unversioned space for local notes
 Sample/WebUI/[Ll][Oo][Cc][Aa][Ll].md
+Sample/WebUI/tsbuild/
+Sample/WebUI/*.tsbuildinfo

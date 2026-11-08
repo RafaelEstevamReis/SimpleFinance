@@ -45,10 +45,12 @@ nothing ever again. So:
 The only milestone that starts with zero code — the kernel is already
 installed, curated and locked.
 
-- [ ] Scaffold: `package.json` scripts, `vite.config.ts`, `tsconfig.json`,
-      `index.html`, `src/main.ts`, `src/App.vue` — a screen that says hello.
-- [ ] `npm run build` passes; dev server shows the hello screen.
-- [ ] `.gitignore` already covers `node_modules/`/`dist/` — verify.
+- [x] Scaffold: `package.json` scripts, `vite.config.ts`, `tsconfig.json` +
+      `tsconfig.node.json` (project references), `index.html`, `src/main.ts`,
+      `src/App.vue` — "My Personal Finances" + version from package.json.
+- [x] `npm run build` passes (vue-tsc type-check + vite build); dev server
+      shows the hello screen (desktop and 390px phone, no overflow).
+- [x] `.gitignore` covers `node_modules/`/`dist/`/`tsbuild/`/`*.tsbuildinfo`.
 
 ## M1 — API client + Connect screen
 
@@ -156,4 +158,10 @@ bundle into parity.
 
 Progress log (append one line per milestone, date + one lesson):
 
-- (none yet)
+
+2026-11-08 M0 — two lessons: (1) `typescript@7.0.2` broke vue-tsc 3.x
+(`ERR_PACKAGE_PATH_NOT_EXPORTED` resolving the compiler binary) — pinned
+`5.9.3`, the line the whole toolchain is built for; the Curated list records
+the failed pair so nobody re-pins 7 blindly. (2) Composite/project-reference
+tsconfigs require declaration emit, not `noEmit` — the scaffold's
+`tsconfig.node.json` carries `emitDeclarationOnly`.
