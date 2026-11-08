@@ -120,3 +120,42 @@ export interface TransactionResponse {
   created: string
   changed: string
 }
+
+/// GET /api/persons — one counterparty row
+export interface PersonResponse {
+  id: number
+  name: string
+  isDeleted: boolean
+}
+
+/// POST /api/persons + PUT /api/persons/{id} — request body
+export interface PersonRequest {
+  name: string
+  isDeleted: boolean
+}
+
+/// POST /api/transactions + PUT /api/transactions/{id} — request body.
+/// Values are sent positive: the sign comes from the category.
+/// Transfers never travel here — they have their own endpoint
+export interface TransactionRequest {
+  walletId: number
+  categoryId: number
+  counterpartyId: number
+  invoiceId: number
+  dueDate: string
+  paymentDate: string
+  description: string
+  status: 'Unpaid' | 'Paid' | 'Reversed'
+  paymentCurrency: string
+  dueValue: number
+  paidValue: number
+  paymentDetails: string | null
+  externalIdentifier: string | null
+}
+
+/// GET /api/transfers/{id} — both legs, found by the id of either one.
+/// Source is always negative, Destination always positive
+export interface TransferResponse {
+  source: TransactionResponse
+  destination: TransactionResponse
+}

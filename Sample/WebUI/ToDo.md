@@ -152,17 +152,30 @@ The book is not a later view: **it is how the WebUi displays transactions** —
 one wallet, one closed month. The simplest useful shape a transaction list
 can have; how the screen *designs around* that shape is open.
 
-- [ ] Wallet selector + **month browser** (prev/next/jump) over the search
-      endpoints — month window, ordered by date, `Id` tiebreak.
-- [ ] Rows show: date, description, counterparty, value with sign as stored;
-      transfers display as transfers.
-- [ ] Running totals per view; "All wallets" is a **feature, not the core** —
+- [x] Wallet selector + **month browser** (prev/next/jump) over the search
+      endpoints — month window, ordered by date, `Id` tiebreak. One
+      unfiltered search per month (`/by`, `dateType=EffectiveDate`): pairing
+      must see both legs of every transfer, each view picks its own rows
+      (`walletBook`). Smoke: prev → "Oct 2026" empty state, back to Nov,
+      jump via `<input type="month">` → "Dec 2025" empty, back.
+- [x] Rows show: date, description, counterparty, value with sign as stored;
+      transfers display as transfers. Smoke: Main sees `⇄ Transfer →
+      Dollars −300.00` while Dollars sees `⇄ Transfer → Main Account
+      +300.00` — one row per wallet, the leg it owns. Clicking a transfer
+      answers "edited as a pair — arriving with the transfer screen" (M7).
+- [x] Running totals per view; "All wallets" is a **feature, not the core** —
       behind the same selector, grouped by currency and labeled, never a
-      single summed number.
-- [ ] Create/edit form from a row (and a "new" action): wallet, category,
+      single summed number. Smoke: Net runs −620 → −1,167.80 → … down the
+      list, exactly the stored values; all-wallets shows the BRL group with
+      its own Net and the never-summed note, soft-deleted wallets stay out
+      of the groups (their leg is visible under their own selector entry).
+- [x] Create/edit form from a row (and a "new" action): wallet, category,
       counterparty, dates, due/paid values (positive input; sign is the
       category's business — never send negative, show the server's stored
-      value).
+      value). Smoke: create −125.50 through the form, Net absorbed it;
+      edit prefilled with abs() at the border, 8500 → 9000 on the wire,
+      Net recalculated; "Due value cannot be zero" client-side; paid value
+      only when Status is Paid; unpaid sends paidValue 0 (vitest-pinned).
 
 ## M7 — Transfers
 
@@ -269,3 +282,14 @@ a reversal, not a purchase. One search feeds every track (grouping is
 client-side), and an over-budget track is full, with the color — never
 the width — saying how far past it went. The smoke also caught a routing
 slip from M3: Home's categories "manage →" pointed at settings all along.
+
+2026-11-08 M6 — the smoke caught the book's one real doctrine: filtering
+the wire search by wallet cuts a transfer pair in half, because the partner
+leg lives in another wallet — the pair never forms and the movement
+vanishes from the month. The fix moved the cut client-side: one unfiltered
+search per month, `pairTransfers` first, then `walletBook` picks the leg
+each wallet owns (Main sees −300, Dollars sees +300, one row each).
+Also: `monthWindow` left its duplicated copies in Home and Categories and
+grew up into `months.ts` with prev/next/jump, and the edit's date-only
+save (00:00Z vs the seeded 12:00Z) re-sorted the list — EffectiveDate is
+the honest sort, so that reshuffle is correct, not a bug.

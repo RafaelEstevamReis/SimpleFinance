@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router'
 import { activeClient, errorMessage, session } from '../state/session'
 import type { CategoryResponse, WalletBalanceResponse, WalletResponse } from '../api/types'
 import { budgetNote, budgetTrack, sumSpentByCategory } from '../api/categories'
+import { monthWindow } from '../api/months'
 import { formatMoney, liveBalances, netWorthLabel, sumByCurrency } from '../api/wallets'
 
 const router = useRouter()
@@ -51,14 +52,6 @@ const netNote = computed<string>(() => {
 
 function balanceOf(walletId: number): number | null {
   return balances.value.find(b => b.walletId === walletId)?.balance ?? null
-}
-
-/// month window for the spend, as UTC ISO — same helper the Categories
-/// screen uses; duplicated there on purpose, screens own their windows
-function monthWindow(now = new Date()): { start: string; end: string } {
-  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
-  return { start: start.toISOString(), end: end.toISOString() }
 }
 
 function trackOf(category: CategoryResponse): { pct: number; over: boolean } | null {

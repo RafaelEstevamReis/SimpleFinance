@@ -8,9 +8,12 @@ import type {
   CategoryResponse,
   CreateAccountResponse,
   HelloResponse,
+  PersonResponse,
   PreferenceRequest,
   PreferenceResponse,
+  TransactionRequest,
   TransactionResponse,
+  TransferResponse,
   WalletBalanceResponse,
   WalletRequest,
   WalletResponse,
@@ -216,5 +219,56 @@ export class ApiClient {
     if (params.order) query.set('order', params.order)
     if (params.limit !== undefined) query.set('limit', String(params.limit))
     return this.request<TransactionResponse[]>(`/api/transactions?${query.toString()}`)
+  }
+
+
+  /// GET /api/transactions/by — search narrowed by any combination of ids.
+  /// Every id sent must match (AND); 0 selects the rows that carry none
+  async searchTransactionsBy(params: {
+    walletId?: number
+    categoryId?: number
+    counterpartyId?: number
+    dateType?: 'DueDate' | 'PaymentDate' | 'EffectiveDate'
+    start: string
+    end: string
+    order?: 'Asc' | 'Desc'
+    limit?: number
+  }): Promise<TransactionResponse[]> {
+    const query = new URLSearchParams({ start: params.start, end: params.end })
+    if (params.walletId !== undefined) query.set('walletId', String(params.walletId))
+    if (params.categoryId !== undefined) query.set('categoryId', String(params.categoryId))
+    if (params.counterpartyId !== undefined) query.set('counterpartyId', String(params.counterpartyId))
+    if (params.dateType) query.set('dateType', params.dateType)
+    if (params.order) query.set('order', params.order)
+    if (params.limit !== undefined) query.set('limit', String(params.limit))
+    return this.request<TransactionResponse[]>(`/api/transactions/by?${query.toString()}`)
+  }
+
+  /// GET /api/transactions/{id} — a single transaction
+  async transaction(id: number): Promise<TransactionResponse> {
+    return this.request<TransactionResponse>(`/api/transactions/${id}`)
+  }
+
+  /// POST /api/transactions — creates a transaction (201). The sign of the
+  /// values comes from the category, so positive values are fine
+  async createTransaction(request: TransactionRequest): Promise<TransactionResponse> {
+    return this.request<TransactionResponse>('/api/transactions', { method: 'POST', body: JSON.stringify(request) })
+  }
+
+  /// PUT /api/transactions/{id} — updates a transaction. Legs of a wallet
+  /// transfer cannot be updated here — they are edited through /api/transfers
+  async updateTransaction(id: number, request: TransactionRequest): Promise<TransactionResponse> {
+    return this.request<TransactionResponse>(`/api/transactions/${id}`, { method: 'PUT', body: JSON.stringify(request) })
+  }
+
+  /// GET /api/transfers/{id} — both legs of a transfer, found by the id
+  /// of either one of them
+  async transfer(id: number): Promise<TransferResponse> {
+    return this.request<TransferResponse>(`/api/transfers/${id}`)
+  }
+
+  /// GET /api/persons — every counterparty, including soft-deleted ones
+  async persons(): Promise<PersonResponse[]> {
+    return this.request<PersonResponse[]>('/api/persons')
   }
 }

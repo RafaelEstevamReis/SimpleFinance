@@ -10,6 +10,7 @@ import { activeClient, errorMessage, session } from '../state/session'
 import type { CategoryRequest, CategoryResponse } from '../api/types'
 import { budgetNote, budgetTrack, sumSpentByCategory } from '../api/categories'
 import { formatMoney } from '../api/wallets'
+import { monthWindow } from '../api/months'
 
 const categories = ref<CategoryResponse[]>([])
 const spent = ref<Map<number, number>>(new Map())
@@ -25,12 +26,6 @@ const formDescription = ref('')
 const formError = ref('')
 const saving = ref(false)
 
-/// month window for the spend, as UTC ISO — the wire speaks explicit UTC
-function monthWindow(now = new Date()): { start: string; end: string } {
-  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
-  return { start: start.toISOString(), end: end.toISOString() }
-}
 
 async function load(): Promise<void> {
   const client = activeClient()
