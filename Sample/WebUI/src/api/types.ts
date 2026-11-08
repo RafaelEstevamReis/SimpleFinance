@@ -159,3 +159,32 @@ export interface TransferResponse {
   source: TransactionResponse
   destination: TransactionResponse
 }
+
+/// POST /api/transfers — request body. Value is always positive; the server
+/// writes the negative leg on the source and the positive one on the
+/// destination. Category ids are 0 for none
+export interface CreateTransferRequest {
+  sourceWalletId: number
+  sourceCategoryId: number
+  destinationWalletId: number
+  destinationCategoryId: number
+  description: string
+  value: number
+  dueDate: string
+  paymentDate: string
+  paid: boolean
+  paymentDetails: string | null
+}
+
+/// PUT /api/transfers/{id} — request body, found by the id of either leg.
+/// Values are always positive: the server re-signs both legs. Wallets and
+/// categories are fixed after creation — they are not in the request
+export interface UpdateTransferRequest {
+  dueValue: number
+  paidValue: number
+  dueDate: string
+  paymentDate: string
+  description: string
+  paymentDetails: string | null
+  status: 'Unpaid' | 'Paid' | 'Reversed'
+}

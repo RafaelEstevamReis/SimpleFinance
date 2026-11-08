@@ -6,10 +6,11 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import type { BookRow } from '../api/book'
 import { buildTransactionRequest, rowDate, walletBook } from '../api/book'
+import { buildCreateTransferRequest, buildUpdateTransferRequest, pairHeading } from '../api/transfers'
 import { activeClient, errorMessage, session } from '../state/session'
-import type { CategoryResponse, PersonResponse, TransactionResponse, WalletResponse } from '../api/types'
-import { formatMoney } from '../api/wallets'
+import type { CategoryResponse, CreateTransferRequest, PersonResponse, TransactionResponse, UpdateTransferRequest, WalletResponse } from '../api/types'
 import { monthFromValue, monthLabel, monthValue, monthWindow, monthWindowOffset } from '../api/months'
+import { formatMoney } from '../api/wallets'
 
 const wallets = ref<WalletResponse[]>([])
 const categories = ref<CategoryResponse[]>([])
@@ -23,7 +24,6 @@ const formOpen = ref(false)
 const editingId = ref<number | null>(null)
 const saving = ref(false)
 const formError = ref('')
-const transferNotice = ref('')
 
 // -- form state -------------------------------------------------------------
 const formWalletId = ref(0)
@@ -37,12 +37,36 @@ const formDueValue = ref('')
 const formPaidValue = ref('')
 const formPaymentDetails = ref('')
 
+// -- transfer form state: the pair is edited as one ---------------------------
+const transferFormOpen = ref(false)
+const transferEditing = ref(false) // false = create, true = edit of the pair
+const transferSaving = ref(false)
+const transferError = ref('')
+const tSourceWalletId = ref(0)
+const tDestinationWalletId = ref(0)
+const tSourceCategoryId = ref(0)
+const tDestinationCategoryId = ref(0)
+const tValue = ref('')
+const tStatus = ref<'Unpaid' | 'Paid' | 'Reversed'>('Paid')
+const tPaidValue = ref('')
+const tDescription = ref('')
+const tPaymentDetails = ref('')
+const tDueDate = ref('')
+const tPaymentDate = ref('')
+// edit-only: the id of either leg — the update endpoint accepts both
+const tEditingLegId = ref<number | null>(null)
+
 // -- data -------------------------------------------------------------------
 
 const window_ = computed(() => monthWindow(monthDate.value))
 const label = computed(() => monthLabel(window_.value.start))
 
 const bookRows = computed(() => walletBook(txs.value, walletId.value))
+
+/// Transfer categories are side-locked by the server (source expense,
+/// destination income) — the selects only offer legal rows
+const expenseCategories = computed(() => categories.value.filter(c => c.isExpense))
+const incomeCategories = computed(() => categories.value.filter(c => !c.isExpense))
 
 /// All-wallets view groups by currency; each group is its own list with its
 /// own Net. Different currencies are never summed — a wallet reports in
@@ -130,16 +154,14 @@ function openCreate(): void {
   formPaidValue.value = ''
   formPaymentDetails.value = ''
   formError.value = ''
-  transferNotice.value = ''
   formOpen.value = true
 }
 
 function openEdit(row: { kind: string; ids: number[]; tx: TransactionResponse }): void {
   if (row.kind === 'transfer') {
-    // Transfers are edited as the linked pair, which is M7's business — the
-    // book shows them, it does not edit them yet
-    transferNotice.value = 'Transfers are edited as a pair — arriving with the transfer screen.'
-    formOpen.value = false
+    // A transfer is one linked pair — it opens its own form, never the
+    // movement form. Either leg id finds the pair
+    openTransferEdit(row.ids[0])
     return
   }
   const tx = row.tx
@@ -156,7 +178,6 @@ function openEdit(row: { kind: string; ids: number[]; tx: TransactionResponse })
   formPaidValue.value = String(Math.abs(tx.paidValue))
   formPaymentDetails.value = tx.paymentDetails ?? ''
   formError.value = ''
-  transferNotice.value = ''
   formOpen.value = true
 }
 
@@ -197,13 +218,115 @@ async function save(): Promise<void> {
     saving.value = false
   }
 }
+
+// -- transfer form: create a pair, edit a pair --------------------------------
+
+function openTransferCreate(): void {
+  transferEditing.value = false
+  tEditingLegId.value = null
+  const today = new Date().toISOString().slice(0, 10)
+  tSourceWalletId.value = walletId.value === 0 ? (wallets.value[0]?.id ?? 0) : walletId.value
+  tDestinationWalletId.value = 0
+  tSourceCategoryId.value = 0
+  tDestinationCategoryId.value = 0
+  tValue.value = ''
+  tStatus.value = 'Paid'
+  tDescription.value = ''
+  tPaymentDetails.value = ''
+  tDueDate.value = today
+  tPaymentDate.value = today
+  transferError.value = ''
+  formOpen.value = false
+  transferFormOpen.value = true
+}
+
+async function openTransferEdit(legId: number): Promise<void> {
+  const client = activeClient()
+  if (!client) return
+  const today = new Date().toISOString().slice(0, 10)
+  try {
+    const pair = await client.transfer(legId)
+    transferEditing.value = true
+    tEditingLegId.value = legId
+    tSourceWalletId.value = pair.source.walletId
+    tDestinationWalletId.value = pair.destination.walletId
+    tSourceCategoryId.value = pair.source.categoryId
+    tDestinationCategoryId.value = pair.destination.categoryId
+    // Stored legs carry the sign — the input is positive, abs() at the border
+    tValue.value = String(Math.abs(pair.source.dueValue))
+    tStatus.value = pair.source.status as 'Unpaid' | 'Paid' | 'Reversed'
+    tDescription.value = pair.source.description
+    tPaymentDetails.value = pair.source.paymentDetails ?? ''
+    tDueDate.value = (pair.source.dueDate ?? today).slice(0, 10)
+    tPaymentDate.value = (pair.source.paymentDate ?? today).slice(0, 10)
+    transferError.value = ''
+    formOpen.value = false
+    transferFormOpen.value = true
+    // paid value rides the same input when Paid — filled from the source leg
+    if (pair.source.status === 'Paid') tPaidValue.value = String(Math.abs(pair.source.paidValue))
+    else tPaidValue.value = ''
+  } catch (e) {
+    session.error.value = errorMessage(e)
+  }
+}
+
+function cancelTransfer(): void {
+  transferFormOpen.value = false
+  tEditingLegId.value = null
+}
+
+async function saveTransfer(): Promise<void> {
+  const client = activeClient()
+  if (!client) return
+  const out = transferEditing.value
+    ? buildUpdateTransferRequest({
+        description: tDescription.value,
+        value: tValue.value,
+        paidValue: tPaidValue.value,
+        status: tStatus.value,
+        dueDate: tDueDate.value,
+        paymentDate: tPaymentDate.value,
+        paymentDetails: tPaymentDetails.value,
+      })
+    : buildCreateTransferRequest({
+        sourceWalletId: tSourceWalletId.value,
+        sourceCategoryId: tSourceCategoryId.value,
+        destinationWalletId: tDestinationWalletId.value,
+        destinationCategoryId: tDestinationCategoryId.value,
+        description: tDescription.value,
+        value: tValue.value,
+        dueDate: tDueDate.value,
+        paymentDate: tPaymentDate.value,
+        paid: tStatus.value === 'Paid',
+        paymentDetails: tPaymentDetails.value,
+      })
+  if (out.request === null) {
+    transferError.value = out.error
+    return
+  }
+  transferSaving.value = true
+  try {
+    if (transferEditing.value) await client.updateTransfer(tEditingLegId.value!, out.request as UpdateTransferRequest)
+    else await client.createTransfer(out.request as CreateTransferRequest)
+    transferFormOpen.value = false
+    tEditingLegId.value = null
+    await loadBook()
+  } catch (e) {
+    transferError.value = errorMessage(e)
+  } finally {
+    transferSaving.value = false
+  }
+}
 </script>
 
 <template>
   <section>
     <div class="sec">
       <h2>Book</h2>
-      <button class="add" @click="openCreate">＋ New</button>
+      <div class="actions">
+        <button class="add" @click="openCreate">＋ New</button>
+        <button class="add" @click="openTransferCreate">⇄ Transfer</button>
+      </div>
     </div>
 
     <div class="bar">
@@ -224,7 +347,6 @@ async function save(): Promise<void> {
       </div>
     </div>
 
-    <p v-if="transferNotice" class="notice">{{ transferNotice }}</p>
     <p v-if="loading" class="muted">Loading…</p>
 
     <!-- one wallet: one flat list -->
@@ -338,6 +460,89 @@ async function save(): Promise<void> {
         <button class="primary" :disabled="saving" @click="save">{{ saving ? 'Saving…' : 'Save' }}</button>
       </div>
     </div>
+
+    <!-- transfer form: one linked pair, created and edited as one -->
+    <div v-if="transferFormOpen" class="form card">
+      <h3>{{ transferEditing ? 'Edit transfer' : 'New transfer' }}</h3>
+
+      <template v-if="transferEditing">
+        <p class="hintline">{{ pairHeading(walletName(tSourceWalletId), walletName(tDestinationWalletId)) }} — wallets are fixed after creation.</p>
+      </template>
+      <template v-else>
+        <label>
+          Source wallet
+          <select v-model.number="tSourceWalletId">
+            <option v-for="w in wallets" :key="w.id" :value="w.id">{{ w.name }}</option>
+          </select>
+        </label>
+        <label>
+          Destination wallet
+          <select v-model.number="tDestinationWalletId">
+            <option :value="0">— pick one —</option>
+            <option v-for="w in wallets" :key="w.id" :value="w.id">{{ w.name }}</option>
+          </select>
+        </label>
+        <div class="grid2">
+          <label>
+            Source category <span class="hint">(optional)</span>
+            <select v-model.number="tSourceCategoryId">
+              <option :value="0">— none —</option>
+              <option v-for="c in expenseCategories" :key="c.id" :value="c.id">− {{ c.name }}</option>
+            </select>
+          </label>
+          <label>
+            Destination category <span class="hint">(optional)</span>
+            <select v-model.number="tDestinationCategoryId">
+              <option :value="0">— none —</option>
+              <option v-for="c in incomeCategories" :key="c.id" :value="c.id">+ {{ c.name }}</option>
+            </select>
+          </label>
+        </div>
+      </template>
+
+      <div class="grid2">
+        <label>
+          Due date
+          <input v-model="tDueDate" type="date">
+        </label>
+        <label>
+          Payment date
+          <input v-model="tPaymentDate" type="date">
+        </label>
+      </div>
+      <div class="lock">
+        <span class="lbl">Status</span>
+        <div class="types">
+          <button :class="{ on: tStatus === 'Paid' }" @click="tStatus = 'Paid'">Paid</button>
+          <button :class="{ on: tStatus === 'Unpaid' }" @click="tStatus = 'Unpaid'">Unpaid</button>
+          <button :class="{ on: tStatus === 'Reversed' }" @click="tStatus = 'Reversed'">Reversed</button>
+        </div>
+      </div>
+      <div class="grid2">
+        <label>
+          Value
+          <input v-model="tValue" type="text" inputmode="decimal" placeholder="100">
+        </label>
+        <label v-if="tStatus === 'Paid'">
+          Paid value
+          <input v-model="tPaidValue" type="text" inputmode="decimal" placeholder="100">
+        </label>
+      </div>
+      <p class="hintline">Values are positive — the pair carries both sides.</p>
+      <label>
+        Description
+        <input v-model="tDescription" type="text" placeholder="What it was for" autocomplete="off">
+      </label>
+      <label>
+        Payment details <span class="hint">(optional)</span>
+        <input v-model="tPaymentDetails" type="text" placeholder="Free text" autocomplete="off">
+      </label>
+      <p v-if="transferError" class="err">{{ transferError }}</p>
+      <div class="row">
+        <button class="ghost" :disabled="transferSaving" @click="cancelTransfer">Cancel</button>
+        <button class="primary" :disabled="transferSaving" @click="saveTransfer">{{ transferSaving ? 'Saving…' : 'Save' }}</button>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -348,6 +553,7 @@ async function save(): Promise<void> {
   border: 1px solid var(--border); border-radius: 999px; background: transparent;
   color: var(--accent); font: inherit; font-size: 0.78rem; padding: 0.35rem 0.9rem; cursor: pointer;
 }
+.actions { display: flex; gap: 0.4rem; }
 .muted { color: var(--muted); font-size: 0.9rem; }
 .muted.small { font-size: 0.75rem; }
 .muted.net { margin: 0.4rem 0; font-size: 0.8rem; }

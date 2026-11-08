@@ -7,6 +7,7 @@ import type {
   CategoryRequest,
   CategoryResponse,
   CreateAccountResponse,
+  CreateTransferRequest,
   HelloResponse,
   PersonResponse,
   PreferenceRequest,
@@ -14,6 +15,7 @@ import type {
   TransactionRequest,
   TransactionResponse,
   TransferResponse,
+  UpdateTransferRequest,
   WalletBalanceResponse,
   WalletRequest,
   WalletResponse,
@@ -265,6 +267,19 @@ export class ApiClient {
   /// of either one of them
   async transfer(id: number): Promise<TransferResponse> {
     return this.request<TransferResponse>(`/api/transfers/${id}`)
+  }
+
+  /// POST /api/transfers — moves money between two wallets, writing both
+  /// legs at once (201). Source category must be an expense, destination
+  /// must not; 0 means none. Value is always positive
+  async createTransfer(request: CreateTransferRequest): Promise<TransferResponse> {
+    return this.request<TransferResponse>('/api/transfers', { method: 'POST', body: JSON.stringify(request) })
+  }
+
+  /// PUT /api/transfers/{id} — updates both legs at once, found by the id
+  /// of either one, answering with the pair as persisted
+  async updateTransfer(id: number, request: UpdateTransferRequest): Promise<TransferResponse> {
+    return this.request<TransferResponse>(`/api/transfers/${id}`, { method: 'PUT', body: JSON.stringify(request) })
   }
 
   /// GET /api/persons — every counterparty, including soft-deleted ones

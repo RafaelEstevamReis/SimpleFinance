@@ -179,9 +179,21 @@ can have; how the screen *designs around* that shape is open.
 
 ## M7 — Transfers
 
-- [ ] Create transfer (`POST /api/transfers`) — source/destination/values/date.
-- [ ] Update transfer — the linked pair, edited as one.
-- [ ] Transfer rows display as transfers, not as two mystery transactions.
+- [x] Create transfer (`POST /api/transfers`) — source/destination/values/date.
+      Own "⇄ Transfer" button beside "＋ New", own form (source/destination
+      wallets, side-locked category selects — source offers expenses only,
+      destination income only — dates, value positive, status, description).
+      Client refuses same-wallet and zero before the wire. Smoke: created
+      "vacation fund" 150 Main → Dollars through the form, both legs landed.
+- [x] Update transfer — the linked pair, edited as one. Clicking a ⇄ row
+      opens the pair form: `GET /api/transfers/{legId}` prefills it, wallets
+      stated as locked text ("Main Account → Dollars — wallets are fixed
+      after creation"), value/paid abs() at the border, PUT by either leg
+      id. Smoke: 150 → 200 edited as one, both books recalculated (Main
+      −200, Dollars +200), the untouched pair stayed at 300.
+- [x] Transfer rows display as transfers, not as two mystery transactions.
+      Delivered with M6's `walletBook` (one ⇄ row per wallet, its own leg) —
+      M7 confirms it standing, now with the pair editable behind the row.
 
 ## M8 — Dashboard
 
@@ -293,3 +305,14 @@ Also: `monthWindow` left its duplicated copies in Home and Categories and
 grew up into `months.ts` with prev/next/jump, and the edit's date-only
 save (00:00Z vs the seeded 12:00Z) re-sorted the list — EffectiveDate is
 the honest sort, so that reshuffle is correct, not a bug.
+
+2026-11-08 M7 — a transfer is one decision with two legs, so it gets one
+form: create writes the pair through POST /api/transfers, edit opens from
+either leg and PUTs both at once, and the wallets never travel on the
+update — they are stated, not asked ("Main Account → Dollars — wallets
+are fixed after creation", the locked-side pattern M5 used for expense).
+The category selects are side-filtered at the form (source offers expenses
+only, destination income only), because the server would reject a swapped
+pair one POST later. And the pair's value is a magnitude on the wire —
+positive, always, the server re-signs each leg — the same "sign is the
+category's business" doctrine the movement form already carried.
