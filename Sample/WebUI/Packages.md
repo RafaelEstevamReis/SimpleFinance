@@ -80,24 +80,55 @@ waits or pins the previous stable — the checklist above checks the
 
 ## Curated list
 
-*(empty — intentionally. The list is populated only through approved
-Proposals; see "Open Proposals". Until a package is listed here, it is not
-installable in this project, by agent or human alike.)*
-
 | Package | Version | Publisher | Why it's safe | Rejected alternative |
 |---|---|---|---|---|
-| | | | | |
+| `vue` | `3.5.45` | vuejs | The framework; frozen public API since 2020; SLSA provenance | `svelte` — runes API young in agent training |
+| `vite` | `8.3.6` | vitejs | De-facto standard dev server/build; provenance | raw `esbuild` — loses HMR/plugins |
+| `@vitejs/plugin-vue` | `6.0.10` | vitejs | Official Vue-SFC plugin for Vite | — |
+| `typescript` | `7.0.2` | Microsoft | Type checking; dev-only, not shipped | JSDoc — loses compile-time checks |
+| `vue-router` | `5.4.0` | vuejs | Official router; guards account connection | `vue-router@4` — fallback if 5.x proves unfamiliar |
+| `vue-tsc` | `3.3.14` | vuejs/language-tools | Type-checks `.vue` SFCs — `vite build` alone does not; provenance | — |
+| `@types/node` | `26.6.6` | DefinitelyTyped (Microsoft) | Node types for `vite.config.ts`; dev-only | — |
+| `@phosphor-icons/vue` | `2.2.1` | phosphor community | 9k SVG icons, tree-shakeable; no provenance, evaluated knowingly | `lucide-vue-next` — **dead name**: deprecated at latest in favor of `@lucide/vue` |
+| `@tabler/icons-vue` | `3.50.0` | tabler | 5.9k SVG icons, SLSA provenance; peer-dep free | `@mdi/font` — webfont, not components; loads whole font for a few icons |
+| `chart.js` | `4.6.1` | chartjs org | Stable API since 2.x; SLSA provenance | `echarts` — ~1MB for one chart |
+| `vue-chartjs` | `5.3.4` | apertureless | Thin wrapper over chart.js; no provenance, vetted knowingly | `d3` — toolkit-scale API, largest hallucination surface |
+| `vue-i18n` | `11.4.18` | intlify (kazupon) | Official i18n plugin, provenance; repo stays EN, the *user's* UI language is theirs | hard-coded strings — loses user-chosen language |
+| `vite-plugin-pwa` | `2.0.0` | vite-pwa (antfu, userquin) | Installable-on-phone via manifest+SW; provenance; pulls workbox-build/window | hand `manifest.json` — enough for install, loses update/offline story |
+| `file-saver` | `2.0.5` | eligrey | `saveAs()` Blob download; tiny, ancient and stable | — |
+| `jspdf` | `4.2.1` | parallax (mrjameshall) | PDF generation client-side; no provenance, maintainer-published, evaluated knowingly | — |
+| `dinero.js` | `2.0.2` | dinerojs (sarahdayan) | Immutable money objects, provenance; fallback if the hand-written money component ever needs arithmetic helpers | `currency.js` — unmaintained since 2021 |
+| `vitest` | `5.1.0` | vitest-dev (Vite team; antfu, yyx990803) | Unit/component testing; SLSA provenance; peer-dep vite ^6.4/^7/^8 matches our kernel; engines node ^22.12 || ^24 || >=26 | `playwright` — e2e; heavier, needs browser binaries; smoke-by-milestone already covers the same ground |
 
 ## Open Proposals
 
-*(none)*
+*(none — all discussion-time proposals were approved and moved to the
+Curated list above. Future proposals land here until evaluated:)*
 
-> Proposals land here in this format and are removed once evaluated:
->
-> ### Proposal N: `<what it is for>`
-> - Option A: `<name>@<version>` — `<one-line justification>`
-> - Option B: `<name>@<version>` — `<one-line justification>`
-> - Reviewed ___ by ___ → approved → moved to Curated list / rejected — reason: ___
+> `### Proposal N — <what it is for>` · Option A: `name@version` — why ·
+> Option B: `name@version` — why (often the rejected alternative) ·
+> Reviewed ___ by ___ → approved / rejected — reason.
+
+### Historical: evaluation notes behind the Curated list
+
+- **Icons**: `lucide-vue-next` was the training-data favorite — the registry
+  shows its latest as **deprecated, pointing to `@lucide/vue`** (a dead-name
+  trap caught by the checklist; live name: `@lucide/vue@1.70.0`, provenance).
+  Approved pair: Phosphor + Tabler. `@mdi/font` (Material) rejected: it is a
+  **webfont**, not tree-shakeable SVG components — the whole font loads for a
+  handful of icons.
+- **Money**: hand-written component (see `Architecture.md`); `currency.js`
+  rejected (unmaintained since 2021), `dinero.js` is the pre-agreed fallback
+  already in the Curated list.
+- **Testing**: `vitest` approved (Curated list) for unit/component tests —
+  the money component (cents parsing, bank-typing) is the natural first
+  target. `playwright` rejected for now: e2e duplicates the smoke-by-milestone
+  contract and drags browser binaries; re-propose with new evidence.
+  **axios, pinia, date-fns/luxon/dayjs, zod/vee-validate, @vueuse/core,
+  eslint/prettier, unplugin-auto-import, lodash**: not needed —
+  state is view-local; dates/formatting are `Intl`; validation is the
+  API's 400s. Re-proposing requires new evidence (e.g. a CI step for this
+  sample).
 
 ## Red flags
 

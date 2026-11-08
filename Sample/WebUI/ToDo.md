@@ -1,0 +1,159 @@
+# ToDo.md — Sample/WebUI implementation plan
+
+Deliverable-based plan, from HelloWorld to everything.
+Each milestone is sized to fit one working session (build, smoke,
+verify, commit — then stop).
+
+The whole plan is intentionally **not** one big build: companion UIs built in a
+single push by other agents cost roughly a month of tokens. This file keeps
+every milestone small, verifiable and independently shippable.
+
+**The phone is the primary target.** The UI must be good on a phone first,
+then tablets — the PC is a special case of tablet, designed last, not the
+default that phones must tolerate. Every milestone's smoke includes using the
+screen at phone width.
+
+Rules for every milestone, no exceptions:
+
+- Packages: only from the `Packages.md` curated list. Anything else goes
+  through a Proposal first (see that file).
+- Smoke against a real API (`dotnet run --project src/WebApi`) before commit.
+- `npm run build` passes.
+- Smoke includes phone width (dev tools device mode is enough).
+
+### How logic is verified (token discipline)
+
+**A thrown-away verification is burned tokens**: written, run once, proves
+nothing ever again. So:
+
+- **Permanent test by default.** Pure logic with a stable surface (cents
+  parsing and bank-typing, month browsing, error shaping in `client.ts`,
+  theme round-trip) gets a `vitest` test the moment it is written — the test
+  is part of the deliverable, not a retrofit.
+- **Throwaway is the exception**, named as such in the commit — allowed only
+  when there is no stable surface to pin the test to.
+- **Screen smoke stays the done-criterion for the visual** — that work is
+  never thrown away, it *is* the commit.
+- What does not deserve a test: visual layout, browser behavior a unit test
+  cannot see, and anything that would just re-pin what the type system
+  already proves.
+
+---
+
+## M0 — HelloWorld
+
+The only milestone that starts with zero code — the kernel is already
+installed, curated and locked.
+
+- [ ] Scaffold: `package.json` scripts, `vite.config.ts`, `tsconfig.json`,
+      `index.html`, `src/main.ts`, `src/App.vue` — a screen that says hello.
+- [ ] `npm run build` passes; dev server shows the hello screen.
+- [ ] `.gitignore` already covers `node_modules/`/`dist/` — verify.
+
+## M1 — API client + Connect screen
+
+The WebUi becomes a real client.
+
+- [ ] `src/api/client.ts` — active server `baseUrl`, `X-Api-Key` header,
+      400 `ProblemDetails` surfaced as readable errors, 401 → back to Connect.
+- [ ] `src/api/types.ts` — DTO mirrors (start with account/hello/preferences;
+      grow per milestone, never guess — check the repo or the live swagger).
+- [ ] Connect screen per `Architecture.md`: add server (validated with
+      `GET /api/hello`, failure reasons surfaced), add account (paste Key or
+      `POST /api/account`), stored in `localStorage` as specced.
+- [ ] Switching accounts works; nothing is hardcoded.
+
+## M2 — Theme system
+
+Identity comes before content: tint the shell so M3+ screens inherit it.
+
+- [ ] `src/styles/themes.ts` — registry `satisfies Record<string, Theme>`,
+      ship set: `slate` (default), `azure`, `emerald`, `violet`, `amber`, `rose`.
+- [ ] `applyTheme(name)` sets CSS custom properties on `<html>`.
+- [ ] Read the account's theme from `GET /api/account/preferences` on connect;
+      write with `PUT` from a picker; cache per-account for login preview.
+- [ ] Connect screen cards tinted by each account's accent (preview cache).
+- [ ] *Subtle by design* respected (see `Architecture.md` — accent only,
+      never text/background/semantic colors).
+
+## M3 — App shell + Wallets + Categories
+
+First money screens.
+
+- [ ] Shell: top bar (account label + accent tint), nav, error area.
+- [ ] Wallets screen: list, create/edit form, balance per wallet
+      (`GET /api/wallets/{id}/balance`), no cross-currency sums.
+- [ ] Categories screen: list, create/edit, `isExpense` locked after creation
+      (UI shows it read-only), `monthlyBudget` field.
+- [ ] Empty states designed; API errors shown with server message.
+
+## M4 — Transaction book — the transactions screen
+
+The book is not a later view: **it is how the WebUi displays transactions** —
+one wallet, one closed month. The simplest useful shape a transaction list
+can have; how the screen *designs around* that shape is open.
+
+- [ ] Wallet selector + **month browser** (prev/next/jump) over the search
+      endpoints — month window, ordered by date, `Id` tiebreak.
+- [ ] Rows show: date, description, counterparty, value with sign as stored;
+      transfers display as transfers.
+- [ ] Running totals per view; "All wallets" is a **feature, not the core** —
+      behind the same selector, grouped by currency and labeled, never a
+      single summed number.
+- [ ] Create/edit form from a row (and a "new" action): wallet, category,
+      counterparty, dates, due/paid values (positive input; sign is the
+      category's business — never send negative, show the server's stored
+      value).
+
+## M5 — Transfers
+
+- [ ] Create transfer (`POST /api/transfers`) — source/destination/values/date.
+- [ ] Update transfer — the linked pair, edited as one.
+- [ ] Transfer rows display as transfers, not as two mystery transactions.
+
+## M6 — Dashboard
+
+- [ ] Recent transactions + upcoming due lists, designed for glanceability
+      (not two raw grids).
+- [ ] Monthly chart, hand-rolled `<svg>`, series colors from `--c1..c4`.
+- [ ] Wallet totals grouped by currency (labeled, never summed across).
+
+## M7 — Quick actions (due list)
+
+The single-row power moves, surfaced where the money is already on screen.
+
+- [ ] Due actions on the book rows and the dashboard due list: pay on the due
+      date, pay as today, reverse — inline, no dead-end.
+
+## M8 — Advanced search
+
+A power tool, not a core screen — built after the book proves the search
+endpoints' shaping.
+
+- [ ] The `/by` filters (wallet/category/person/counterparty windows) with the
+      shared shaping of the two search endpoints (`order`/`limit`, date-type
+      sort with `Id` tiebreak).
+- [ ] Result actions identical to the book rows (open, edit) — no dead-end
+      results.
+
+## M9 — Bulk + Import (closing)
+
+- [ ] Bulk transactions form (the `POST` bulk endpoint) — quick actions in
+      mass, the sibling of M7's single-row moves.
+- [ ] OFX/MT940 import: upload → parsed rows shown for review → post back
+      (import endpoint is parse-only; the UI owns the write and the
+      no-dedup warning).
+- [ ] Default category pair per import (income/expense by sign, per
+      `src/WebApi/AGENTS.md`).
+
+## M10 — Beyond the DemoProject (optional, separate decisions)
+
+Scenarios, invoices, change log viewer — the API exposes them, the
+DemoProject never did. Treat each as its own milestone if wanted; do not
+bundle into parity.
+
+---
+
+Progress log (append one line per milestone, date + one lesson):
+
+- (none yet)

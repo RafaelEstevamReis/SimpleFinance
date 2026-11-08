@@ -46,6 +46,7 @@ Sample/WebUI/
 ├── Architecture.md        # this file — how the app is put together
 ├── Packages.md            # npm governance: the golden rule, checklists, curated list
 ├── README.md              # how to run it, day-to-day instructions
+├── ToDo.md              # implementation plan — milestones, in order
 ├── package.json           # only packages from the Packages.md curated list
 ├── vite.config.ts         # dev proxy — where /api forwards in dev is the developer's choice
 ├── index.html
@@ -79,9 +80,32 @@ The UI assists the connection instead of assuming a target:
    validates with `GET /api/hello` (anonymous) and reports reachability/version
    before saving.
 2. **Then an account** — paste an existing Key or create one (`POST /api/account`,
-   anonymous on that server). Validated with `GET /api/account/database`.
+   anonymous on that server). Account creation **asks for the primary
+   currency**, offering the browser's locale currency as the suggested default
+   (`Intl` exposes it; the list comes from the ISO currency codes, same source
+   the library uses). It is a convenience default, not a decision made for the
+   user — the choice is shown and changeable before the wallet is created.
+   Validated with `GET /api/account/database`.
 3. Failed connection attempts surface the reason (unreachable, not-a-WebApi,
    invalid Key) — the user should never guess why a server does not respond.
+
+### Money input (hand-written, no library)
+
+Money is the hard problem of web forms — float binary cannot represent
+decimal (`0.1 + 0.2 !== 0.3`). The WebUi's rules:
+
+- **Integer cents are the only internal representation** of money in the
+  WebUi. Parsing (`string` → cents) happens in the money component;
+  cents → JSON number happens only at the API boundary. No float ever lives
+  in a form's state.
+- Display uses `Intl.NumberFormat` with the wallet's currency — no formatting
+  library.
+- The component supports **bank-style typing**: digits typed walk left as
+  they are entered, so `1500` reads `15,00` and the decimal separator is
+  never typed (`inputmode="decimal"` for the phone keypad). This is a mode
+  the user can toggle; classic free-typed input stays available.
+- The API owns every calculation. The WebUi never sums, converts or rounds
+  money except for running totals it displays — and those sum cents.
 
 Every API call goes to the **active server's** `baseUrl`; the client layer
 prepends it and attaches the `X-Api-Key` header. The dev proxy (`vite.config.ts`)
@@ -142,6 +166,18 @@ own tokens on every theme). The effect is association, not decoration.
 - Dates on the wire are explicit UTC; the UI renders in the browser's locale
   but never re-sends what it parsed — it sends back what it received.
 - Enums travel as names (`"Paid"`, `"WalletTransfer"`, ...) — display them as-is.
+
+### The phone is the primary target
+
+The UI must be good on a phone first, then tablets — the PC is a special case
+of tablet, designed last. What this means in practice:
+
+- Layouts and touch targets are designed at phone width; larger screens get
+  more, not different, affordances.
+- "Table" is a desktop word: on a phone, dense grids collapse into cards or
+  rows designed for a thumb. A screen that only works as a grid is not done.
+- Every screen's smoke includes using it at phone width (dev tools device
+  mode is enough).
 
 ## Screens (initial scope)
 
