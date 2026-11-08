@@ -54,6 +54,8 @@ Sample/WebUI/
     ├── api/
     │   ├── client.ts      # fetch wrapper: X-Api-Key header, error shaping, 401 handling
     │   └── types.ts       # DTO mirrors of the WebApi request/response shapes
+    ├── styles/
+    │   └── themes.ts       # theme registry (satisfies Record<string, Theme>) + applyTheme
     ├── components/        # hand-written, no UI kit — table, form fields, money display
     └── views/             # one file per screen: Login, Wallets, Transactions, ...
 ```
@@ -86,6 +88,46 @@ prepends it and attaches the `X-Api-Key` header. The dev proxy (`vite.config.ts`
 is only a dev convenience — the production app always calls the configured
 server directly (CORS on the WebApi is open).
 
+## Theming
+
+One mechanic only, one entity: a **Theme** — a named set of CSS custom
+properties. There is no separate light/dark axis: a dark theme is just a
+theme with dark values.
+
+Its primary job is **account identity**: the connected account's theme tints
+the UI subtly so "Company 1 is blue, Company 2 is green" becomes muscle
+memory and the user stops entering expenses in the wrong account. For the
+single-account user it is simply pleasing to the eye — same mechanic, no
+second system.
+
+### Where the theme lives
+
+| State | Where | Notes |
+|---|---|---|
+| The account's theme | `AccountPreference` on the server: preference name `theme`, value = a theme name | Travels with the account to any browser; read with `GET /api/account/preferences`, written with `PUT /api/account/preferences/{name}` — both already exist, **no API change** |
+| Active in the session | CSS custom properties on `<html>`, set by `applyTheme(name)` on connect and on switch | A theme is data in `themes.ts`; applying it is setting vars |
+| Login-screen preview | `localStorage["webui.theme.<serverLabel>.<accountLabel>"]` | Cache of the last-seen theme so account cards can be tinted **before** connecting — there is no Key to read preferences with at that point. Server stays the truth; cache is only a preview. A brand-new account on a new browser shows neutral until first connect |
+
+### Subtle by design
+
+The theme's `accent` (and its soft background derivative) is the identity
+color. It may tint: top bar, input focus ring, selected row highlight, the
+account's card on the selection screen. It must **not** tint: body text,
+general background, semantic colors (`success`/`warning`/`error` stay their
+own tokens on every theme). The effect is association, not decoration.
+
+### Structure
+
+- `src/styles/themes.ts` — the registry: `satisfies Record<string, Theme>`;
+  a new theme is a new object, and `tsc` forces every token to exist (no
+  silent fallback — a missing token fails the build).
+- Tokens: `--fg`, `--muted`, `--border`, `--surface`, `--accent`,
+  `--accent-soft`, `--success`, `--warning`, `--error`, `--c1..c4` (chart
+  series). Components only ever consume `var(--…)`.
+- Initial ship: `slate` (neutral default), `azure`, `emerald`, `violet`,
+  `amber`, `rose`.
+- No theming-related packages; CSS custom properties are the mechanism.
+
 ## API integration details that matter
 
 - Header: `X-Api-Key: <guid>` on every call except `POST /api/account` (anonymous,
@@ -105,7 +147,8 @@ server directly (CORS on the WebApi is open).
 
 1. **Connect** — add a server (base URL, validated with `GET /api/hello`), then
    paste an existing Key or create an account (`POST /api/account`). Validated
-   with `GET /api/account/database`.
+   with `GET /api/account/database`. Account cards show each account's theme
+   accent from the local preview cache (see *Theming*).
 2. **Wallets** — list with balances; `GET /api/wallets`, one
    `GET /api/wallets/{id}/balance` per wallet (balances are per-wallet and never
    cross currencies — the screen must not sum them; if it ever wants a "total",
