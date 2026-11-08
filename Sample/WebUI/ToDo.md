@@ -85,18 +85,46 @@ Identity comes before content: tint the shell so M3+ screens inherit it.
       preference `theme=emerald` verified over the wire; reconnect applies it
       from the server; connect card tinted from preview cache; 390px clean.
 
-## M3 — App shell + Wallets + Categories
+## M3 — App shell
 
-First money screens.
+The frame every later screen hangs on.
 
-- [ ] Shell: top bar (account label + accent tint), nav, error area.
-- [ ] Wallets screen: list, create/edit form, balance per wallet
-      (`GET /api/wallets/{id}/balance`), no cross-currency sums.
-- [ ] Categories screen: list, create/edit, `isExpense` locked after creation
-      (UI shows it read-only), `monthlyBudget` field.
-- [ ] Empty states designed; API errors shown with server message.
+- [x] Top bar: account label + accent tint, profile avatar (initial), profile
+      sheet — switch between saved accounts, "Add or create" → connect.
+      Smoke: sheet lists both saved accounts, "here" on the active one;
+      Add or create lands on connect; a dead Key in the sheet surfaces
+      the server message in the error area and leaves the session intact.
+- [x] Bottom nav: Home / Wallets / Book / Settings, active state, spread to
+      content width (demo5 pattern). Verified aligned at 390px.
+- [x] Global error area: API errors with the server's message, not generic.
+- [x] Settings screen leaves mock behind: theme swatches, Dark/Light toggle
+      (`PUT mode`), account type (`PUT account-type`, display only).
+      Smoke: dark + business + violet written from Settings, read back on
+      the wire (`mode=dark`, `account-type=business`, `theme=violet`);
+      reload restores all three from the server, header shows
+      "Business Account".
+- [x] Home becomes the demo5 dashboard (static content for now — M8 wires it).
+      Smoke: sections Wallets / Categories / Activity with designed empty
+      states; net worth placeholder; 390px no overflow (after fixing
+      `.content` box-sizing).
 
-## M4 — Transaction book — the transactions screen
+## M4 — Wallets
+
+First money screen, inside the shell.
+
+- [ ] Wallets screen: demo5 table (Wallet / Currency / Balance), create/edit
+      form, balance per wallet (`GET /api/wallets/{id}/balance`), no
+      cross-currency sums.
+- [ ] Empty state designed; API errors with the server message.
+
+## M5 — Categories
+
+- [ ] Categories screen: demo5 budget tracks (name, progress bar, spent
+      "of budget" below the value), create/edit form, `monthlyBudget` field.
+- [ ] `isExpense` locked after creation — UI shows it read-only on edit.
+- [ ] Empty state designed; API errors with the server message.
+
+## M6 — Transaction book — the transactions screen
 
 The book is not a later view: **it is how the WebUi displays transactions** —
 one wallet, one closed month. The simplest useful shape a transaction list
@@ -114,27 +142,27 @@ can have; how the screen *designs around* that shape is open.
       category's business — never send negative, show the server's stored
       value).
 
-## M5 — Transfers
+## M7 — Transfers
 
 - [ ] Create transfer (`POST /api/transfers`) — source/destination/values/date.
 - [ ] Update transfer — the linked pair, edited as one.
 - [ ] Transfer rows display as transfers, not as two mystery transactions.
 
-## M6 — Dashboard
+## M8 — Dashboard
 
 - [ ] Recent transactions + upcoming due lists, designed for glanceability
       (not two raw grids).
 - [ ] Monthly chart, hand-rolled `<svg>`, series colors from `--c1..c4`.
 - [ ] Wallet totals grouped by currency (labeled, never summed across).
 
-## M7 — Quick actions (due list)
+## M9 — Quick actions (due list)
 
 The single-row power moves, surfaced where the money is already on screen.
 
 - [ ] Due actions on the book rows and the dashboard due list: pay on the due
       date, pay as today, reverse — inline, no dead-end.
 
-## M8 — Advanced search
+## M10 — Advanced search
 
 A power tool, not a core screen — built after the book proves the search
 endpoints' shaping.
@@ -145,17 +173,17 @@ endpoints' shaping.
 - [ ] Result actions identical to the book rows (open, edit) — no dead-end
       results.
 
-## M9 — Bulk + Import (closing)
+## M11 — Bulk + Import (closing)
 
 - [ ] Bulk transactions form (the `POST` bulk endpoint) — quick actions in
-      mass, the sibling of M7's single-row moves.
+      mass, the sibling of M9's single-row moves.
 - [ ] OFX/MT940 import: upload → parsed rows shown for review → post back
       (import endpoint is parse-only; the UI owns the write and the
       no-dedup warning).
 - [ ] Default category pair per import (income/expense by sign, per
       `src/WebApi/AGENTS.md`).
 
-## M10 — Beyond the DemoProject (optional, separate decisions)
+## M12 — Beyond the DemoProject (optional, separate decisions)
 
 Scenarios, invoices, change log viewer — the API exposes them, the
 DemoProject never did. Treat each as its own milestone if wanted; do not
@@ -193,3 +221,11 @@ browser (fake doc + mem storage), and that suite earned its keep before the
 smoke: `isThemeName` used `in`, which walks the prototype chain —
 `'__proto__'` counted as a theme. `Object.hasOwn` is the only correct lookup
 for a string-keyed registry; the vitest case pins it.
+
+2026-11-08 M3 — the shell loads the session, but only the connect flow marked
+it ready: a direct reload on `/` (or any shell route) hung on "Loading…"
+forever. Lesson: whoever loads the session owns `session.ready` — the flag
+now flips in `AppShell.onMounted`, where the load actually happens. Second
+lesson: `width:100%` + side padding inside a max-width column overflows
+without `box-sizing:border-box` — the demo's global `*{box-sizing}` reset
+hid it there; the app sets it per rule.

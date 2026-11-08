@@ -8,10 +8,10 @@ import {
   getThemePreview,
   saveAccounts,
   saveActive,
-  saveThemePreview,
   type StoredAccount,
 } from '../api/storage'
-import { applyTheme, clearTheme, isThemeName, accentOf } from '../styles/themes'
+import { loadSession, session } from '../state/session'
+import { accentOf, isThemeName } from '../styles/themes'
 
 // Account connection — assumes the server is already selected (ServerView).
 const router = useRouter()
@@ -118,16 +118,10 @@ async function connect(acc: StoredAccount): Promise<void> {
     const client = new ApiClient(serverUrl, acc.key)
     await client.account()
     saveActive(localStorage, { key: acc.key })
-    // Theme: server is the truth; read the account's preference and apply it.
-    // No preference yet → neutral (clears any tint from a previous account).
-    const prefs = await client.getPreferences()
-    const stored = prefs.find((p) => p.name === 'theme')?.value
-    if (stored && isThemeName(stored)) {
-      applyTheme(stored)
-      saveThemePreview(localStorage, acc.label, stored)
-    } else {
-      clearTheme()
-    }
+    // session state loads identity + all preferences (theme/mode/account-type)
+    // in one place; server is the truth, preview cache is the fallback
+    await loadSession()
+    session.ready.value = true
     emit('connected')
     router.push({ name: 'home' })
   } catch {

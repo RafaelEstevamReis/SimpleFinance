@@ -66,15 +66,24 @@ header .left .who{color:var(--muted);font-style:italic;font-size:.8rem;font-fami
 .sec h2{margin:0;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .sec a{color:var(--accent-dim);font-size:.75rem;text-decoration:none}
 
-/* wallets — demo 4 */
-.ledger{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.4rem 0}
+/* wallets — demo 1 table */
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;font-size:.85rem}
+th{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.5rem .8rem;border-bottom:1px solid var(--border);font-weight:500}
+td{padding:.55rem .8rem;border-bottom:1px solid var(--border)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem}
+td.neg{color:var(--error)}
+tr.row-total td{background:var(--accent-soft)}
+
+/* categories — budget tracks (demo-4 line style) */
 .walletline{display:flex;align-items:center;gap:.6rem;padding:.55rem .8rem;font-size:.85rem}
 .walletline + .walletline{border-top:1px solid var(--border)}
 .walletline .name{width:6em;color:var(--fg)}
 .walletline .track{flex:1;height:.5rem;border-radius:99px;background:var(--bg);border:1px solid var(--border);overflow:hidden}
 .walletline .fill{height:100%;background:var(--accent);border-radius:99px}
-.walletline b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem}
+.walletline .fill.over{background:var(--error)}
+.walletline b{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem;text-align:right}
 .walletline b.neg{color:var(--error)}
+.walletline .of{display:block;font-size:.6rem;color:var(--muted);font-family:var(--mono)}
 
 /* activity — demo 2 */
 .tx{display:flex;align-items:center;gap:.7rem;padding:.65rem .5rem;border-bottom:1px solid var(--border)}
@@ -146,10 +155,18 @@ nav a.on{color:var(--accent-dim)}
   </div>
 
   <div class="sec"><h2>Wallets</h2><a href="#">manage →</a></div>
+  <table>
+    <tr><th>Wallet</th><th>Currency</th><th class="num">Balance</th></tr>
+    <tr><td>Main</td><td>BRL</td><td class="num">4,231.50</td></tr>
+    <tr><td>Savings</td><td>BRL</td><td class="num">12,000.00</td></tr>
+    <tr class="row-total"><td>Credit card</td><td>BRL</td><td class="num neg">−890.20</td></tr>
+  </table>
+
+  <div class="sec"><h2>Categories</h2><a href="#">manage →</a></div>
   <div class="ledger">
-    <div class="walletline"><span class="name">Main</span><div class="track"><div class="fill" style="width:62%"></div></div><b>4,231.50</b></div>
-    <div class="walletline"><span class="name">Savings</span><div class="track"><div class="fill" style="width:78%"></div></div><b>12,000.00</b></div>
-    <div class="walletline"><span class="name">Credit card</span><div class="track"><div class="fill" style="width:5%"></div></div><b class="neg">−890.20</b></div>
+    <div class="walletline"><span class="name">Groceries</span><div class="track"><div class="fill" style="width:62%"></div></div><b>620.00<span class="of">of 1,000</span></b></div>
+    <div class="walletline"><span class="name">Transport</span><div class="track"><div class="fill" style="width:38%"></div></div><b>190.00<span class="of">of 500</span></b></div>
+    <div class="walletline"><span class="name">Eating out</span><div class="track"><div class="fill over" style="width:100%"></div></div><b class="neg">547.80<span class="of">of 400</span></b></div>
   </div>
 
   <div class="sec"><h2>Activity</h2><a href="#">all →</a></div>
