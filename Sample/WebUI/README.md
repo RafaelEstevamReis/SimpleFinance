@@ -21,11 +21,12 @@ npm install        # first time only; see Packages.md for what this means
 npm run dev        # Vite dev server, hot reload on every save
 ```
 
-Open the printed URL. The first screen is **Connect**: add a server by its
-base URL (the app checks it is reachable and really a WebApi before saving),
-then paste an existing account **Key** — or create a new account on that
-server (the Key is shown exactly once; store it). Saved servers and accounts
-stay in the browser and can be switched any time.
+Open the printed URL. The first screen asks for the **server** base URL (the
+app checks it is reachable and really a WebApi before saving — Select), then
+the account screen: paste an existing **Key** — or create a new account on
+that server (the Key is shown exactly once; store it). The selected server and
+its saved accounts stay in the browser; the `Server…` button goes back to
+server selection.
 
 ## Building
 

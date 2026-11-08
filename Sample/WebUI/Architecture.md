@@ -67,25 +67,28 @@ All client-side, all trivial on purpose:
 
 | Concern | Where | Notes |
 |---|---|---|
-| Saved servers | `localStorage["webui.servers"]` | `[{ label, baseUrl }]` — user-configured; nothing is baked in |
-| Accounts per server | `localStorage["webui.accounts"]` | `[{ serverLabel, label, key }]`; a Key opens exactly one account on exactly one server |
-| Active server + account | `localStorage["webui.active"]` | `{ serverLabel, key }`; switching re-navigates to the dashboard |
+| Server (single) | `localStorage["webui.server"]` | JSON string with the base URL — the app points at one WebApi; nothing baked in |
+| Accounts | `localStorage["webui.accounts"]` | `[{ label, key, primaryCurrency }]` — accounts of that one server |
+| Active account | `localStorage["webui.active"]` | `{ key }`; switching re-navigates to the dashboard |
 | Server data | component-local | no store, no pinia — each view fetches what it shows; the app is small enough that a store would be ceremony |
 
 ### Connecting to a server
 
 The UI assists the connection instead of assuming a target:
 
-1. **Add server** — user gives a base URL (e.g. `http://localhost:5080`). The UI
-   validates with `GET /api/hello` (anonymous) and reports reachability/version
-   before saving.
+1. **Select server** — user gives a base URL (e.g. `http://localhost:5080`) and
+   presses Select. The UI validates with `GET /api/hello` (anonymous) and
+   reports reachability/version before saving. Single-server by design:
+   re-selecting replaces the target; the account screen has a `Server…` button
+   to come back here.
 2. **Then an account** — paste an existing Key or create one (`POST /api/account`,
    anonymous on that server). Account creation **asks for the primary
    currency**, offering the browser's locale currency as the suggested default
    (`Intl` exposes it; the list comes from the ISO currency codes, same source
    the library uses). It is a convenience default, not a decision made for the
    user — the choice is shown and changeable before the wallet is created.
-   Validated with `GET /api/account/database`.
+   Validated with `GET /api/account/database`. Router guards enforce the order:
+   no server → server screen; no active account → account screen.
 3. Failed connection attempts surface the reason (unreachable, not-a-WebApi,
    invalid Key) — the user should never guess why a server does not respond.
 
@@ -130,7 +133,7 @@ second system.
 |---|---|---|
 | The account's theme | `AccountPreference` on the server: preference name `theme`, value = a theme name | Travels with the account to any browser; read with `GET /api/account/preferences`, written with `PUT /api/account/preferences/{name}` — both already exist, **no API change** |
 | Active in the session | CSS custom properties on `<html>`, set by `applyTheme(name)` on connect and on switch | A theme is data in `themes.ts`; applying it is setting vars |
-| Login-screen preview | `localStorage["webui.theme.<serverLabel>.<accountLabel>"]` | Cache of the last-seen theme so account cards can be tinted **before** connecting — there is no Key to read preferences with at that point. Server stays the truth; cache is only a preview. A brand-new account on a new browser shows neutral until first connect |
+| Login-screen preview | `localStorage["webui.theme.<accountLabel>"]` | Cache of the last-seen theme so account cards can be tinted **before** connecting — there is no Key to read preferences with at that point. Server stays the truth; cache is only a preview. A brand-new account on a new browser shows neutral until first connect |
 
 ### Subtle by design
 

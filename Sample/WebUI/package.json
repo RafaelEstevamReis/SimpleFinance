@@ -5,7 +5,8 @@
   "type": "module",
   "description": "Vue 3 SPA sample over the Simple.Finance WebApi",
   "scripts": {
-    "dev": "vite",
+    "test": "vitest",
+    "test:types": "vue-tsc -p tsconfig.test.json",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest"

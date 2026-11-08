@@ -56,14 +56,18 @@ installed, curated and locked.
 
 The WebUi becomes a real client.
 
-- [ ] `src/api/client.ts` — active server `baseUrl`, `X-Api-Key` header,
+- [x] `src/api/client.ts` — active server `baseUrl`, `X-Api-Key` header,
       400 `ProblemDetails` surfaced as readable errors, 401 → back to Connect.
-- [ ] `src/api/types.ts` — DTO mirrors (start with account/hello/preferences;
-      grow per milestone, never guess — check the repo or the live swagger).
-- [ ] Connect screen per `Architecture.md`: add server (validated with
+- [x] `src/api/types.ts` — DTO mirrors copied from `DTOs/AccountDtos.cs` +
+      `HelloController.cs` (hello/create/account/database).
+- [x] Connect screen per `Architecture.md`: add server (validated with
       `GET /api/hello`, failure reasons surfaced), add account (paste Key or
-      `POST /api/account`), stored in `localStorage` as specced.
-- [ ] Switching accounts works; nothing is hardcoded.
+      `POST /api/account`), stored in `localStorage` as specced
+      (`webui.server`/`webui.accounts`/`webui.active`).
+- [x] Switching accounts works; nothing is hardcoded. Smoke ran end-to-end
+      against a real API (server → create → connect), 390px phone width
+      included; 15 vitest cases cover error shaping and corrupt-JSON storage
+      safety.
 
 ## M2 — Theme system
 
@@ -165,3 +169,18 @@ Progress log (append one line per milestone, date + one lesson):
 the failed pair so nobody re-pins 7 blindly. (2) Composite/project-reference
 tsconfigs require declaration emit, not `noEmit` — the scaffold's
 `tsconfig.node.json` carries `emitDeclarationOnly`.
+
+2026-11-08 M1 — two lessons: (1) smoke found that connect() saved the
+active selection but nothing navigated — an emit on a route's root component
+has no listener; navigate with `router.push` directly. (2) A created Key
+lived only in a component ref: one reload between "create" and "save" lost
+it forever — creation now auto-saves to localStorage before showing the
+shown-once box (user-approved). Also: spec files are excluded from the app
+tsconfig and type-checked by `vue-tsc -p tsconfig.test.json` (`test:types`).
+
+2026-11-08 M1.1 (user request) — server selection split into its own screen:
+single-server by design (no name, no list, button is Select). Storage lost
+`serverLabel` everywhere (`webui.server` is a JSON string now); router guards
+enforce the order server → account → home. Lesson: `saveServerUrl` once wrote
+the raw URL while `getServerUrl` parsed it as JSON — asymmetric save/read
+broke round-trip; a vitest round-trip case caught it before the smoke did.

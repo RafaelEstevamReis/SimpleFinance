@@ -1,0 +1,42 @@
+/* Neutral base tokens — every component consumes var(--…), never a literal.
+   A theme overrides accent (+ accent-soft) on <html>; everything else is
+   theme-independent by design ("subtle by design", Architecture.md). */
+
+:root {
+  color-scheme: light dark;
+
+  /* neutrals — same values the M0 stand-in shipped; light-dark() carries
+     the pair so dark mode keeps working without a second system */
+  --fg: light-dark(#1c2128, #e7ebee);
+  --muted: light-dark(#5a6270, #9aa3b0);
+  --border: light-dark(#d7dbe2, #2a2f36);
+  --surface: light-dark(#ffffff, #1c2027);
+
+  /* semantic — never themed */
+  --success: light-dark(#1e7f4f, #4cbb87);
+  --warning: light-dark(#a06a00, #d9a441);
+  --error: light-dark(#b3372f, #e2726b);
+
+  /* identity — the only tokens a theme touches; neutral until applied */
+  --accent: light-dark(#3b4b63, #8fa3bf);
+  --accent-soft: light-dark(#e3e8f0, #232a35);
+
+  /* chart series — fixed, distinct in both modes, hue-rotated apart */
+  --c1: light-dark(#3b6ea5, #5b8fc4);
+  --c2: light-dark(#3f8f5a, #56ab74);
+  --c3: light-dark(#a5763b, #c4955b);
+  --c4: light-dark(#8f3f6e, #ab56aa);
+  --radius: 10px;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: light-dark(#f6f7f9, #14161a);
+  color: var(--fg);
+  font-family: system-ui, sans-serif;
+}
+
+button, input, select {
+  font: inherit;
+}
