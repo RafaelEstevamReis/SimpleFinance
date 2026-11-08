@@ -3,21 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Finance", "Simple.Finance\Simple.Finance.csproj", "{C7527C96-F9DE-4555-ABEF-705C5086AD0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Finance", "src\Simple.Finance\Simple.Finance.csproj", "{C7527C96-F9DE-4555-ABEF-705C5086AD0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{1F9F3FB8-1E4E-443D-9505-A6D770E1F05F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "tests\Tests\Tests.csproj", "{1F9F3FB8-1E4E-443D-9505-A6D770E1F05F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoProject", "DemoProject\DemoProject.csproj", "{8FDE78B4-0C3E-4818-98FF-B83E7A7FC501}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoProject", "Sample\DemoProject\DemoProject.csproj", "{8FDE78B4-0C3E-4818-98FF-B83E7A7FC501}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{A2802D16-997E-4D69-BC08-A1BE4CE66B03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{A2802D16-997E-4D69-BC08-A1BE4CE66B03}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		AGENTS.md = AGENTS.md
+		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{EE3E5F54-2492-4FED-B20B-35D5EA1935EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "src\WebApi\WebApi.csproj", "{EE3E5F54-2492-4FED-B20B-35D5EA1935EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{347960B6-BB39-4F07-9328-826BE6CE50DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{40043993-D2FD-4570-B48F-B29586540264}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{4C86CE92-30CA-4003-975A-2E80DA8DA30B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +56,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C7527C96-F9DE-4555-ABEF-705C5086AD0D} = {347960B6-BB39-4F07-9328-826BE6CE50DE}
+		{EE3E5F54-2492-4FED-B20B-35D5EA1935EC} = {347960B6-BB39-4F07-9328-826BE6CE50DE}
+		{1F9F3FB8-1E4E-443D-9505-A6D770E1F05F} = {40043993-D2FD-4570-B48F-B29586540264}
+		{A2802D16-997E-4D69-BC08-A1BE4CE66B03} = {40043993-D2FD-4570-B48F-B29586540264}
+		{8FDE78B4-0C3E-4818-98FF-B83E7A7FC501} = {4C86CE92-30CA-4003-975A-2E80DA8DA30B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6C5B958-D065-408E-9E07-7EE2C3E6FAFC}

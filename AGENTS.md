@@ -13,11 +13,11 @@ There is no service layer, no DI container, no async data access.
 
 | Project | TFM | Role |
 | --- | --- | --- |
-| `Simple.Finance/` | `netstandard2.1`, LangVersion 12, nullable enabled | The library. **Everything of value lives here.** |
-| `UnitTests/` | `net9.0` | xUnit v3 automated tests. The real test suite. |
-| `Tests/` | `net9.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
-| `DemoProject/` | `net9.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
-| `WebApi/` | `net9.0`, ASP.NET Core | Web API over the library (`AssemblyName` = `Simple.Finance.WebApi`). Serilog + Swashbuckle, everything local under `[app]/data`. |
+| `src/Simple.Finance/` | `netstandard2.1`, LangVersion 12, nullable enabled | The library. **Everything of value lives here.** |
+| `tests/UnitTests/` | `net9.0` | xUnit v3 automated tests. The real test suite. |
+| `tests/Tests/` | `net9.0` | Console sandbox — `SampleFunctions.cs` is a manual smoke run, `Ignore.cs` is scratch space for new ideas and one-off scraping. Not a test suite. |
+| `Sample/DemoProject/` | `net9.0-windows`, WinForms | Demo GUI app (`AssemblyName` = `MyPersonalFinances`). |
+| `src/WebApi/` | `net9.0`, ASP.NET Core | Web API over the library (`AssemblyName` = `Simple.Finance.WebApi`). Serilog + Swashbuckle, everything local under `[app]/data`. |
 | `Assets/` | — | `TemporalSeries_*.json` rate series, served over HTTP from `main` and consumed by `ExternalRepoSeries`. |
 | `SampleFiles/` | — | Sample bank/fiscal files (OFX, OFC, CNAB, MT940, SPED, NFe, IFF, PDF statements). |
 
@@ -28,8 +28,8 @@ External packages the library depends on: `Simple.Sqlite`, `Simple.API`, `Rafael
 ```
 dotnet build                                # whole solution
 dotnet test                                 # runs UnitTests
-dotnet test UnitTests/UnitTests.csproj
-dotnet run --project Tests                  # console smoke run against ./data.db
+dotnet test tests/UnitTests/UnitTests.csproj
+dotnet run --project tests/Tests             # console smoke run against ./data.db
 ```
 
 CI (`.github/workflows/dotnet.yml`): `windows-latest`, .NET 9, restore → build → test on push/PR to `main`.
@@ -54,7 +54,7 @@ graph TD
   H --> M[IExchangeRateCaching]
 ```
 
-### Tables (`Simple.Finance/Tables/`)
+### Tables (`src/Simple.Finance/Tables/`)
 
 `record` types with `Simple.DatabaseWrapper.Attributes` (`[PrimaryKey]`, `[Index]`).
 Schema is created/migrated by `Manager.Initialize()` via `cnn.CreateTables().Add<T>()…Commit()`.
@@ -230,7 +230,7 @@ as the bridge. It has **no wallet and no category** — those belong to the tran
   invisible until it runs again.
 - `TemporalSeries_*.cs` are **generated data files** (up to 162 KB each) — `decimal[][][]` indexed
   `[year - firstYear][month - 1][day - 1]`, read by `ExchangeRateConverter.getTableValue`. Do not hand-edit;
-  regenerate with the scrapers in `Tests/Ignore.cs`. `TemporalSeries_BTCUSD` also derives `SAT` (`BTC / 1e8`).
+  regenerate with the scrapers in `tests/Tests/Ignore.cs`. `TemporalSeries_BTCUSD` also derives `SAT` (`BTC / 1e8`).
 - `ExternalRepoSeries` fetches `Assets/TemporalSeries_*.json` from `raw.githubusercontent.com/.../main/Assets/`
   via a `Simple.API` client interface. **Network-dependent — never put it in a unit test.**
   Its file list is hard-coded in `IExternalSeries`; adding an asset means adding a method there too.
@@ -349,18 +349,18 @@ These are choices, not defects. Work with them; changing any of them is a produc
   don't add locking or a shared connection.
 - **Deprecation is a slow ladder.** They become `error: true` after many revisions, and are only
   removed long after that. Don't call them from new code and don't accelerate the ladder.
-- **`Tests/Ignore.cs` is a sandbox** for new ideas and one-off data scraping. Don't lint it, refactor it, test it, or take its warnings seriously.
+- **`tests/Tests/Ignore.cs` is a sandbox** for new ideas and one-off data scraping. Don't lint it, refactor it, test it, or take its warnings seriously.
 - **`IsDeleted` is a soft flag with no delete API.** Nothing in `Manager` filters on it; presentation decides.
 
 ## Landmines
 
 - `TemporalSeries_*.cs` are generated; hand-editing them desyncs the `Assets/*.json` served to
-  `ExternalRepoSeries` and moves the pinned rates in `UnitTests`.
+  `ExternalRepoSeries` and moves the pinned rates in `tests/UnitTests`.
 
 ## Testing expectations
 
-- Folders mirror the subject: `ManagerTests/` (core CRUD, validation, transfers, change log, notifications,
-  invoices), `ExchangeTableTests/`, `HelperTests/`. xUnit v3, `[Fact]`/`[Theory]` + `[InlineData]`.
+- Folders mirror the subject: `tests/UnitTests/ManagerTests/` (core CRUD, validation, transfers, change log,
+  notifications, invoices), `ExchangeTableTests/`, `HelperTests/`. xUnit v3, `[Fact]`/`[Theory]` + `[InlineData]`.
 - **Test classes must be `public`** — xUnit does not discover `internal` ones.
 - `ManagerTests/ManagerTestBase.cs` gives each test its own temp SQLite file plus `newWallet`/`newCategory`/
   `newPerson`/`tx`/`newTx` builders and a `past` date constant. Inherit it instead of hand-rolling a database.
@@ -370,7 +370,7 @@ These are choices, not defects. Work with them; changing any of them is a produc
   `TemporalSeries_*` file will move those numbers. Update expectations deliberately, not blindly.
 - Tests must be offline and deterministic: use `ExchangeRateConverter.CreateWithTemporalSeries()`, never
   `ExternalRepoSeries`.
-- Routing/crossing mechanics are tested against `ExchangeTableTests/FakeRateTable.cs`, not the generated
+- Routing/crossing mechanics are tested against `tests/UnitTests/ExchangeTableTests/FakeRateTable.cs`, not the generated
   series: `Pair` (declared + served), `Declare` (visible to the graph, no data — drives the per-hop fallback),
   `Serve`/`ServeOn` (data without a graph edge), plus `Queries`/`InitializeCalls` and a `SpyRateCache`
   recording cache hits. Prefer it over `CreateWithTemporalSeries()` whenever the assertion is about the graph.
