@@ -105,11 +105,32 @@ const accountTypeLabel = labelOfAccountType // template needs it exposed
           <h1>My Personal Finances</h1>
           <span class="who">{{ accountTypeLabel(session.state.value.accountType) }}</span>
         </div>
-        <button class="avatar" :title="session.accountLabel.value" @click="toggleSheet">
-          {{ initialOf(session.accountLabel.value) }}
-        </button>
-      </header>
+        <div class="avatarbox">
+          <button class="avatar" :title="session.accountLabel.value" @click="toggleSheet">
+            {{ initialOf(session.accountLabel.value) }}
+          </button>
+          <transition name="fade">
+            <div v-if="sheetOpen" class="sheet" role="menu" aria-label="Profiles on this server" @click.stop>
+              <h3>Profiles on this server</h3>
+              <button
+                v-for="a in accounts" :key="a.key" class="acct"
+                :class="{ on: a.key === getActiveKey() }"
+                :style="tintOf(a) ? { '--tint': tintOf(a) } : undefined"
+                :disabled="switching !== ''"
+                @click="pickAccount(a)"
+              >
+                <span class="mini">{{ initialOf(a.name) }}</span>
+                <span class="t">{{ a.name }} <span>{{ a.primaryCurrency }}</span></span>
+                <span v-if="a.key === getActiveKey()" class="here">here</span>
+              </button>
+              <button class="acct addnew" :disabled="switching !== ''" @click="addOrCreate">
+                <span class="mini">＋</span><span class="t">Add or create</span>
+              </button>
+            </div>
+          </transition>
+        </div>
 
+      </header>
       <!-- global error area — set by any screen, dismissed here -->
       <div v-if="session.error.value" class="alert" role="alert">
         <span>{{ session.error.value }}</span>
@@ -119,26 +140,7 @@ const accountTypeLabel = labelOfAccountType // template needs it exposed
       <main class="content"><RouterView /></main>
 
       <transition name="fade">
-        <div v-if="sheetOpen" class="profile-backdrop" @click="closeSheet">
-          <div class="sheet" role="menu" aria-label="Profiles on this server" @click.stop>
-            <h3>Profiles on this server</h3>
-            <button
-              v-for="a in accounts" :key="a.key" class="acct"
-              :class="{ on: a.key === getActiveKey() }"
-              :style="tintOf(a) ? { '--tint': tintOf(a) } : undefined"
-              :disabled="switching !== ''"
-              @click="pickAccount(a)"
-            >
-              <span class="mini">{{ initialOf(a.name) }}</span>
-              <span class="t">{{ a.name }} <span>{{ a.primaryCurrency }}</span></span>
-              <span v-if="a.key === getActiveKey()" class="here">here</span>
-            </button>
-            <button class="acct addnew" @click="addOrCreate">
-              <span class="mini">＋</span>
-              <span class="t">Add or create<span>back to login / selection</span></span>
-            </button>
-          </div>
-        </div>
+        <div v-if="sheetOpen" class="profile-backdrop" @click="closeSheet"></div>
       </transition>
 
       <nav>
@@ -205,13 +207,15 @@ header.top .who { color: var(--muted); font-style: italic; font-size: 0.8rem; fo
 }
 .alert button { border: 0; background: transparent; color: inherit; cursor: pointer; padding: 0.2rem; }
 
-/* profile sheet */
+/* profile sheet — anchored to the avatar box, so it opens below the
+   profile wherever the shell sits (the 420px column on a wide screen) */
+.avatarbox { position: relative; }
 .profile-backdrop {
   position: fixed; inset: 0; z-index: 40;
   background: color-mix(in srgb, #000 35%, transparent);
 }
 .sheet {
-  position: absolute; right: 0.5rem; top: 3.6rem; width: 16rem;
+  position: absolute; right: 0; top: 3rem; width: 16rem;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 12px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
   padding: 0.5rem; z-index: 50;

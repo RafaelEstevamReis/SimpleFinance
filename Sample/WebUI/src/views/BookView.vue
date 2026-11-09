@@ -327,12 +327,17 @@ option.del { opacity: 0.5; }
 .months .ghost { padding: 0.45rem 0.8rem; }
 .ml { position: relative; flex: 1; }
 .ml input {
-  width: 100%; box-sizing: border-box; font: inherit; font-size: 0.95rem; color: var(--fg);
+  width: 100%; box-sizing: border-box; font: inherit; font-size: 0.95rem;
+  /* the native field text ("November 2026") is hidden on purpose: the
+     .mlabel below is this field's value. Without this, both render and
+     the month appears twice in the same box */
+  color: transparent;
   background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.55rem 0.7rem;
 }
 .mlabel {
-  position: absolute; left: 0.8rem; top: 0.35rem; font-size: 0.72rem; color: var(--muted);
-  pointer-events: none; font-family: var(--mono);
+  position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%);
+  font-size: 0.95rem; color: var(--fg); font-family: var(--mono);
+  pointer-events: none;
 }
 
 .ledger { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }

@@ -195,7 +195,7 @@ function spentOf(category: CategoryResponse): number {
 
 .walletline { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.8rem; font-size: 0.85rem; cursor: pointer; }
 .walletline + .walletline { border-top: 1px solid var(--border); }
-.walletline .name { width: 6em; color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.walletline .name { flex: 0 1 auto; min-width: 0; max-width: 60%; color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .walletline .track { flex: 1; height: 0.5rem; border-radius: 99px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
 .walletline .track.none { visibility: hidden; }
 .walletline .fill { height: 100%; background: var(--accent); border-radius: 99px; }
