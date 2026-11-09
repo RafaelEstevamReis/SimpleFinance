@@ -65,12 +65,12 @@ Sample/WebUI/
 
 All client-side, all trivial on purpose:
 
-| Concern | Where | Notes |
-|---|---|---|
-| Server (single) | `localStorage["webui.server"]` | JSON string with the base URL — the app points at one WebApi; nothing baked in |
-| Accounts | `localStorage["webui.accounts"]` | `[{ name, key, primaryCurrency }]` — `name` is a CACHE of the server's `Account.Name`, refreshed on every contact (probe, create, connect). The Key is the identity; the browser never owns the name. Legacy rows with `label` migrate on read |
-| Active account | `localStorage["webui.active"]` | `{ key }`; switching re-navigates to the dashboard |
-| Server data | component-local | no store, no pinia — each view fetches what it shows; the app is small enough that a store would be ceremony |
+| Concern         | Where                            | Notes |
+|-----------------|----------------------------------|---|
+| Server (single) | `localStorage["webui.server"]`   | JSON string with the base URL — the app points at one WebApi; nothing baked in        |
+| Accounts        | `localStorage["webui.accounts"]` | `[{ name, key, primaryCurrency }]` — `name` is a CACHE of the server's `Account.Name` |
+| Active account  | `localStorage["webui.active"]`   | `{ key }`; switching re-navigates to the dashboard                                    |
+| Server data     | component-local                  | no store, no pinia — each view fetches what it shows; the app is small enough that a store would be ceremony |
 
 ### Connecting to a server
 
