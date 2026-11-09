@@ -43,3 +43,18 @@ export function budgetTrack(spent: number, budget: number): BudgetTrack {
 export function budgetNote(budget: number): string {
   return budget > 0 ? `of ${budget.toLocaleString('en-US')}` : ''
 }
+
+/// The Net-worth card's budget row (tablet3 shape): "spent of limit" for
+/// the current month. Empty string when no expense category carries a
+/// limit — the row vanishes instead of showing a zero against nothing.
+export function monthlyBudgetRow(spentByCategory: Map<number, number>, categories: { id: number; isExpense: boolean; monthlyBudget: number }[]): string {
+  let spent = 0
+  let limit = 0
+  for (const c of categories) {
+    if (!c.isExpense || c.monthlyBudget <= 0) continue
+    limit += c.monthlyBudget
+    spent += Math.abs(spentByCategory.get(c.id) ?? 0)
+  }
+  if (limit <= 0) return ''
+  return `${spent.toLocaleString('en-US', { minimumFractionDigits: 2 })} of ${limit.toLocaleString('en-US')}`
+}

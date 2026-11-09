@@ -277,6 +277,23 @@ multi-column ledgers where the rows are many:
 - [ ] The bottom nav stays (thumb reach is not a desktop-only concern).
 - [ ] Smoke at both 390×844 and 768×1024: no stretched rows, no orphan
       whitespace, no overflow at either width.
+  - [ ] M12 polish (post-smoke gaps vs tablet3):
+      - [ ] Profile: show the account NAME beside the avatar at tablet width
+            (tablet3 header has name + type under the h1, app shows type only).
+      - [ ] Net worth: month-over-month comparison line ("▲ R$ X this month
+            (+Y%)", tablet3 `.delta`) — currently only the one-currency note.
+      - [ ] Tint: dark mode background is too grey — tablet3's dark `--bg`
+            (#0e1218) leans blue; the app's tinted themes should tint the
+            background/surface too, not just the accent - Dark+Blue should be
+            equal Tablet3
+      - [ ] Equal gaps: vertical and horizontal spacing between cards and
+            panels must match (current grid: row-gap ≠ column-gap and section
+            margins vary).
+      - [ ] Recent ledger: both columns must look identical — the right
+            column has a top bar the left one lacks (border/padding mismatch
+            in the two-column split).
+      - [ ] Bug: wallet "Dollars" balance renders as "..." — investigate
+            (sum excludes it? formatting? multi-currency note?).
 
 
 ## M13 — Bulk insert

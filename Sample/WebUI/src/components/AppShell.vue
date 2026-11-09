@@ -145,7 +145,7 @@ const accountTypeLabel = labelOfAccountType // template needs it exposed
 
       <nav>
         <ul>
-          <li><RouterLink to="/" class="on"><div>▤</div>Home</RouterLink></li>
+          <li><RouterLink to="/"><div>▤</div>Home</RouterLink></li>
           <li><RouterLink to="/wallets"><div>◈</div>Wallets</RouterLink></li>
           <li><RouterLink to="/book"><div>≡</div>Book</RouterLink></li>
           <li><RouterLink to="/search"><div>⌕</div>Search</RouterLink></li>
@@ -175,6 +175,11 @@ export default { name: 'AppShell' }
   display: flex;
   flex-direction: column;
 }
+/* tablet steps (M12): step 2 pairs from 720px, step 3 canvas from 900px,
+   ceiling 1100px — the phone column below 720px is untouched.
+   The nav's matching rules live next to its base rule (cascade order). */
+@media (min-width: 720px) { .shell { max-width: 760px; } }
+@media (min-width: 900px) { .shell { max-width: 1100px; } }
 header.top {
   display: flex;
   justify-content: space-between;
@@ -257,7 +262,10 @@ nav {
   border-top: 1px solid var(--border);
   z-index: 30;
 }
-nav ul { display: flex; list-style: none; margin: 0 auto; padding: 0.55rem 0.35rem 0.75rem; max-width: 420px; }
+nav ul { display: flex; list-style: none; margin: 0 auto; padding: 0.55rem 0.35rem 0.75rem; max-width: 420px; box-sizing: border-box; }
+/* tablet steps (M12) — after the base rules so the cascade keeps these winning */
+@media (min-width: 720px) { nav ul { max-width: 760px; } }
+@media (min-width: 900px) { nav ul { max-width: 1100px; } }
 nav li { flex: 1; }
 nav a {
   display: flex; flex-direction: column; align-items: center; gap: 0.18rem;
@@ -265,7 +273,7 @@ nav a {
   font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase;
 }
 nav a div { font-size: 1.2rem; line-height: 1; }
-nav a.router-link-active { color: var(--accent); }
+nav a.router-link-exact-active { color: var(--accent); }
 
 .fatal { padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
 .muted { color: var(--muted); }

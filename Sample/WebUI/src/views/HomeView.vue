@@ -4,11 +4,11 @@
 // more show no number rather than a made-up one.
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { activeClient, errorMessage, session } from '../state/session'
 import type { CategoryResponse, TransactionResponse, WalletBalanceResponse, WalletResponse } from '../api/types'
-import { budgetNote, budgetTrack, sumSpentByCategory } from '../api/categories'
+import { budgetNote, budgetTrack, monthlyBudgetRow, sumSpentByCategory } from '../api/categories'
 import { monthWindow, monthWindowOffset } from '../api/months'
 import { formatMoney, liveBalances, netWorthLabel, sumByCurrency } from '../api/wallets'
 import { chartBars, monthSeries, recentRows, upcomingDue } from '../api/dashboard'
@@ -106,6 +106,7 @@ const netNote = computed<string>(() => {
   if (currencies === 1) return 'Sum of every wallet, one currency'
   return `Balances in ${currencies} currencies — no single total`
 })
+const budgetRow = computed<string>(() => monthlyBudgetRow(spent.value, categories.value))
 
 function balanceOf(walletId: number): number | null {
   return balances.value.find(b => b.walletId === walletId)?.balance ?? null
@@ -152,7 +153,23 @@ const series = computed(() => {
   const firstDay = new Date(first.start)
   return monthSeries(chartTxs.value, firstDay, CHART_MONTHS)
 })
-const geometry = computed(() => chartBars(series.value, 320, 150))
+const CHART_W = 320
+const CHART_H = 150
+/// The svg is born at the card's real width (M12 tablet steps) — bars are
+/// drawn for the size they render at, never stretched. 320 is the floor:
+/// below that the phone column keeps its pin.
+const chartW = ref(CHART_W)
+const chartBox = ref<HTMLElement | null>(null)
+let chartObserver: ResizeObserver | null = null
+onMounted(() => {
+  chartObserver = new ResizeObserver(() => {
+    const w = chartBox.value?.clientWidth ?? CHART_W
+    chartW.value = Math.max(CHART_W, Math.round(w))
+  })
+  if (chartBox.value) chartObserver.observe(chartBox.value)
+})
+onBeforeUnmount(() => chartObserver?.disconnect())
+const geometry = computed(() => chartBars(series.value, chartW.value, CHART_H))
 
 /// One line per movement — transfers paired first, the M6 rule
 const recent = computed(() => recentRows(transactions.value, 5, rowDate))
@@ -176,10 +193,15 @@ function rowAmount(tx: TransactionResponse): { text: string; cls: string } {
 
 <template>
   <section>
+    <div class="dgrid">
     <div class="balance">
       <div class="lbl">Net worth</div>
       <div class="val" :class="{ muted: net === '—' }">{{ net }}</div>
       <div class="delta muted">{{ netNote }}</div>
+      <div v-if="budgetRow" class="brow">
+        <span class="lbl">Budget</span>
+        <span class="bval">{{ budgetRow }}</span>
+      </div>
     </div>
 
     <div class="chartcard">
@@ -193,91 +215,102 @@ function rowAmount(tx: TransactionResponse): { text: string; cls: string } {
           >{{ c }}</button>
         </div>
       </div>
-      <svg v-if="geometry.bars.length > 0" class="chart" viewBox="0 0 320 150" role="img" aria-label="Income and expense by month">
-        <line x1="0" :y1="geometry.baseY" x2="320" :y2="geometry.baseY" class="baseline" />
-        <template v-for="(bar, i) in geometry.bars" :key="i">
-          <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height" :class="bar.side" rx="1.5" />
-          <text v-if="bar.topLabel !== null" class="toplabel" :x="bar.x + 0.6" :y="bar.y - 4">{{ bar.topLabel }}</text>
-        </template>
-        <text v-for="(p, i) in series" :key="p.label + i" class="axis" :x="(i + 0.5) * (320 / series.length)" y="147">{{ p.label }}</text>
-      </svg>
-      <div v-else class="chart empty">No movement this quarter yet</div>
-    </div>
-
-
-    <div class="sec"><h2>Wallets</h2><a @click="router.push({ name: 'wallets' })">manage →</a></div>
-    <table v-if="wallets.length > 0">
-      <tr><th>Wallet</th><th>Currency</th><th class="num">Balance</th></tr>
-      <tbody>
-        <tr v-for="w in wallets" :key="w.id" :class="{ del: w.isDeleted }">
-          <td>{{ w.name }}</td>
-          <td>{{ w.baseCurrency }}</td>
-          <td class="num" :class="{ neg: (balanceOf(w.id) ?? 0) < 0 }">
-            {{ balanceOf(w.id) === null ? '…' : formatMoney(balanceOf(w.id) as number) }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-else class="ledger empty">
-      <p>No wallets yet — create the first one from the Wallets screen.</p>
-    </div>
-
-    <div class="sec"><h2>Categories</h2><a @click="router.push({ name: 'categories' })">manage →</a></div>
-    <div v-if="categories.length > 0" class="ledger">
-      <div
-        v-for="c in categories"
-        :key="c.id"
-        class="walletline"
-        :class="{ del: c.isDeleted }"
-        @click="router.push({ name: 'categories' })"
-      >
-        <span class="name">{{ c.name }}</span>
-        <div v-if="trackOf(c)" class="track">
-          <div class="fill" :class="{ over: trackOf(c)?.over }" :style="{ width: `${trackOf(c)?.pct}%` }"></div>
-        </div>
-        <div v-else class="track none"></div>
-        <b :class="{ neg: trackOf(c)?.over }">
-          {{ formatMoney(spentOf(c)) }}<span v-if="budgetNote(c.monthlyBudget)" class="of">{{ budgetNote(c.monthlyBudget) }}</span>
-        </b>
+      <div ref="chartBox" class="chartwrap">
+        <svg v-if="geometry.bars.length > 0" class="chart" :viewBox="`0 0 ${chartW} ${CHART_H}`" role="img" aria-label="Income and expense by month">
+          <line x1="0" :y1="geometry.baseY" :x2="chartW" :y2="geometry.baseY" class="baseline" />
+          <template v-for="(bar, i) in geometry.bars" :key="i">
+            <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height" :class="bar.side" rx="1.5" />
+            <text v-if="bar.topLabel !== null" class="toplabel" :x="bar.x + 0.6" :y="bar.y - 4">{{ bar.topLabel }}</text>
+          </template>
+          <text v-for="(p, i) in series" :key="p.label + i" class="axis" :x="(i + 0.5) * (chartW / series.length)" :y="CHART_H - 3">{{ p.label }}</text>
+        </svg>
+        <div v-else class="chart empty">No movement this quarter yet</div>
       </div>
     </div>
-    <div v-else class="ledger empty">
-      <p>No categories yet — create the first one from the Categories screen.</p>
-    </div>
 
-    <div class="sec"><h2>Upcoming</h2><a @click="router.push({ name: 'book' })">book →</a></div>
-    <p v-if="quickNotice !== ''" class="notice">{{ quickNotice }}</p>
-    <div v-if="upcoming.length > 0" class="ledger">
-      <div v-for="r in upcoming" :key="r.tx.id" class="tx" @click="router.push({ name: 'book' })">
-        <div class="ic">{{ r.kind === 'transfer' ? '⇄' : '↓' }}</div>
-        <div class="who">
-          <b :class="{ overdue: r.overdueBy > 0 }">{{ rowTitle(r.tx) }}</b>
-          <span>{{ r.date }} · {{ walletName(r.tx.walletId) }}</span>
-        </div>
-        <div class="quick" v-if="availableActions(r.tx).length > 0">
-          <button v-for="a in availableActions(r.tx)" :key="a" class="qbtn" :title="QUICK_LABEL[a]"
-            :disabled="quickBusy !== 0" @click="quick(a, r.tx, $event)">{{ QUICK_ICON[a] }}</button>
-        </div>
-        <div class="amt" :class="rowAmount(r.tx).cls">{{ rowAmount(r.tx).text }}</div>
+
+    <div class="panel pw">
+      <div class="sec"><h2>Wallets</h2><a @click="router.push({ name: 'wallets' })">manage →</a></div>
+      <table v-if="wallets.length > 0">
+        <tr><th>Wallet</th><th>Currency</th><th class="num">Balance</th></tr>
+        <tbody>
+          <tr v-for="w in wallets" :key="w.id" :class="{ del: w.isDeleted }">
+            <td>{{ w.name }}</td>
+            <td>{{ w.baseCurrency }}</td>
+            <td class="num" :class="{ neg: (balanceOf(w.id) ?? 0) < 0 }">
+              {{ balanceOf(w.id) === null ? '…' : formatMoney(balanceOf(w.id) as number) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-else class="ledger empty">
+        <p>No wallets yet — create the first one from the Wallets screen.</p>
       </div>
     </div>
-    <div v-else class="ledger empty">
-      <p>Nothing due — the book keeps every unpaid row here.</p>
-    </div>
 
-    <div class="sec"><h2>Recent</h2><a @click="router.push({ name: 'book' })">all →</a></div>
-    <div v-if="recent.length > 0" class="ledger">
-      <div v-for="r in recent" :key="r.ids[0]" class="tx" @click="router.push({ name: 'book' })">
-        <div class="ic">{{ r.kind === 'transfer' ? '⇄' : (r.tx.effectiveValue < 0 ? '↓' : '↑') }}</div>
-        <div class="who">
-          <b>{{ rowTitle(r.tx, r.other) }}</b>
-          <span>{{ r.date }} · {{ walletName(r.tx.walletId) }}</span>
+    <div class="panel pc">
+      <div class="sec"><h2>Categories</h2><a @click="router.push({ name: 'categories' })">manage →</a></div>
+      <div v-if="categories.length > 0" class="ledger">
+        <div
+          v-for="c in categories"
+          :key="c.id"
+          class="walletline"
+          :class="{ del: c.isDeleted }"
+          @click="router.push({ name: 'categories' })"
+        >
+          <span class="name">{{ c.name }}</span>
+          <div v-if="trackOf(c)" class="track">
+            <div class="fill" :class="{ over: trackOf(c)?.over }" :style="{ width: `${trackOf(c)?.pct}%` }"></div>
+          </div>
+          <div v-else class="track none"></div>
+          <b :class="{ neg: trackOf(c)?.over }">
+            {{ formatMoney(spentOf(c)) }}<span v-if="budgetNote(c.monthlyBudget)" class="of">{{ budgetNote(c.monthlyBudget) }}</span>
+          </b>
         </div>
-        <div class="amt" :class="rowAmount(r.tx).cls">{{ rowAmount(r.tx).text }}</div>
+      </div>
+      <div v-else class="ledger empty">
+        <p>No categories yet — create the first one from the Categories screen.</p>
       </div>
     </div>
-    <div v-else class="ledger empty">
-      <p>No movement yet — the book opens with the first transaction.</p>
+
+    <div class="panel pu">
+      <div class="sec"><h2>Upcoming</h2><a @click="router.push({ name: 'book' })">book →</a></div>
+      <p v-if="quickNotice !== ''" class="notice">{{ quickNotice }}</p>
+      <div v-if="upcoming.length > 0" class="ledger">
+        <div v-for="r in upcoming" :key="r.tx.id" class="tx" @click="router.push({ name: 'book' })">
+          <div class="ic">{{ r.kind === 'transfer' ? '⇄' : '↓' }}</div>
+          <div class="who">
+            <b :class="{ overdue: r.overdueBy > 0 }">{{ rowTitle(r.tx) }}</b>
+            <span>{{ r.date }} · {{ walletName(r.tx.walletId) }}</span>
+          </div>
+          <div class="quick" v-if="availableActions(r.tx).length > 0">
+            <button v-for="a in availableActions(r.tx)" :key="a" class="qbtn" :title="QUICK_LABEL[a]"
+              :disabled="quickBusy !== 0" @click="quick(a, r.tx, $event)">{{ QUICK_ICON[a] }}</button>
+          </div>
+          <div class="amt" :class="rowAmount(r.tx).cls">{{ rowAmount(r.tx).text }}</div>
+        </div>
+      </div>
+      <div v-else class="ledger empty">
+        <p>Nothing due — the book keeps every unpaid row here.</p>
+      </div>
+    </div>
+
+    <div class="panel pr">
+      <div class="sec"><h2>Recent</h2><a @click="router.push({ name: 'book' })">all →</a></div>
+      <div v-if="recent.length > 0" class="ledger">
+        <div v-for="r in recent" :key="r.ids[0]" class="tx" @click="router.push({ name: 'book' })">
+          <div class="ic">{{ r.kind === 'transfer' ? '⇄' : (r.tx.effectiveValue < 0 ? '↓' : '↑') }}</div>
+          <div class="who">
+            <b>{{ rowTitle(r.tx, r.other) }}</b>
+            <span>{{ r.date }} · {{ walletName(r.tx.walletId) }}</span>
+          </div>
+          <div class="amt" :class="rowAmount(r.tx).cls">{{ rowAmount(r.tx).text }}</div>
+        </div>
+      </div>
+      <div v-else class="ledger empty">
+        <p>No movement yet — the book opens with the first transaction.</p>
+      </div>
+    </div>
     </div>
   </section>
 </template>
@@ -291,6 +324,8 @@ function rowAmount(tx: TransactionResponse): { text: string; cls: string } {
 .balance .lbl { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .balance .val { font-family: 'SF Mono', ui-monospace, Consolas, monospace; font-size: 2.1rem; margin: 0.25rem 0; font-variant-numeric: tabular-nums; }
 .balance .delta { font-family: ui-monospace, Consolas, monospace; font-size: 0.78rem; color: var(--success); }
+.balance .brow { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-top: 0.6rem; }
+.balance .bval { font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
 .sec { display: flex; justify-content: space-between; align-items: center; margin: 1.1rem 0 0.5rem; }
 .sec h2 { margin: 0; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
@@ -354,4 +389,44 @@ tr.del td { opacity: 0.5; }
 }
 .qbtn:hover { border-color: var(--accent); }
 .qbtn[title='Pay as today'] { font-weight: 700; }
+
+/* M12 tablet steps — the grid owns the layout; the phone column below
+   720px is untouched (block flow, the original stack).
+   Step 2 (≥720px, tablet2 pairs): balance beside chart, panels in pairs.
+   Step 3 (≥900px, tablet3 canvas): chart takes the wide rail (2fr) with
+   balance beside it, three panels in one row, Recent in two columns. */
+.dgrid { display: block; }
+.chartwrap { min-width: 0; }
+.dgrid .notice { margin: 0 0 0.4rem; }
+/* panels become cards (tablet2/3 pattern): header inside the card,
+   equal-width tracks — minmax(0,…) so a wide table cannot push
+   neighbours and steal width from them */
+.dgrid .panel .sec { margin-top: 0; }
+.panel { min-width: 0; }
+@media (min-width: 720px) {
+  .dgrid .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 0.8rem 0.4rem 0.4rem; overflow: hidden;
+  }
+  .dgrid .panel .sec { padding: 0 0.4rem; }
+  .dgrid .panel table, .dgrid .panel .ledger { border: 0; border-radius: 0; }
+  .dgrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    /* default stretch — panels in a row share one height, as in tablet2/3 */
+  }
+  .dgrid .balance { margin: 0.9rem 0 0; }
+  .dgrid .chartcard { margin: 0.9rem 0 0; }
+}
+@media (min-width: 900px) {
+  .dgrid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.6rem 1.5rem; }
+  .dgrid .chartcard { grid-column: 1 / 5; grid-row: 1; margin: 0.9rem 0 0; }
+  .dgrid .balance { grid-column: 5 / 7; grid-row: 1; margin: 0.9rem 0 0; }
+  .panel.pw { grid-column: 1 / 3; }
+  .panel.pc { grid-column: 3 / 5; }
+  .panel.pu { grid-column: 5 / 7; }
+  .panel.pr { grid-column: 1 / 7; }
+  .panel.pr .sec { padding: 0 0.4rem; }
+  .panel.pr .ledger { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+}
 </style>

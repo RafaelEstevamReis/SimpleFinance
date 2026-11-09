@@ -1,7 +1,7 @@
 // categories.ts — budget track math and month spend grouping.
 
 import { describe, expect, it } from 'vitest'
-import { budgetNote, budgetTrack, sumSpentByCategory } from './categories'
+import { budgetNote, budgetTrack, monthlyBudgetRow, sumSpentByCategory } from './categories'
 import type { TransactionResponse } from './types'
 
 function tx(categoryId: number, effectiveValue: number, typeOtherId = 0): TransactionResponse {
@@ -59,5 +59,26 @@ describe('budgetNote', () => {
 
   it('no budget, no note', () => {
     expect(budgetNote(0)).toBe('')
+  })
+})
+
+describe('monthlyBudgetRow', () => {
+  const cats = [
+    { id: 1, isExpense: true, monthlyBudget: 1000 },
+    { id: 2, isExpense: true, monthlyBudget: 900 },
+    { id: 3, isExpense: false, monthlyBudget: 500 },
+  ]
+
+  it('sums spent and limit over every expense category with a budget', () => {
+    expect(monthlyBudgetRow(new Map([[1, -123.4]]), cats)).toBe('123.40 of 1,900')
+  })
+
+  it('an unbudgeted expense category stays out — spend without a limit inflates nothing', () => {
+    const mixed = [...cats, { id: 4, isExpense: true, monthlyBudget: 0 }]
+    expect(monthlyBudgetRow(new Map([[4, 50]]), mixed)).toBe('0.00 of 1,900')
+  })
+
+  it('no budgets at all means no row', () => {
+    expect(monthlyBudgetRow(new Map([[9, 10]]), [{ id: 9, isExpense: true, monthlyBudget: 0 }])).toBe('')
   })
 })
