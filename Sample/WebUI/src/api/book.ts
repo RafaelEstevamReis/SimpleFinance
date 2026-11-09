@@ -108,7 +108,11 @@ export function buildTransactionRequest(form: {
   if (due < 0) return { request: null, error: 'Due value is sent positive — the category decides the side' }
   if (due === 0) return { request: null, error: 'Due value cannot be zero' }
 
-  const paid = form.status === 'Paid' ? Number(form.paidValue) : 0
+  // Paid with an empty paid value assumes the due — the common "paid in
+  // full"; a partial payment types its own number
+  const paid = form.status === 'Paid'
+    ? (form.paidValue.trim() === '' ? due : Number(form.paidValue))
+    : 0
   if (form.status === 'Paid' && !Number.isFinite(paid)) return { request: null, error: 'Paid value must be a number' }
   if (form.status === 'Paid' && paid < 0) return { request: null, error: 'Paid value is sent positive — the category decides the side' }
 

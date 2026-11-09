@@ -215,19 +215,23 @@ can have; how the screen *designs around* that shape is open.
 
 The single-row power moves, surfaced where the money is already on screen.
 
-- [ ] Due actions on the book rows and the dashboard due list: pay on the due
-      date, pay as today, reverse — inline, no dead-end.
+- [x] Due actions on the book rows and the dashboard due list: pay on the due
+      date, pay as today, reverse — inline, no dead-end. Undo reversal is the
+      way back (a reversed row is never a dead-end either).
 
 ## M10 — Advanced search
 
 A power tool, not a core screen — built after the book proves the search
 endpoints' shaping.
 
-- [ ] The `/by` filters (wallet/category/person/counterparty windows) with the
+- [x] The `/by` filters (wallet/category/person/counterparty windows) with the
       shared shaping of the two search endpoints (`order`/`limit`, date-type
       sort with `Id` tiebreak).
-- [ ] Result actions identical to the book rows (open, edit) — no dead-end
-      results.
+- [x] Result actions identical to the book rows (open, edit) — no dead-end
+      results. Quick actions ride along (M9's builders, same buttons), and
+      the edit forms themselves became shared components: MovementForm and
+      TransferForm, extracted from the book so search and book edit rows
+      through one truth.
 
 ## M11 — Bulk + Import (closing)
 
@@ -336,3 +340,31 @@ a 9000 month with 1793 spent — the net of a ledger where expense walks
 below zero is a SUM, and that is the second time the sign doctrine paid
 a test. Geometry lives in `chartBars`, pure and pinned; a month with no
 money keeps its slot — a quiet month is a fact, not a gap.
+
+2026-11-09 M9 — a quick action is the row's own truth rebuilt, not a
+sketch: the wire has no patch verb, so every builder carries every field
+and only what the action owns moves. The three power moves live inline
+where the money already is — book rows and the dashboard due list share
+one builder, never two truths — and a transfer is ONE decision even here:
+pay or reverse crosses the pair through the transfer endpoint, both legs
+together, because a half-flipped pair would lie. Pay as today is today:
+when the honest timeline moves the row to another month the screen says
+"moved to Nov", a row that just vanishes would look like a bug. And a
+reversed row is not a dead-end — undo is the fourth quick action; the
+simple row with no category gets none at all, because the server refuses
+CategoryId 0 and the edit form is where it gets categorized first.
+
+2026-11-09 M10 — the power tool earned its tri-state filters: every id is
+"All", one, or "None" — and None is a real thing to ask for, because
+"no category" is where the transfer legs live. The ids combine with AND
+and the window is always explicit, the same doctrine the book already
+paid for; and the server's own rule — a 'limit' never travels without
+its 'order' — is said by the form first, not by a 400. The result rows
+proved the deeper point: a limit cuts at the WIRE, so a pair may arrive
+cut in half — the orphan leg is a fact, not a crash. And "identical to
+the book rows" was taken literally: the movement and transfer forms left
+the book and became components, so the found row is edited through the
+same form that created it — one truth, no dead-end. The smoke caught a
+preexisting hole in that form: Paid with an empty paid value wrote a
+paid-of-zero row, a "payment" that paid nothing — paid-in-full is now
+the empty field's meaning, pinned by a test.

@@ -124,6 +124,11 @@ describe('buildTransactionRequest', () => {
     expect(out.request?.paidValue).toBe(0)
   })
 
+  it('paid with an empty paid value assumes the due — "paid in full" is one keystroke fewer', () => {
+    const out = buildTransactionRequest({ ...form, paidValue: '' })
+    expect(out.request?.paidValue).toBe(620)
+  })
+
   it('refuses zero — a movement without a side', () => {
     expect(buildTransactionRequest({ ...form, dueValue: '0' }).error).toBe('Due value cannot be zero')
   })

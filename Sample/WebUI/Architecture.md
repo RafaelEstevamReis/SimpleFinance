@@ -57,8 +57,10 @@ Sample/WebUI/
     │   └── types.ts       # DTO mirrors of the WebApi request/response shapes
     ├── styles/
     │   └── themes.ts       # theme registry (satisfies Record<string, Theme>) + applyTheme
-    ├── components/        # hand-written, no UI kit — table, form fields, money display
-    └── views/             # one file per screen: Login, Wallets, Transactions, ...
+    ├── components/        # hand-written, no UI kit — MovementForm and TransferForm are
+    │   │                  # the shared edit surfaces (book and search edit rows through them)
+    │   └── AppShell.vue   # top bar + bottom nav + global error area
+    └── views/             # one file per screen: Home, Wallets, Book, Search, Categories, Settings, ...
 ```
 
 ## Application state

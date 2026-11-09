@@ -13,6 +13,7 @@ import { monthWindow, monthWindowOffset } from '../api/months'
 import { formatMoney, liveBalances, netWorthLabel, sumByCurrency } from '../api/wallets'
 import { chartBars, monthSeries, recentRows, upcomingDue } from '../api/dashboard'
 import { rowDate } from '../api/book'
+import { availableActions, payAsToday, payOnDue, reverseRow, unreverseRow, type QuickActionName } from '../api/actions'
 
 const router = useRouter()
 const wallets = ref<WalletResponse[]>([])
@@ -51,6 +52,51 @@ async function load(): Promise<void> {
 }
 
 onMounted(() => void load())
+
+// -- quick actions on the due list (M9) — same builders the book uses ------
+
+const quickBusy = ref(0)
+const quickNotice = ref('')
+
+const QUICK_ICON: Record<QuickActionName, string> = {
+  payDue: '✓',
+  payToday: '✓',
+  reverse: '↩',
+  unreverse: '↩',
+}
+const QUICK_LABEL: Record<QuickActionName, string> = {
+  payDue: 'Pay on due date',
+  payToday: 'Pay as today',
+  reverse: 'Reverse',
+  unreverse: 'Undo reversal',
+}
+
+/// Fire a due action without leaving the dashboard; one load refreshes
+/// spend, chart, upcoming and recent together — they share the search
+async function quick(name: QuickActionName, tx: TransactionResponse, ev: Event): Promise<void> {
+  ev.stopPropagation()
+  const client = activeClient()
+  if (!client || quickBusy.value !== 0) return
+  const action = name === 'payDue' ? payOnDue(tx)
+    : name === 'payToday' ? payAsToday(tx, new Date().toISOString())
+    : name === 'reverse' ? reverseRow(tx)
+    : unreverseRow(tx)
+  if (action.request === null && action.transferRequest === null) return
+  quickBusy.value = tx.id
+  try {
+    if (action.request !== null) await client.updateTransaction(tx.id, action.request)
+    else await client.updateTransfer(tx.id, action.transferRequest!)
+    quickNotice.value = action.movesTo === null
+      ? (name === 'reverse' ? 'Reversed.' : 'Saved.')
+      : `Saved — the row moved to ${action.movesTo}.`
+    await load()
+  } catch (e) {
+    quickNotice.value = ''
+    session.error.value = errorMessage(e)
+  } finally {
+    quickBusy.value = 0
+  }
+}
 
 const net = computed<string>(() => netWorthLabel(balances.value))
 const netNote = computed<string>(() => {
@@ -200,12 +246,17 @@ function rowAmount(tx: TransactionResponse): { text: string; cls: string } {
     </div>
 
     <div class="sec"><h2>Upcoming</h2><a @click="router.push({ name: 'book' })">book →</a></div>
+    <p v-if="quickNotice !== ''" class="notice">{{ quickNotice }}</p>
     <div v-if="upcoming.length > 0" class="ledger">
       <div v-for="r in upcoming" :key="r.tx.id" class="tx" @click="router.push({ name: 'book' })">
         <div class="ic">{{ r.kind === 'transfer' ? '⇄' : '↓' }}</div>
         <div class="who">
           <b :class="{ overdue: r.overdueBy > 0 }">{{ rowTitle(r.tx) }}</b>
           <span>{{ r.date }} · {{ walletName(r.tx.walletId) }}</span>
+        </div>
+        <div class="quick" v-if="availableActions(r.tx).length > 0">
+          <button v-for="a in availableActions(r.tx)" :key="a" class="qbtn" :title="QUICK_LABEL[a]"
+            :disabled="quickBusy !== 0" @click="quick(a, r.tx, $event)">{{ QUICK_ICON[a] }}</button>
         </div>
         <div class="amt" :class="rowAmount(r.tx).cls">{{ rowAmount(r.tx).text }}</div>
       </div>
@@ -294,4 +345,13 @@ tr.del td { opacity: 0.5; }
 .tx .amt { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.82rem; flex-shrink: 0; }
 .tx .amt.pos { color: var(--success); }
 .tx .amt.neg { color: var(--fg); }
+.notice { color: var(--accent); font-size: 0.8rem; margin: 0.4rem 0; }
+.quick { display: flex; gap: 0.3rem; flex: none; }
+.qbtn {
+  width: 1.8rem; height: 1.8rem; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--accent); font: inherit; font-size: 0.8rem;
+  cursor: pointer; display: grid; place-items: center; padding: 0;
+}
+.qbtn:hover { border-color: var(--accent); }
+.qbtn[title='Pay as today'] { font-weight: 700; }
 </style>

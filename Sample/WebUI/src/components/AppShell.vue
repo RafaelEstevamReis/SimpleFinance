@@ -146,6 +146,7 @@ const accountTypeLabel = labelOfAccountType // template needs it exposed
           <li><RouterLink to="/" class="on"><div>▤</div>Home</RouterLink></li>
           <li><RouterLink to="/wallets"><div>◈</div>Wallets</RouterLink></li>
           <li><RouterLink to="/book"><div>≡</div>Book</RouterLink></li>
+          <li><RouterLink to="/search"><div>⌕</div>Search</RouterLink></li>
           <li><RouterLink to="/settings"><div>⚙</div>Settings</RouterLink></li>
         </ul>
       </nav>
