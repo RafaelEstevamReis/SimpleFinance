@@ -20,7 +20,8 @@ const serverUrl = getServerUrl(localStorage) ?? ''
 const accounts = ref(getAccounts(localStorage))
 
 // step 1: account on this server
-const accountLabel = ref('')
+// name is asked HERE for "create new" only — adding an existing Key never asks
+const newAccountName = ref('')
 const accountKey = ref('')
 const creating = ref(false)
 const accountError = ref('')
@@ -52,26 +53,27 @@ function failureMessage(e: unknown): string {
   return (e as Error).message
 }
 
+/// Add an existing account by its Key. No name is asked — the account
+/// already has one, the server owns it, and the probe reads it here
 async function addAccount(): Promise<void> {
   accountError.value = ''
   const key = accountKey.value.trim()
-  const label = accountLabel.value.trim() || 'Account'
   if (key === '') { accountError.value = 'Paste an existing Key or create an account'; return }
   if (serverUrl === '') { accountError.value = 'No server selected yet'; return }
+  if (accounts.value.some((a) => a.key === key)) { accountError.value = 'This Key is already saved below'; return }
   creating.value = true
   try {
     // validate before saving — a Key that does not open is not an account
     const probe = new ApiClient(serverUrl, key)
     const info = await probe.account()
     const stored: StoredAccount = {
-      label: label || info.name,
+      name: info.name,
       key,
       primaryCurrency: currency.value,
     }
     accounts.value = [...accounts.value, stored]
     saveAccounts(localStorage, accounts.value)
     accountKey.value = ''
-    accountLabel.value = ''
   } catch (e) {
     accountError.value = failureMessage(e)
   } finally {
@@ -79,23 +81,26 @@ async function addAccount(): Promise<void> {
   }
 }
 
+/// Create a new account. THIS is the only moment a name is asked — the
+/// server is the only owner of it and only takes it at creation
 async function createAccount(): Promise<void> {
   accountError.value = ''
   creating.value = true
   try {
     if (serverUrl === '') { accountError.value = 'No server selected yet'; return }
     const probe = new ApiClient(serverUrl)
-    const res = await probe.createAccount(accountLabel.value.trim() || 'Account')
+    const res = await probe.createAccount(newAccountName.value.trim() || 'Account')
     // Auto-save: the Key is shown once by the API and unrecoverable — a reload
     // between "create" and "save" would lose it forever. Store it immediately;
     // the shown-once box stays for the user to copy it elsewhere.
     const stored: StoredAccount = {
-      label: accountLabel.value.trim() || res.name || 'Account',
+      name: res.name,
       key: res.key,
       primaryCurrency: currency.value,
     }
     accounts.value = [...accounts.value, stored]
     saveAccounts(localStorage, accounts.value)
+    newAccountName.value = ''
     createdKey.value = res.key
     createdCopied.value = false
   } catch (e) {
@@ -111,12 +116,16 @@ function copyCreatedKey(): void {
 }
 
 async function connect(acc: StoredAccount): Promise<void> {
-  connecting.value = acc.label
+  connecting.value = acc.key
   try {
     if (serverUrl === '') return
-    // revalidate on connect — keys can be stale
+    // revalidate on connect — keys can be stale. The probe also refreshes
+    // the cached name: the server owns it, the browser just remembers it
     const client = new ApiClient(serverUrl, acc.key)
-    await client.account()
+    const info = await client.account()
+    accounts.value = accounts.value.map((a) =>
+      a.key === acc.key && a.name !== info.name ? { ...a, name: info.name } : a)
+    saveAccounts(localStorage, accounts.value)
     saveActive(localStorage, { key: acc.key })
     // session state loads identity + all preferences (theme/mode/account-type)
     // in one place; server is the truth, preview cache is the fallback
@@ -132,7 +141,7 @@ async function connect(acc: StoredAccount): Promise<void> {
 }
 
 function cardTint(a: StoredAccount): Record<string, string> | undefined {
-  const preview = getThemePreview(localStorage, a.label)
+  const preview = getThemePreview(localStorage, a.key)
   if (preview && isThemeName(preview)) {
     return { borderColor: accentOf(preview) }
   }
@@ -141,12 +150,12 @@ function cardTint(a: StoredAccount): Record<string, string> | undefined {
 
 /** Accent for the identity dot; neutral (CSS default) when no preview */
 function dotColor(a: StoredAccount): string | undefined {
-  const preview = getThemePreview(localStorage, a.label)
+  const preview = getThemePreview(localStorage, a.key)
   return preview && isThemeName(preview) ? accentOf(preview) : undefined
 }
 
 function removeAccount(acc: StoredAccount): void {
-  accounts.value = accounts.value.filter((a) => a.label !== acc.label || a.key !== acc.key)
+  accounts.value = accounts.value.filter((a) => a.key !== acc.key)
   saveAccounts(localStorage, accounts.value)
 }
 </script>
@@ -159,24 +168,32 @@ function removeAccount(acc: StoredAccount): void {
     </header>
     <p class="muted">on {{ serverUrl }}</p>
 
-    <!-- Step 1: account -->
+    <!-- Step 1a: open an existing account — the Key is the whole identity,
+         the name is the server's business and is never asked here -->
     <section>
       <h2>1 · Account</h2>
       <div class="row">
-        <input v-model="accountLabel" placeholder="Account name" />
-      </div>
-      <div class="row">
         <input v-model="accountKey" placeholder="Paste existing Key" autocomplete="off" />
         <button :disabled="creating" @click="addAccount">Add existing</button>
-        <button :disabled="creating" @click="createAccount">Create new</button>
       </div>
-      <label class="currency">
-        Primary currency
-        <select v-model="currency">
-          <option v-for="c in browserCurrency" :key="c" :value="c">{{ c }}</option>
-        </select>
-      </label>
       <p v-if="accountError" class="err">{{ accountError }}</p>
+    </section>
+
+    <!-- Step 1b: create a new account — the ONE place a name is asked -->
+    <section>
+      <h2>Create new</h2>
+      <div class="row">
+        <input v-model="newAccountName" placeholder="Account name" />
+      </div>
+      <div class="row">
+        <label class="currency">
+          Primary currency
+          <select v-model="currency">
+            <option v-for="c in browserCurrency" :key="c" :value="c">{{ c }}</option>
+          </select>
+        </label>
+        <button :disabled="creating" @click="createAccount">Create account</button>
+      </div>
 
       <div v-if="createdKey" class="created">
         <p><strong>Key created and saved — copy it now, it is shown once and cannot be recovered:</strong></p>
@@ -198,13 +215,13 @@ function removeAccount(acc: StoredAccount): void {
             :style="cardTint(a)">
           <div>
             <span class="dot" :style="{ background: dotColor(a) }"></span>
-            <strong>{{ a.label }}</strong>
+            <strong>{{ a.name }}</strong>
             <span class="muted"> · {{ a.primaryCurrency }}</span>
           </div>
           <div class="row tight">
-            <button class="primary" :disabled="connecting === a.label"
+            <button class="primary" :disabled="connecting === a.key"
                     @click="connect(a)">
-              {{ connecting === a.label ? 'Connecting…' : 'Connect' }}
+              {{ connecting === a.key ? 'Connecting…' : 'Connect' }}
             </button>
             <button @click="removeAccount(a)">Remove</button>
           </div>

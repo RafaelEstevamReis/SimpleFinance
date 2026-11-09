@@ -68,7 +68,7 @@ All client-side, all trivial on purpose:
 | Concern | Where | Notes |
 |---|---|---|
 | Server (single) | `localStorage["webui.server"]` | JSON string with the base URL — the app points at one WebApi; nothing baked in |
-| Accounts | `localStorage["webui.accounts"]` | `[{ label, key, primaryCurrency }]` — accounts of that one server |
+| Accounts | `localStorage["webui.accounts"]` | `[{ name, key, primaryCurrency }]` — `name` is a CACHE of the server's `Account.Name`, refreshed on every contact (probe, create, connect). The Key is the identity; the browser never owns the name. Legacy rows with `label` migrate on read |
 | Active account | `localStorage["webui.active"]` | `{ key }`; switching re-navigates to the dashboard |
 | Server data | component-local | no store, no pinia — each view fetches what it shows; the app is small enough that a store would be ceremony |
 
@@ -133,7 +133,7 @@ second system.
 |---|---|---|
 | The account's theme | `AccountPreference` on the server: preference name `theme`, value = a theme name | Travels with the account to any browser; read with `GET /api/account/preferences`, written with `PUT /api/account/preferences/{name}` — both already exist, **no API change** |
 | Active in the session | CSS custom properties on `<html>`, set by `applyTheme(name)` on connect and on switch | A theme is data in `themes.ts`; applying it is setting vars |
-| Login-screen preview | `localStorage["webui.theme.<accountLabel>"]` | Cache of the last-seen theme so account cards can be tinted **before** connecting — there is no Key to read preferences with at that point. Server stays the truth; cache is only a preview. A brand-new account on a new browser shows neutral until first connect |
+| Login-screen preview | `localStorage["webui.theme.<accountKey>"]` | Cache of the last-seen theme so account cards can be tinted **before** connecting — there is no Key to read preferences with at that point. Keyed by the account Key (the identity), never the name (a cache). Server stays the truth; cache is only a preview. A brand-new account on a new browser shows neutral until first connect |
 
 ### Subtle by design
 

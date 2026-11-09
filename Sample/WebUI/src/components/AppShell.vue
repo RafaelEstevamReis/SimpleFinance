@@ -50,12 +50,14 @@ function closeSheet(): void {
 
 async function pickAccount(acc: StoredAccount): Promise<void> {
   if (switching.value !== '') return
-  const active = accounts.value.find((a) => a.key === acc.key)
-  if (active && active.key === session.state.value.accountName) {
+  const active = getActive(localStorage)
+  if (active !== null && active.key === acc.key) {
+    // already connected — comparing KEYS, never the name (the old code
+    // compared a Guid against accountName and always missed)
     closeSheet()
     return
   }
-  switching.value = acc.label
+  switching.value = acc.key
   session.error.value = ''
   try {
     await switchAccount(acc)
@@ -82,7 +84,7 @@ function leave(): void {
 
 /** Label tint for the profile sheet — preview cache, same as connect cards */
 function tintOf(acc: StoredAccount): string | undefined {
-  const preview = getThemePreview(localStorage, acc.label)
+  const preview = getThemePreview(localStorage, acc.key)
   return preview !== null && isThemeName(preview) ? accentOf(preview) : undefined
 }
 
@@ -127,8 +129,8 @@ const accountTypeLabel = labelOfAccountType // template needs it exposed
               :disabled="switching !== ''"
               @click="pickAccount(a)"
             >
-              <span class="mini">{{ initialOf(a.label) }}</span>
-              <span class="t">{{ a.label }} <span>{{ a.primaryCurrency }}</span></span>
+              <span class="mini">{{ initialOf(a.name) }}</span>
+              <span class="t">{{ a.name }} <span>{{ a.primaryCurrency }}</span></span>
               <span v-if="a.key === getActiveKey()" class="here">here</span>
             </button>
             <button class="acct addnew" @click="addOrCreate">

@@ -17,6 +17,7 @@ import {
   getServerUrl,
   getThemePreview,
   saveActive,
+  saveAccounts,
   saveThemePreview,
   type StoredAccount,
 } from '../api/storage'
@@ -87,8 +88,16 @@ export async function loadSession(): Promise<void> {
     const account = await client.account()
     const prefs = parsePreferences(await client.getPreferences())
     // theme/mode fallbacks: server preference first, then local preview, else neutral
-    const label = activeStoredAccount()?.label ?? null
-    const preview = label !== null ? getThemePreview(localStorage, label) : null
+    const active = getActive(localStorage)
+    // the name cache follows the server — every identity load refreshes it
+    if (active) {
+      const saved = getAccounts(localStorage)
+      if (saved.some((a) => a.key === active.key && a.name !== account.name)) {
+        saveAccounts(localStorage, saved.map((a) =>
+          a.key === active.key ? { ...a, name: account.name } : a))
+      }
+    }
+    const preview = active !== null ? getThemePreview(localStorage, active.key) : null
     const theme = prefs.theme ?? (preview !== null && isThemeName(preview) ? preview : null)
     const s = state.value
     s.accountName = account.name
@@ -112,8 +121,8 @@ export async function setPreference(name: 'theme' | 'mode' | 'account-type', val
   if (name === 'theme' && isThemeName(value)) {
     state.value.theme = value
     applyTheme(value)
-    const label = activeStoredAccount()?.label ?? null
-    if (label) saveThemePreview(localStorage, label, value)
+    const active = getActive(localStorage)
+    if (active) saveThemePreview(localStorage, active.key, value)
   } else if (name === 'mode' && isModeName(value)) {
     state.value.mode = value
     applyMode(value)
@@ -148,9 +157,9 @@ export function disconnect(): void {
   error.value = ''
 }
 
-/** Initial of a label, for the profile avatar */
-export function initialOf(label: string): string {
-  const trimmed = label.trim()
+/** Initial of the account name, for the profile avatar */
+export function initialOf(name: string): string {
+  const trimmed = name.trim()
   return trimmed === '' ? '?' : trimmed[0].toUpperCase()
 }
 

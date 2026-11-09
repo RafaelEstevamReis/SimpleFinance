@@ -6,7 +6,9 @@
 // No server name, no server list — baseUrl alone identifies the server.
 
 export interface StoredAccount {
-  label: string
+  /** Server's Account.Name — a CACHE, not a truth. The Key is the identity;
+   *  every contact with the server (probe, create, connect) refreshes it */
+  name: string
   key: string
   /** Primary currency asked at account creation (ISO 4217), WebUI-side only */
   primaryCurrency: string
@@ -42,10 +44,20 @@ export function getServerUrl(storage: Storage): string | null {
   return typeof v === 'string' && v !== '' ? v : null
 }
 
+/// One-time migration: accounts saved before the name unification carried
+/// a browser-side `label`. It becomes the `name` cache's seed — the next
+/// contact with the server overwrites it with the server's truth
 export function getAccounts(storage: Storage): StoredAccount[] {
   const v = readJson<unknown>(storage, KEYS.accounts, [])
-  return Array.isArray(v) ? (v as StoredAccount[]) : []
+  if (!Array.isArray(v)) return []
+  return (v as Record<string, unknown>[]).map((raw) => {
+    const key = typeof raw.key === 'string' ? raw.key : ''
+    const name = typeof raw.name === 'string' ? raw.name : typeof raw.label === 'string' ? raw.label : ''
+    const primaryCurrency = typeof raw.primaryCurrency === 'string' ? raw.primaryCurrency : 'USD'
+    return { name, key, primaryCurrency }
+  })
 }
+
 
 export function getActive(storage: Storage): ActiveSelection | null {
   const v = readJson<unknown>(storage, KEYS.active, null)
@@ -57,14 +69,15 @@ export function getActive(storage: Storage): ActiveSelection | null {
   return null
 }
 
-/** Last-seen theme of an account — preview only, server stays the truth */
-export function getThemePreview(storage: Storage, accountLabel: string): string | null {
-  const v = readJson<unknown>(storage, KEYS.themePreviewPrefix + accountLabel, null)
+/** Last-seen theme of an account — preview only, server stays the truth.
+ *  Keyed by the account KEY: the name is a cache, the Key is the identity */
+export function getThemePreview(storage: Storage, accountKey: string): string | null {
+  const v = readJson<unknown>(storage, KEYS.themePreviewPrefix + accountKey, null)
   return typeof v === 'string' && v !== '' ? v : null
 }
 
-export function saveThemePreview(storage: Storage, accountLabel: string, theme: string): void {
-  writeJson(storage, KEYS.themePreviewPrefix + accountLabel, theme)
+export function saveThemePreview(storage: Storage, accountKey: string, theme: string): void {
+  writeJson(storage, KEYS.themePreviewPrefix + accountKey, theme)
 }
 
 

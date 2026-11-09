@@ -46,12 +46,17 @@ describe('storage corrupt-JSON safety', () => {
 
   it('round-trip server, accounts, active', () => {
     saveServerUrl(s, 'http://localhost:5080')
-    saveAccounts(s, [{ label: 'main', key: 'abc', primaryCurrency: 'BRL' }])
+    saveAccounts(s, [{ name: 'main', key: 'abc', primaryCurrency: 'BRL' }])
     saveActive(s, { key: 'abc' })
 
     expect(getServerUrl(s)).toBe('http://localhost:5080')
-    expect(getAccounts(s)[0].primaryCurrency).toBe('BRL')
+    expect(getAccounts(s)[0]).toEqual({ name: 'main', key: 'abc', primaryCurrency: 'BRL' })
     expect(getActive(s)).toEqual({ key: 'abc' })
+  })
+
+  it('legacy `label` seeds the name cache — the Key is the identity', () => {
+    s.setItem('webui.accounts', JSON.stringify([{ label: 'main', key: 'abc', primaryCurrency: 'BRL' }]))
+    expect(getAccounts(s)).toEqual([{ name: 'main', key: 'abc', primaryCurrency: 'BRL' }])
   })
 
   it('empty-string server (legacy corrupt) reads as null', () => {
