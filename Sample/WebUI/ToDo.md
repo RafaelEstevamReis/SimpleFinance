@@ -233,17 +233,100 @@ endpoints' shaping.
       TransferForm, extracted from the book so search and book edit rows
       through one truth.
 
-## M11 — Bulk + Import (closing)
+## M11 — Counterparties (cadastro)
 
-- [ ] Bulk transactions form (the `POST` bulk endpoint) — quick actions in
-      mass, the sibling of M9's single-row moves.
-- [ ] OFX/MT940 import: upload → parsed rows shown for review → post back
-      (import endpoint is parse-only; the UI owns the write and the
-      no-dedup warning).
+The counterparty exists on the server and nowhere to be born in the UI —
+the selects read a list nothing populates. It becomes reachable where it
+is used:
+
+- [ ] `client.ts` gains the person writes: `createPerson` (`POST /api/persons`),
+      `updatePerson` (`PUT /api/persons/{id}`) — with the `PersonRequest`/name
+      validation mirrored from the API.
+- [ ] The counterparty select stops being a bare `<select>`: it becomes a
+      modal picker — a search box over the list (filter as you type), the
+      matching rows, and an "Add {name}" action that creates the person and
+      selects it in one stroke. The same picker serves the movement form and
+      the search filters.
+- [ ] A person is soft-deleted by the server, never removed: deleted rows
+      stay pickable but dimmed (the `del` class doctrine), because a movement
+      from the past still points at them.
+- [ ] Tablet: the counterparty picker modal gets its wide layout — the match
+      list in multiple columns, the search box full-width (M12's canvas
+      doctrine, checked when M12 lands or alongside it).
+
+## M12 — Tablet mode (wider screens)
+
+The phone is done first by doctrine; the tablet earns its width. Not a new
+app — the same components, re-laid-out for a wider canvas. Visual basis
+approved: `scratchpad/tablet3.html` ("The canvas") — the shell opens to a
+wide max, accounts sit inline in the header at tablet width (the sheet's
+job, done where there is room), the dashboard is a card grid with the
+chart on the wide track beside net worth, three panels on a row, and
+multi-column ledgers where the rows are many:
+
+- [ ] Shell + nav: breakpoint opens the funnel (420px phone → tablet max).
+      The header keeps showing only the ACTIVE account — avatar + profile
+      sheet on click, the demo5 pattern unchanged from phone (revised
+      tablet3: no accounts row).
+- [ ] Dashboard per tablet3: chart (wide) beside net worth, wallets /
+      categories / upcoming on a three-panel row, recent ledger in two
+      columns.
+- [ ] Book, Search, Wallets, Categories on the same canvas doctrine:
+      month bar and filters get horizontal room, ledgers go multi-column
+      where the rows are many, forms take the wide track.
+- [ ] The bottom nav stays (thumb reach is not a desktop-only concern).
+- [ ] Smoke at both 390×844 and 768×1024: no stretched rows, no orphan
+      whitespace, no overflow at either width.
+
+
+## M13 — Bulk insert
+
+Quick actions in mass — the sibling of M9's single-row moves.
+
+- [ ] Bulk transactions form (the `POST` bulk endpoint): rows added inline,
+      one request, the server's per-item validation surfaced per row — an
+      invalid item stops nothing retroactively (the bulk is not
+      transactional; earlier rows stay).
+
+- [ ] Tablet: the bulk form rows get the wide track — row controls on a
+      grid line instead of stacked, more rows visible at once (M12's
+      canvas doctrine).
+
+## M14 — Import (OFX/MT940)
+
+The parse is the server's; the write and the dedup warning are ours.
+
+- [ ] Upload → parsed rows shown for review → post back (import endpoint is
+      parse-only; the UI owns the write and the no-dedup warning).
 - [ ] Default category pair per import (income/expense by sign, per
       `src/WebApi/AGENTS.md`).
 
-## M12 — Beyond the DemoProject (optional, separate decisions)
+- [ ] Tablet: the upload drop area and the parsed-rows review get the wide
+      track — review rows in multiple columns (M12's canvas doctrine).
+
+## M15 — Translations (i18n)
+
+The UI is written in English; the money speaks whatever language its user
+does. A translation layer lands LAST — after the screens it translates
+are stable, so strings move once, not twice:
+
+- [ ] String extraction: every literal the user can read goes through a
+      translation function (`t('key')` or equivalent) — one dictionary,
+      no strings inline in templates.
+- [ ] Language registry: three at launch — `en-US` (default, the current
+      texts), `pt-BR`, `es` (neutral Spanish, the widest umbrella).
+      Language is a client preference, picked in Settings, persisted per
+      browser.
+- [ ] Money stays as it is: amounts format with the wallet's currency
+      (`Intl`-based formatting), never with the UI language — a pt-BR UI
+      showing a USD wallet still shows USD amounts, US-style.
+- [ ] Dates follow the language: the book's month labels, weekday names
+      and the quick action notices render in the picked language.
+- [ ] Permanent vitest: the dictionary round-trips (every key used in a
+      screen exists in `en` and `pt-BR`, no orphan keys) — a missing
+      translation is caught by the suite, not by a user.
+
+## Beyond the DemoProject (optional, separate decisions)
 
 Scenarios, invoices, change log viewer — the API exposes them, the
 DemoProject never did. Treat each as its own milestone if wanted; do not

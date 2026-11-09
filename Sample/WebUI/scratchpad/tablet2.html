@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablet 2 — Pairs</title>
+<style>
+/* Proposal 2: the dashboard becomes PAIRS. Two columns where the glanceable
+   things sit side by side: balance+chart, wallets+categories, upcoming+recent.
+   The phone stack becomes the tablet grid; the shell grows to 960px. */
+:root{
+  color-scheme:dark;
+  --fg:light-dark(#1c2128,#e7ebee);
+  --muted:light-dark(#5a6270,#8b94a3);
+  --border:light-dark(#d7dbe2,#232a35);
+  --surface:light-dark(#ffffff,#161b23);
+  --bg:light-dark(#f6f7f9,#0e1218);
+  --success:light-dark(#1e7f4f,#4cbb87);
+  --error:light-dark(#b3372f,#e2726b);
+  --mono:'SF Mono',ui-monospace,Consolas,monospace;
+  --serif:Georgia,'Times New Roman',serif;
+  --accent:light-dark(var(--ac-l),var(--ac-d));
+  --accent-soft:light-dark(var(--acs-l),var(--acs-d));
+  --accent-dim:light-dark(var(--acd-l),var(--ac-d));
+  --ac-l:#1f6fd0; --acs-l:#d9e8fa; --acd-l:#175bb5;
+  --ac-d:#6aa5e8; --acs-d:#16233a;
+  --c1:light-dark(#3b6ea5,#5b8fc4);
+  --c2:light-dark(#3f8f5a,#56ab74);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:0 1.5rem 5rem}
+
+header{display:flex;justify-content:space-between;align-items:center;padding:.9rem 0 .7rem;border-bottom:2px solid var(--accent)}
+header .left h1{margin:0;font-family:var(--serif);font-size:1.2rem;letter-spacing:.02em}
+header .left .who{color:var(--muted);font-style:italic;font-size:.8rem;font-family:var(--serif)}
+.avatar{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--accent-soft);color:var(--accent-dim);
+  display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:1.1rem;
+  border:1px solid var(--border);cursor:pointer;flex:none}
+
+/* the grid of pairs — one row on a tablet, the phone stack under 640px */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin:.9rem 0}
+.balance{background:linear-gradient(135deg,var(--surface),var(--accent-soft));border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.2rem}
+.balance .lbl{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.balance .val{font-family:var(--mono);font-size:2.1rem;margin:.25rem 0;font-variant-numeric:tabular-nums}
+.balance .delta{font-family:var(--mono);font-size:.78rem;color:var(--success)}
+
+.chartcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;
+  display:flex;flex-direction:column}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:.2rem 0 .5rem}
+.sec h2{margin:0;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sec a{color:var(--accent-dim);font-size:.75rem;text-decoration:none}
+.chart{flex:1;width:100%}
+
+/* pair rows further down */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:.8rem .4rem .4rem;overflow:hidden}
+.panel .sec{padding:0 .4rem}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:.85rem}
+th{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.5rem .8rem;border-bottom:1px solid var(--border);font-weight:500}
+td{padding:.55rem .8rem;border-bottom:1px solid var(--border)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem}
+td.neg{color:var(--error)}
+tr.row-total td{background:var(--accent-soft)}
+tr:last-child td{border-bottom:0}
+
+.walletline{display:flex;align-items:center;gap:.6rem;padding:.55rem .8rem;font-size:.85rem}
+.walletline + .walletline{border-top:1px solid var(--border)}
+.walletline .name{width:6em}
+.walletline .track{flex:1;height:.5rem;border-radius:99px;background:var(--bg);border:1px solid var(--border);overflow:hidden}
+.walletline .fill{height:100%;background:var(--accent);border-radius:99px}
+.walletline .fill.over{background:var(--error)}
+.walletline b{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem;text-align:right}
+.walletline b.neg{color:var(--error)}
+.walletline .of{display:block;font-size:.6rem;color:var(--muted);font-family:var(--mono)}
+
+.tx{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-bottom:1px solid var(--border)}
+.tx:last-child{border-bottom:0}
+.tx .ic{width:2rem;height:2rem;border-radius:9px;background:var(--accent-soft);display:grid;place-items:center;font-family:var(--mono);font-size:.7rem;color:var(--accent-dim);flex:none}
+.tx .ic.late{background:light-dark(#f8ecd4,#3a2a10);color:var(--error)}
+.tx .who{flex:1;min-width:0}
+.tx .who b{display:block;font-size:.88rem;font-weight:500}
+.tx .who span{font-size:.72rem;color:var(--muted);font-family:var(--mono)}
+.tx .who span.late{color:var(--error)}
+.tx .amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.9rem}
+.amt.pos{color:var(--success)} .amt.neg{color:var(--fg)}
+
+nav{position:fixed;bottom:0;left:0;right:0;background:light-dark(rgba(246,247,249,.92),rgba(14,18,24,.92));backdrop-filter:blur(10px);border-top:1px solid var(--border)}
+nav ul{display:flex;list-style:none;margin:0 auto;padding:.55rem .35rem .75rem;max-width:960px}
+nav li{flex:1}
+nav a{display:flex;flex-direction:column;align-items:center;gap:.18rem;color:var(--muted);text-decoration:none;
+  font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
+nav a div{font-size:1.2rem;line-height:1}
+nav a.on{color:var(--accent-dim)}
+
+.note{margin:1.4rem 0 .4rem;padding:.8rem 1rem;border:1px dashed var(--border);border-radius:10px;
+  font-size:.78rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="left">
+      <h1>My Personal Finances</h1>
+      <span class="who">Personal Account</span>
+    </div>
+    <button class="avatar" title="Switch profile">R</button>
+  </header>
+
+  <!-- pair 1: net worth beside the chart -->
+  <div class="grid2">
+    <div class="balance">
+      <div class="lbl">Net worth</div>
+      <div class="val">R$ 15,341.30</div>
+      <div class="delta">▲ R$ 7,222.60 this month (+88.9%)</div>
+    </div>
+    <div class="chartcard">
+      <div class="sec"><h2>Monthly</h2><span style="font-family:var(--mono);font-size:.7rem;color:var(--c1)">■ in</span> <span style="font-family:var(--mono);font-size:.7rem;color:var(--c2)">■ out</span></div>
+      <svg class="chart" viewBox="0 0 420 130" role="img" aria-label="Income and expense by month">
+        <line x1="0" y1="120" x2="420" y2="120" stroke="var(--border)"/>
+        <rect x="30"  y="25" width="40" height="95" rx="2" fill="var(--c1)"/>
+        <rect x="78"  y="60" width="40" height="60" rx="2" fill="var(--c2)"/>
+        <rect x="170" y="15" width="40" height="105" rx="2" fill="var(--c1)"/>
+        <rect x="218" y="52" width="40" height="68" rx="2" fill="var(--c2)"/>
+        <rect x="310" y="20" width="40" height="100" rx="2" fill="var(--c1)"/>
+        <rect x="358" y="66" width="40" height="54" rx="2" fill="var(--c2)"/>
+        <text x="74"  y="129" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--mono)">Sep</text>
+        <text x="214" y="129" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--mono)">Oct</text>
+        <text x="354" y="129" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--mono)">Nov</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- pair 2: wallets beside categories -->
+  <div class="grid2">
+    <div class="panel">
+      <div class="sec"><h2>Wallets</h2><a href="#">manage →</a></div>
+      <table>
+        <tr><th>Wallet</th><th>Currency</th><th class="num">Balance</th></tr>
+        <tr><td>Main</td><td>BRL</td><td class="num">4,231.50</td></tr>
+        <tr><td>Savings</td><td>BRL</td><td class="num">12,000.00</td></tr>
+        <tr class="row-total"><td>Credit card</td><td>BRL</td><td class="num neg">−890.20</td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="sec"><h2>Categories</h2><a href="#">manage →</a></div>
+      <div class="walletline"><span class="name">Groceries</span><div class="track"><div class="fill" style="width:62%"></div></div><b>620.00<span class="of">of 1,000</span></b></div>
+      <div class="walletline"><span class="name">Transport</span><div class="track"><div class="fill" style="width:38%"></div></div><b>190.00<span class="of">of 500</span></b></div>
+      <div class="walletline"><span class="name">Eating out</span><div class="track"><div class="fill over" style="width:100%"></div></div><b class="neg">547.80<span class="of">of 400</span></b></div>
+      <div class="walletline"><span class="name">Salary</span><div class="track"><div class="fill" style="width:100%"></div></div><b>9,000.00<span class="of">no budget</span></b></div>
+    </div>
+  </div>
+
+  <!-- pair 3: upcoming beside recent -->
+  <div class="grid2">
+    <div class="panel">
+      <div class="sec"><h2>Upcoming</h2><a href="#">book →</a></div>
+      <div class="tx"><div class="ic late">!</div><div class="who"><b>Overdue from October</b><span class="late">Nov 09 · overdue</span></div><div class="amt neg">90.00</div></div>
+      <div class="tx"><div class="ic">↓</div><div class="who"><b>Due in November</b><span>Nov 20 · Main</span></div><div class="amt neg">250.00</div></div>
+      <div class="tx"><div class="ic">⇄</div><div class="who"><b>Unpaid transfer</b><span>Nov 28 · Main → Dollars</span></div><div class="amt neg">75.00</div></div>
+    </div>
+    <div class="panel">
+      <div class="sec"><h2>Recent</h2><a href="#">all →</a></div>
+      <div class="tx"><div class="ic">↑</div><div class="who"><b>Salary</b><span>Nov 05 · Main</span></div><div class="amt pos">+9,000.00</div></div>
+      <div class="tx"><div class="ic">⇄</div><div class="who"><b>Move to savings</b><span>transfer · linked</span></div><div class="amt neg">−300.00</div></div>
+      <div class="tx"><div class="ic">↓</div><div class="who"><b>Groceries</b><span>Nov 03 · Main</span></div><div class="amt neg">−620.00</div></div>
+      <div class="tx"><div class="ic">↓</div><div class="who"><b>Fuel and bus</b><span>Nov 02 · Main</span></div><div class="amt neg">−547.80</div></div>
+    </div>
+  </div>
+
+  <div class="note">Proposal 2 — pairs. Everything glanceable sits beside its sibling:
+  balance beside chart, wallets beside categories, upcoming beside recent. The phone
+  stack is unchanged below 640px; the tablet grid simply pairs it. Panels align on a
+  shared border radius, the way the cards already do on the phone.</div>
+</div>
+<nav>
+  <ul>
+    <li><a class="on" href="#"><div>▤</div>Home</a></li>
+    <li><a href="#"><div>◈</div>Wallets</a></li>
+    <li><a href="#"><div>≡</div>Book</a></li>
+    <li><a href="#"><div>⌕</div>Search</a></li>
+    <li><a href="#"><div>⚙</div>Settings</a></li>
+  </ul>
+</nav>
+</body>
+</html>

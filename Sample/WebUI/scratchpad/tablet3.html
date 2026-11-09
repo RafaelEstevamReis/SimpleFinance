@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablet 3 — The canvas</title>
+<style>
+/* Proposal 3: the shell stops being a funnel — the canvas is used whole.
+   The dashboard becomes a masonry-ish card grid; the header gains the
+   accounts inline (the sheet is redundant at this width). Most ambitious
+   of the three; the most desktop-like without becoming a desktop app. */
+:root{
+  color-scheme:dark;
+  --fg:light-dark(#1c2128,#e7ebee);
+  --muted:light-dark(#5a6270,#8b94a3);
+  --border:light-dark(#d7dbe2,#232a35);
+  --surface:light-dark(#ffffff,#161b23);
+  --bg:light-dark(#f6f7f9,#0e1218);
+  --success:light-dark(#1e7f4f,#4cbb87);
+  --error:light-dark(#b3372f,#e2726b);
+  --mono:'SF Mono',ui-monospace,Consolas,monospace;
+  --serif:Georgia,'Times New Roman',serif;
+  --accent:light-dark(var(--ac-l),var(--ac-d));
+  --accent-soft:light-dark(var(--acs-l),var(--acs-d));
+  --accent-dim:light-dark(var(--acd-l),var(--ac-d));
+  --ac-l:#1f6fd0; --acs-l:#d9e8fa; --acd-l:#175bb5;
+  --ac-d:#6aa5e8; --acs-d:#16233a;
+  --c1:light-dark(#3b6ea5,#5b8fc4);
+  --c2:light-dark(#3f8f5a,#56ab74);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem 5rem}
+
+/* header — only the ACTIVE account visible; click opens the same sheet
+   the phone already uses (demo5 pattern, unchanged) */
+header{display:flex;justify-content:space-between;align-items:center;padding:.9rem 0 .7rem;border-bottom:2px solid var(--accent)}
+header .left h1{margin:0;font-family:var(--serif);font-size:1.2rem;letter-spacing:.02em}
+header .left .who{color:var(--muted);font-style:italic;font-size:.8rem;font-family:var(--serif)}
+.avatar{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--accent-soft);color:var(--accent-dim);
+  display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:1.1rem;
+  border:1px solid var(--border);cursor:pointer;flex:none}
+.avatar:hover{border-color:var(--accent-dim)}
+.profile{position:relative;display:flex;justify-content:flex-end;margin-top:.15rem}
+.sheet{position:absolute;right:0;top:.4rem;width:16rem;background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.28);padding:.5rem;z-index:20}
+.sheet h3{margin:.2rem .5rem .4rem;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.acct{display:flex;align-items:center;gap:.6rem;width:100%;padding:.5rem;border:0;border-radius:9px;
+  background:transparent;color:var(--fg);font:inherit;font-size:.85rem;text-align:left;cursor:pointer}
+.acct:hover{background:var(--bg)}
+.acct.on{background:var(--accent-soft)}
+.acct .mini{width:1.7rem;height:1.7rem;border-radius:50%;background:var(--accent-soft);border:1px solid var(--border);
+  display:grid;place-items:center;font-size:.75rem;font-weight:700;flex:none}
+.acct .t{flex:1}
+.acct .t span{display:block;font-size:.68rem;color:var(--muted)}
+.acct .here{color:var(--accent-dim);font-family:var(--mono);font-size:.7rem}
+.acct.addnew{border-top:1px solid var(--border);border-radius:0;margin-top:.25rem;padding-top:.6rem;color:var(--accent-dim)}
+.acct.addnew .mini{color:var(--accent-dim)}
+
+/* the card grid — balance spans, chart takes the wide track */
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:.9rem;margin:.9rem 0}
+.grid .wide{grid-column:1}
+.grid .side{grid-column:2}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem}
+.card.balance{background:linear-gradient(135deg,var(--surface),var(--accent-soft))}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:.2rem 0 .5rem}
+.sec h2{margin:0;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sec a{color:var(--accent-dim);font-size:.75rem;text-decoration:none}
+.balance .lbl{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.balance .val{font-family:var(--mono);font-size:2.1rem;margin:.25rem 0;font-variant-numeric:tabular-nums}
+.balance .delta{font-family:var(--mono);font-size:.78rem;color:var(--success)}
+.balance .row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-top:.6rem}
+.chart{width:100%;margin-top:.4rem}
+
+/* three list cards on one row below */
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin:.9rem 0}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:.8rem .4rem .4rem;overflow:hidden}
+.panel .sec{padding:0 .4rem}
+
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:.85rem}
+th{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.5rem .8rem;border-bottom:1px solid var(--border);font-weight:500}
+td{padding:.55rem .8rem;border-bottom:1px solid var(--border)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem}
+td.neg{color:var(--error)}
+tr.row-total td{background:var(--accent-soft)}
+tr:last-child td{border-bottom:0}
+
+.walletline{display:flex;align-items:center;gap:.6rem;padding:.55rem .8rem;font-size:.85rem}
+.walletline + .walletline{border-top:1px solid var(--border)}
+.walletline .name{width:6em}
+.walletline .track{flex:1;height:.5rem;border-radius:99px;background:var(--bg);border:1px solid var(--border);overflow:hidden}
+.walletline .fill{height:100%;background:var(--accent);border-radius:99px}
+.walletline .fill.over{background:var(--error)}
+.walletline b{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem;text-align:right}
+.walletline b.neg{color:var(--error)}
+.walletline .of{display:block;font-size:.6rem;color:var(--muted);font-family:var(--mono)}
+
+.tx{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-bottom:1px solid var(--border)}
+.tx:last-child{border-bottom:0}
+.tx .ic{width:2rem;height:2rem;border-radius:9px;background:var(--accent-soft);display:grid;place-items:center;font-family:var(--mono);font-size:.7rem;color:var(--accent-dim);flex:none}
+.tx .ic.late{background:light-dark(#f8ecd4,#3a2a10);color:var(--error)}
+.tx .who{flex:1;min-width:0}
+.tx .who b{display:block;font-size:.88rem;font-weight:500}
+.tx .who span{font-size:.72rem;color:var(--muted);font-family:var(--mono)}
+.tx .who span.late{color:var(--error)}
+.tx .amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.9rem}
+.amt.pos{color:var(--success)} .amt.neg{color:var(--fg)}
+
+nav{position:fixed;bottom:0;left:0;right:0;background:light-dark(rgba(246,247,249,.92),rgba(14,18,24,.92));backdrop-filter:blur(10px);border-top:1px solid var(--border)}
+nav ul{display:flex;list-style:none;margin:0 auto;padding:.55rem .35rem .75rem;max-width:1100px}
+nav li{flex:1}
+nav a{display:flex;flex-direction:column;align-items:center;gap:.18rem;color:var(--muted);text-decoration:none;
+  font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
+nav a div{font-size:1.2rem;line-height:1}
+nav a.on{color:var(--accent-dim)}
+
+.note{margin:1.4rem 0 .4rem;padding:.8rem 1rem;border:1px dashed var(--border);border-radius:10px;
+  font-size:.78rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="left">
+      <h1>My Personal Finances</h1>
+      <span class="who">Personal Account</span>
+    </div>
+    <button class="avatar" title="Switch profile" onclick="toggleSheet()">R</button>
+  </header>
+
+  <div class="profile" id="profileSheet" hidden>
+    <div class="sheet">
+      <h3>Profiles on this server</h3>
+      <button class="acct on" onclick="pickAcct(this)">
+        <span class="mini">R</span><span class="t">Rafael <span>Personal Account</span></span><span class="here">here</span>
+      </button>
+      <button class="acct" onclick="pickAcct(this)">
+        <span class="mini">Z</span><span class="t">Zotech <span>Business Account</span></span>
+      </button>
+      <button class="acct" onclick="pickAcct(this)">
+        <span class="mini">S</span><span class="t">Shed studio <span>Project Account</span></span>
+      </button>
+      <button class="acct addnew" onclick="document.getElementById('profileSheet').hidden=true">
+        <span class="mini">＋</span><span class="t">Add or create<span>back to login / selection</span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- row 1: chart (wide) beside net worth (side) -->
+  <div class="grid">
+    <div class="card wide">
+      <div class="sec"><h2>Monthly</h2><span style="font-family:var(--mono);font-size:.7rem;color:var(--c1)">■ in</span> <span style="font-family:var(--mono);font-size:.7rem;color:var(--c2)">■ out</span></div>
+      <svg class="chart" viewBox="0 0 620 150" role="img" aria-label="Income and expense by month">
+        <line x1="0" y1="140" x2="620" y2="140" stroke="var(--border)"/>
+        <rect x="40"  y="30"  width="52" height="110" rx="2" fill="var(--c1)"/>
+        <rect x="102" y="72"  width="52" height="68"  rx="2" fill="var(--c2)"/>
+        <rect x="230" y="18"  width="52" height="122" rx="2" fill="var(--c1)"/>
+        <rect x="292" y="60"  width="52" height="80"  rx="2" fill="var(--c2)"/>
+        <rect x="420" y="24"  width="52" height="116" rx="2" fill="var(--c1)"/>
+        <rect x="482" y="76"  width="52" height="64"  rx="2" fill="var(--c2)"/>
+        <text x="97"  y="149" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--mono)">Sep</text>
+        <text x="287" y="149" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--mono)">Oct</text>
+        <text x="477" y="149" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--mono)">Nov</text>
+      </svg>
+    </div>
+    <div class="card balance side">
+      <div class="lbl">Net worth</div>
+      <div class="val">R$ 15,341.30</div>
+      <div class="delta">▲ R$ 7,222.60 this month (+88.9%)</div>
+      <div class="row">
+        <span class="lbl">Nov budget</span>
+        <span style="font-family:var(--mono);font-size:.85rem">1,357.80 <span style="color:var(--muted)">of 1,900</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- row 2: three panels -->
+  <div class="grid3">
+    <div class="panel">
+      <div class="sec"><h2>Wallets</h2><a href="#">manage →</a></div>
+      <table>
+        <tr><th>Wallet</th><th class="num">Balance</th></tr>
+        <tr><td>Main</td><td class="num">4,231.50</td></tr>
+        <tr><td>Savings</td><td class="num">12,000.00</td></tr>
+        <tr class="row-total"><td>Credit card</td><td class="num neg">−890.20</td></tr>
+        <tr><td>Dollars</td><td class="num">515.00 <span style="color:var(--muted)">USD</span></td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="sec"><h2>Categories</h2><a href="#">manage →</a></div>
+      <div class="walletline"><span class="name">Groceries</span><div class="track"><div class="fill" style="width:62%"></div></div><b>620.00<span class="of">of 1,000</span></b></div>
+      <div class="walletline"><span class="name">Transport</span><div class="track"><div class="fill" style="width:38%"></div></div><b>190.00<span class="of">of 500</span></b></div>
+      <div class="walletline"><span class="name">Eating out</span><div class="track"><div class="fill over" style="width:100%"></div></div><b class="neg">547.80<span class="of">of 400</span></b></div>
+    </div>
+    <div class="panel">
+      <div class="sec"><h2>Upcoming</h2><a href="#">book →</a></div>
+      <div class="tx"><div class="ic late">!</div><div class="who"><b>Overdue from October</b><span class="late">Nov 09 · overdue</span></div><div class="amt neg">90.00</div></div>
+      <div class="tx"><div class="ic">↓</div><div class="who"><b>Due in November</b><span>Nov 20 · Main</span></div><div class="amt neg">250.00</div></div>
+      <div class="tx"><div class="ic">⇄</div><div class="who"><b>Unpaid transfer</b><span>Nov 28 · Main → Dollars</span></div><div class="amt neg">75.00</div></div>
+    </div>
+  </div>
+
+  <!-- row 3: recent ledger full width -->
+  <div class="panel" style="margin:.9rem 0">
+    <div class="sec" style="padding:0 .8rem"><h2>Recent</h2><a href="#">all →</a></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem">
+      <div>
+        <div class="tx"><div class="ic">↑</div><div class="who"><b>Salary</b><span>Nov 05 · Main</span></div><div class="amt pos">+9,000.00</div></div>
+        <div class="tx"><div class="ic">⇄</div><div class="who"><b>Move to savings</b><span>transfer · linked</span></div><div class="amt neg">−300.00</div></div>
+        <div class="tx"><div class="ic">↓</div><div class="who"><b>Groceries</b><span>Nov 03 · Main</span></div><div class="amt neg">−620.00</div></div>
+      </div>
+      <div>
+        <div class="tx"><div class="ic">↓</div><div class="who"><b>Fuel and bus</b><span>Nov 02 · Main</span></div><div class="amt neg">−547.80</div></div>
+        <div class="tx"><div class="ic">↓</div><div class="who"><b>Bakery run</b><span>Nov 01 · Main</span></div><div class="amt neg">−125.50</div></div>
+        <div class="tx"><div class="ic">⇄</div><div class="who"><b>Vacation fund</b><span>transfer · linked</span></div><div class="amt neg">−200.00</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Proposal 3 (revised) — the canvas. Shell opens to 1100px; the header
+  shows only the ACTIVE account (avatar + sheet on click, the demo5 pattern unchanged
+  from phone), the dashboard is a card grid: chart wide beside net worth, three panels
+  on a row, recent in two ledger columns.</div>
+</div>
+<nav>
+  <ul>
+    <li><a class="on" href="#"><div>▤</div>Home</a></li>
+    <li><a href="#"><div>◈</div>Wallets</a></li>
+    <li><a href="#"><div>≡</div>Book</a></li>
+    <li><a href="#"><div>⌕</div>Search</a></li>
+    <li><a href="#"><div>⚙</div>Settings</a></li>
+  </ul>
+</nav>
+<script>
+function toggleSheet(){
+  const s=document.getElementById('profileSheet')
+  s.hidden = !s.hidden
+}
+function pickAcct(btn){
+  btn.parentElement.querySelectorAll('.acct').forEach(b=>b.classList.remove('on'))
+  btn.classList.add('on')
+  document.querySelector('.avatar').textContent = btn.querySelector('.mini').textContent
+  document.getElementById('profileSheet').hidden = true
+}
+document.addEventListener('click',e=>{
+  const sheet=document.getElementById('profileSheet')
+  if(!sheet.hidden && !sheet.contains(e.target) && !e.target.closest('.avatar')) sheet.hidden=true
+})
+</script>
+</body>
+</html>
